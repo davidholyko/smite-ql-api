@@ -18,17 +18,16 @@
     "url": "https://github.com/davidholyko/smite-ql-api.git"
   },
   "devDependencies": {
-    "@babel/helper-compilation-targets": "^7.17.7",
-    "@semantic-release/git": "^9.0.0",
-    "eslint": "^8.11.0",
-    "semantic-release": "^17.0.0"
-  },
-  "dependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.8",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
+    "@semantic-release/git": "^9.0.0",
+    "eslint": "^8.11.0",
     "jest": "^27.5.1",
+    "semantic-release": "^17.0.0"
+  },
+  "dependencies": {
     "lodash": "^4.17.21"
   }
 }
