@@ -1,0 +1,19 @@
+{
+  "name": "smite-ql-api",
+  "version": "0.0.0",
+  "description": "Smite API for Node",
+  "main": "index.js",
+  "private": true,
+  "author": "David Ko",
+  "license": "ISC",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "repository": {
+    "url": "https://github.com/davidholyko/smite-ql-api.git"
+  },
+  "dependencies": {}
+}
