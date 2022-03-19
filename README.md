@@ -1,8 +1,14 @@
 # Smite QL API
 
+## Pre-Requisites
+
+- Node
+- NVM
+
 ## Installation
 
 ```
+nvm use
 npm ci
 npm start
 ```
