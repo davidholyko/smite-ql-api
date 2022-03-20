@@ -5,6 +5,10 @@
 - Node
 - NVM
 
+## Official Developer Guide
+
+[Official Developer Guide](https://webcdn.hirezstudios.com/hirez-studios/legal/smite-api-developer-guide.pdf) contains api endpoints for a user.
+
 ## Installation
 
 ```
