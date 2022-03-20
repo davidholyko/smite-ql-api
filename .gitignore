@@ -6,3 +6,6 @@ node_modules
 
 # ignore compiled babel
 lib
+
+# ignore dev API key
+constants/api.js
