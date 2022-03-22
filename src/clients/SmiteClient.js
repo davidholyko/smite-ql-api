@@ -23,6 +23,7 @@ export class SmiteClient {
    * @param {String} method - type of method
    * @param {String} signature - signature
    * @param {String} timestamp - timestamp
+   * @param {...String} args - extra args
    * @returns {String} - url
    */
   _composeUrl(method, signature, timestamp, ...args) {
@@ -61,13 +62,14 @@ export class SmiteClient {
   /**
    *
    * @param {String} method - method - like 'createsession' or 'createsessionJson'
+   * @param {...String} args - extra args
    * @returns {String} - url
    */
-  _generateEndpoint(method = METHODS.CREATE_SESSION_JSON) {
+  _generateEndpoint(method = METHODS.CREATE_SESSION_JSON, ...args) {
     const parsedMethod = HELPERS.parseMethod(method);
     const signature = this._generateSignature(parsedMethod);
     const timestamp = this._generateTimeStamp();
-    const url = this._composeUrl(method, signature, timestamp);
+    const url = this._composeUrl(method, signature, timestamp, ...args);
     return url;
   }
 
@@ -101,14 +103,15 @@ export class SmiteClient {
   /**
    *
    * @param {String} method - method
+   * @param {...String} args - extra args
    * @returns {Object} - data
    */
-  async makeRequest(method) {
+  async makeRequest(method, ...args) {
     if (_.isEmpty(this.session_id)) {
       await this.createSession();
     }
 
-    const url = this._generateEndpoint(method);
+    const url = this._generateEndpoint(method, ...args);
     const data = await this._processRequest(url);
     return data;
   }
@@ -123,6 +126,26 @@ export class SmiteClient {
     if (!_.includes(response, 'This was a successful test')) {
       throw new Error('Test Session Failed!');
     }
+  }
+
+  /**
+   *
+   * @param {String} accountName - account name for player, like 'dhko'
+   * @returns {Object} - data
+   */
+  async getPlayer(accountName) {
+    const response = await this.makeRequest(METHODS.GET_PLAYER_JSON, accountName);
+    return response;
+  }
+
+  /**
+   *
+   * @param {String} accountName - account name for player, like 'dhko'
+   * @returns {Array<Object>} - data of last 50 matches
+   */
+  async getMatchHistory(accountName) {
+    const response = await this.makeRequest(METHODS.GET_MATCH_HISTORY_JSON, accountName);
+    return response;
   }
 }
 

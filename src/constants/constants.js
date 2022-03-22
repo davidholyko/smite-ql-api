@@ -13,4 +13,8 @@ export const METHODS = {
   TEST_SESSION_JSON: 'testsessionJson',
   CREATE_SESSION: 'createsession',
   CREATE_SESSION_JSON: 'createsessionJson',
+  GET_PLAYER: 'getplayer',
+  GET_PLAYER_JSON: 'getplayerJson',
+  GET_MATCH_HISTORY: 'getmatchhistory',
+  GET_MATCH_HISTORY_JSON: 'getmatchhistoryJson',
 };
