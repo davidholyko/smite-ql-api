@@ -17,4 +17,6 @@ export const METHODS = {
   GET_PLAYER_JSON: 'getplayerJson',
   GET_MATCH_HISTORY: 'getmatchhistory',
   GET_MATCH_HISTORY_JSON: 'getmatchhistoryJson',
+  GET_MATCH_DETAILS: 'getmatchdetails',
+  GET_MATCH_DETAILS_JSON: 'getmatchdetailsJson',
 };

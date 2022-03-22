@@ -8,8 +8,9 @@
   "license": "ISC",
   "scripts": {
     "test": "jest",
-    "build": "npx babel src -d lib",
-    "start": "npm run build && node lib/index.js"
+    "build": "npx babel src -d dist",
+    "start": "npm run build && node dist/index.js",
+    "sandbox": "npm run build && node dist/sandbox.js"
   },
   "engines": {
     "node": "16.x"

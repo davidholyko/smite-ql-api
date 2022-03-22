@@ -147,6 +147,16 @@ export class SmiteClient {
     const response = await this.makeRequest(METHODS.GET_MATCH_HISTORY_JSON, accountName);
     return response;
   }
+
+  /**
+   *
+   * @param {String} matchId - match id like '1229914631'
+   * @returns {Array<Object>} - match details
+   */
+  async getMatchDetails(matchId) {
+    const response = await this.makeRequest(METHODS.GET_MATCH_DETAILS_JSON, matchId);
+    return response;
+  }
 }
 
 const client = new SmiteClient();

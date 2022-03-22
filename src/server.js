@@ -1,6 +1,6 @@
 import SmiteClient from './clients/SmiteClient';
 
 export const makeServer = async () => {
-  await SmiteClient.getMatchHistory('dhko');
+  await SmiteClient.createSession();
   console.log('Server started!');
 };

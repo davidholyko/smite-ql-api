@@ -6,9 +6,13 @@ node_modules
 
 # ignore compiled babel
 lib
+dist
 
 # ignore dev API key
 .env
 
 # ignore jest generated coverage reports
 coverage
+
+# ignore local notes
+notes.*
