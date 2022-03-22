@@ -1,7 +1,7 @@
 # Smite QL API
 
 ![example workflow](https://github.com/github/docs/actions/workflows/unit-tests.yml/badge.svg)
-![example workflow](https://github.com/dhko/smite-ql-api/actions/workflows/unit-tests.yml/badge.svg)
+![example workflow](https://github.com/davidholyko/smite-ql-api/actions/workflows/unit-tests.yml/badge.svg)
 
 ## Pre-Requisites
 
