@@ -1,10 +1,9 @@
-name: Unit Tests
+name: Automation Tests
 
 on:
   push:
     branches:
       - master
-      - '*'
 
 jobs:
   release:
@@ -21,8 +20,8 @@ jobs:
           node-version: '16.x'
       - name: Install Dependencies
         run: npm ci
-      - name: Run Unit Tests
-        run: npm run test:unit
+      - name: Run Automation Tests
+        run: npm run test:automation
         env:
           DEV_ID: ${{ secrets.DEV_ID }}
           AUTH_KEY: ${{ secrets.AUTH_KEY }}

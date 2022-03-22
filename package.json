@@ -8,6 +8,8 @@
   "license": "ISC",
   "scripts": {
     "test": "jest",
+    "test:unit": "npx jest test/unit-tests",
+    "test:automation": "npx jest test/automation-tests",
     "build": "npx babel src -d dist",
     "start": "npm run build && node dist/index.js",
     "sandbox": "npm run build && node dist/sandbox.js"
