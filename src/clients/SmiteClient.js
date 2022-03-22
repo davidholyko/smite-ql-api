@@ -25,9 +25,14 @@ export class SmiteClient {
    * @param {String} timestamp - timestamp
    * @returns {String} - url
    */
-  _composeUrl(method, signature, timestamp) {
+  _composeUrl(method, signature, timestamp, ...args) {
     const session = this.session_id ? `/${this.session_id}` : '';
-    const url = `${BASE_URL}/${method}/${DEV_ID}/${signature}${session}/${timestamp}`;
+    let url = `${BASE_URL}/${method}/${DEV_ID}/${signature}${session}/${timestamp}`;
+
+    [...args].forEach((arg) => {
+      url += `/${arg}`;
+    });
+
     return url;
   }
 
@@ -96,7 +101,7 @@ export class SmiteClient {
   /**
    *
    * @param {String} method - method
-   * @returns {void}
+   * @returns {Object} - data
    */
   async makeRequest(method) {
     if (_.isEmpty(this.session_id)) {
@@ -108,6 +113,10 @@ export class SmiteClient {
     return data;
   }
 
+  /**
+   * tests if createsession was successful
+   * @returns {void}
+   */
   async testSession() {
     const response = await this.makeRequest(METHODS.TEST_SESSION_JSON);
 
