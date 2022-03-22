@@ -8,4 +8,7 @@ node_modules
 lib
 
 # ignore dev API key
-constants/api.js
+.env
+
+# ignore jest generated coverage reports
+coverage

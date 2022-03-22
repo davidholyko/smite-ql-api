@@ -10,5 +10,24 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  rules: {},
+  plugins: ['sort-class-members'],
+  rules: {
+    'valid-jsdoc': 'error',
+
+    'sort-class-members/sort-class-members': [
+      2,
+      {
+        order: [
+          'constructor',
+          '[properties]',
+          '[conventional-private-properties]',
+          '[conventional-private-methods]',
+          '[static-properties]',
+          '[static-methods]',
+          '[methods]',
+        ],
+        accessorPairPositioning: 'getThenSet',
+      },
+    ],
+  },
 };

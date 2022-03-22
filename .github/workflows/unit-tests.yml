@@ -20,3 +20,6 @@ jobs:
         run: npm ci
       - name: Run Unit Tests
         run: npm run test
+        env:
+          DEV_ID: ${{ secrets.DEV_ID }}
+          AUTH_KEY: ${{ secrets.AUTH_KEY }}
