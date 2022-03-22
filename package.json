@@ -7,12 +7,13 @@
   "author": "David Ko",
   "license": "ISC",
   "scripts": {
+    "build": "npx babel src -d dist",
+    "lint": "npx eslint --max-warnings=0",
     "test": "jest",
     "test:unit": "npx jest test/unit-tests",
     "test:automation": "npx jest test/automation-tests",
-    "build": "npx babel src -d dist",
-    "start": "npm run build && node dist/index.js",
-    "sandbox": "npm run build && node dist/sandbox.js"
+    "sandbox": "npm run build && node dist/sandbox.js",
+    "start": "npm run build && node dist/index.js"
   },
   "engines": {
     "node": "16.x"

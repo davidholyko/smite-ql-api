@@ -2,6 +2,7 @@
 
 ![Unit Tests](https://github.com/davidholyko/smite-ql-api/actions/workflows/unit-tests.yml/badge.svg)
 ![Automation Tests](https://github.com/davidholyko/smite-ql-api/actions/workflows/automation-tests.yml/badge.svg)
+![Linting Check Tests](https://github.com/davidholyko/smite-ql-api/actions/workflows/linting-check.yml/badge.svg)
 
 ## Pre-Requisites
 
