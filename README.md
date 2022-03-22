@@ -1,5 +1,7 @@
 # Smite QL API
 
+![example workflow](https://github.com/github/docs/actions/workflows/unit-tests.yml/badge.svg)
+
 ## Pre-Requisites
 
 - [Node](https://nodejs.org/en/)
