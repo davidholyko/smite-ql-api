@@ -41,14 +41,21 @@ describe('SmiteClient', () => {
     const timestamp = SmiteClient._generateTimeStamp();
     const now = moment.utc().format('yyyyMMDDHHmm');
 
-    const year = timestamp.substring(0, 4);
-    const month = timestamp.substring(5, 6);
-    const day = timestamp.substring(7, 8);
-    const minute = timestamp.substring(9, 10);
-
-    expect(year).toBe(now.substring(0, 4));
-    expect(month).toBe(now.substring(5, 6));
-    expect(day).toBe(now.substring(7, 8));
-    expect(minute).toBe(now.substring(9, 10));
+    it('should output the correct year', () => {
+      const year = timestamp.substring(0, 4);
+      expect(year).toBe(now.substring(0, 4));
+    });
+    it('should output the correct month', () => {
+      const month = timestamp.substring(5, 6);
+      expect(month).toBe(now.substring(5, 6));
+    });
+    it('should output the correct day', () => {
+      const day = timestamp.substring(7, 8);
+      expect(day).toBe(now.substring(7, 8));
+    });
+    it('should output the correct minute', () => {
+      const minute = timestamp.substring(9, 10);
+      expect(minute).toBe(now.substring(9, 10));
+    });
   });
 });
