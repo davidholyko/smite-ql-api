@@ -16,3 +16,6 @@ coverage
 
 # ignore local notes
 notes.*
+
+# ignore dev sandbox
+src/sandbox.js
