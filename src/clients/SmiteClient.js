@@ -7,14 +7,14 @@ import utf8 from 'utf8';
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
 
-const { API, METHODS } = CONSTANTS;
+const { API, METHODS, LANGS } = CONSTANTS;
 const { BASE_URL } = API;
 
 const { DEV_ID, AUTH_KEY } = API;
 
 export class SmiteClient {
   constructor() {
-    this.lang = 1; // 1 represents English
+    this.lang = LANGS.ENGLISH;
     this.session_id = null;
   }
 
