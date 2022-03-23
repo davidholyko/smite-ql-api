@@ -1,4 +1,8 @@
-export const matchDetails = [
+/**
+ * Information from:
+ * /getmatchdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
+ */
+export const mockMatchDetails = [
   {
     Account_Level: 144,
     ActiveId1: 21572,

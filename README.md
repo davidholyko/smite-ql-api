@@ -12,7 +12,7 @@
 
 ## Official Developer Guide
 
-[Official Developer Guide](https://webcdn.hirezstudios.com/hirez-studios/legal/smite-api-developer-guide.pdf) contains api endpoints for a user.
+[Official Developer Guide](https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit) contains api endpoints documentation for a developer.
 
 #### Register for Smite API Developer Account
 
