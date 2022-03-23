@@ -8,8 +8,11 @@ import { parsePlayerName } from './parsers';
  * @returns {Object} - list of teams, playerIds, and playerNames
  */
 export const transformMatchDetails = (matchDetails) => {
+  // map of teams
   const teams = {};
+  // map of playerIds to teams
   const playerIds = {};
+  // map of playerNames to teams
   const playerNames = {};
 
   _.forEach(matchDetails, (player) => {
@@ -17,17 +20,20 @@ export const transformMatchDetails = (matchDetails) => {
   });
 
   _.forEach(matchDetails, (player, index) => {
-    const name = parsePlayerName(player.playerName);
-    teams[player.PartyId][name] = player.playerId;
+    const hiddenPlayerName = player.Reference_Name + index;
+    let name = parsePlayerName(player.playerName);
 
     // account for when player profiles are hidden
+    //   player.playerId = 0
+    //   player.playerName = ''
     if (_.isEmpty(name)) {
-      playerIds[index] = player.PartyId;
-      playerNames[player.Reference_Name + index] = player.PartyId;
-    } else {
-      playerIds[player.playerId] = player.PartyId;
-      playerNames[name] = player.PartyId;
+      name = hiddenPlayerName;
+      player.playerId = hiddenPlayerName;
     }
+
+    teams[player.PartyId][name] = player.playerId;
+    playerIds[player.playerId] = player.PartyId;
+    playerNames[name] = player.PartyId;
   });
 
   // sift teams that are of size 1 (who are solo queued)

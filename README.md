@@ -40,6 +40,16 @@ npm ci
 npm start
 ```
 
+## Sandbox
+
+```
+# Run sandbox
+npm run sandbox
+
+# Skip git from noticing changes to sandbox
+git update-index --skip-worktree src/sandbox/sandbox.js
+```
+
 ## Versioning
 
 This project uses [semantic versioning](https://semver.org/).
