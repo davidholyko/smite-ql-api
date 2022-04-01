@@ -14,8 +14,8 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 
   /**
-   * throws error is SmiteApiClient is not ready
-   * @returns {Void} - returns nothing
+   * throws error if SmiteApiClient is not ready
+   * @returns {void}
    */
   _assertReady() {
     if (!this.isReady) {
