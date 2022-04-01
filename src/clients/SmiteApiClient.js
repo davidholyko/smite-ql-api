@@ -13,30 +13,49 @@ export class SmiteApiClient extends BaseSmiteClient {
     this.isReady = false;
   }
 
+  /**
+   * throws error is SmiteApiClient is not ready
+   * @returns {Void} - returns nothing
+   */
   _assertReady() {
     if (!this.isReady) {
       throw new Error('RedisClient is not ready. Call async function SmiteApiClient.ready()');
     }
   }
 
-  async getMatchDetails(accountName) {
+  /**
+   *
+   * @param {Number} matchId - like 1232096830
+   * @returns {Array<Object>} - data
+   */
+  async getMatchDetails(matchId) {
     this._assertReady();
 
-    const data = await super.getPlayer(accountName);
-    await this.redisClient.json.set(ENTRY, `${MATCH_DETAILS}.${accountName}`, data);
+    const data = await super.getMatchDetails(matchId);
+    await this.redisClient.json.set(ENTRY, `${MATCH_DETAILS}.${matchId}`, data);
 
     return data;
   }
 
-  async getMatchHistory(matchId) {
+  /**
+   * Returns last 50 matches of a player
+   * @param {String} accountName - like 'dhko'
+   * @returns {Array<Object>} - data
+   */
+  async getMatchHistory(accountName) {
     this._assertReady();
 
-    const data = await super.getPlayer(matchId);
-    await this.redisClient.json.set(ENTRY, `${MATCHES}.${matchId}`, data);
+    const data = await super.getMatchHistory(accountName);
+    await this.redisClient.json.set(ENTRY, `${MATCHES}.${accountName}`, data);
 
     return data;
   }
 
+  /**
+   *
+   * @param {String} accountName - like 'dhko'
+   * @returns {Object} - data
+   */
   async getPlayer(accountName) {
     this._assertReady();
 
@@ -46,6 +65,10 @@ export class SmiteApiClient extends BaseSmiteClient {
     return data;
   }
 
+  /**
+   * Sets up top level schema for redis db
+   * @returns {void}
+   */
   async ready() {
     this.isReady = true;
 
