@@ -1,21 +1,15 @@
 import moment from 'moment';
 
-import SmiteClient, { SmiteClient as SmiteClientClass } from '../../src/clients/SmiteClient';
+import BaseSmiteClient, { BaseSmiteClient as Client } from '../../src/clients/BaseSmiteClient';
 
-// const mockedCreateSessionJson = {
-//   ret_msg: 'Approved',
-//   session_id: 'A1542BE6B26E4B1BA692565A5351405B',
-//   timestamp: '3/22/2022 1:19:32 AM',
-// };
-
-describe('SmiteClient', () => {
+describe('BaseSmiteClient', () => {
   beforeEach(() => {
-    SmiteClient.session_id = null;
+    BaseSmiteClient.session_id = null;
   });
 
   describe('constructor', () => {
-    it('should be an instance of class "SmiteClient"', async () => {
-      expect(SmiteClient).toBeInstanceOf(SmiteClientClass);
+    it('should be an instance of class "BaseSmiteClient"', async () => {
+      expect(BaseSmiteClient).toBeInstanceOf(Client);
     });
   });
 
@@ -24,15 +18,15 @@ describe('SmiteClient', () => {
       const method = 'createsession';
       const signature = '1234';
       const timestamp = '5678';
-      const url = SmiteClient._composeUrl(method, signature, timestamp);
+      const url = BaseSmiteClient._composeUrl(method, signature, timestamp);
       expect(url).toBe('https://api.smitegame.com/smiteapi.svc/createsession/2787/1234/5678');
     });
     it('should compose a url with method, signature, and timestamp and session if session_id exists', () => {
-      SmiteClient.session_id = '0000';
+      BaseSmiteClient.session_id = '0000';
       const method = 'createsession';
       const signature = '1234';
       const timestamp = '5678';
-      const url = SmiteClient._composeUrl(method, signature, timestamp);
+      const url = BaseSmiteClient._composeUrl(method, signature, timestamp);
       expect(url).toBe('https://api.smitegame.com/smiteapi.svc/createsession/2787/1234/0000/5678');
     });
     it('should compose a url with method, signature, and timestamp, and additional args', () => {
@@ -41,7 +35,7 @@ describe('SmiteClient', () => {
       const timestamp = '5678';
       const foo = 'foo';
       const bar = 'bar';
-      const url = SmiteClient._composeUrl(method, signature, timestamp, foo, bar);
+      const url = BaseSmiteClient._composeUrl(method, signature, timestamp, foo, bar);
       expect(url).toBe(
         'https://api.smitegame.com/smiteapi.svc/createsession/2787/1234/5678/foo/bar',
       );
@@ -49,7 +43,7 @@ describe('SmiteClient', () => {
   });
 
   describe('_generateTimeStamp', () => {
-    const timestamp = SmiteClient._generateTimeStamp();
+    const timestamp = BaseSmiteClient._generateTimeStamp();
     const now = moment.utc().format('yyyyMMDDHHmm');
 
     it('should output the correct year', () => {
@@ -68,5 +62,9 @@ describe('SmiteClient', () => {
       const minute = timestamp.substring(9, 10);
       expect(minute).toBe(now.substring(9, 10));
     });
+  });
+
+  describe('_generateSignature', () => {
+    // TODO
   });
 });

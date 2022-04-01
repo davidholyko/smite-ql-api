@@ -12,8 +12,12 @@
     "test": "jest",
     "test:unit": "npx jest test/unit-tests",
     "test:automation": "npx jest test/automation-tests",
-    "sandbox": "npm run build && node dist/sandbox/sandbox.js",
-    "start": "npm run build && node dist/index.js"
+    "prestart": "npm run build",
+    "prestart:redis": "npm run build",
+    "prestart:sandbox": "npm run build",
+    "start:redis": "node dist/redis/redis.js",
+    "start:sandbox": "node dist/sandbox/sandbox.js",
+    "start": "node dist/index.js"
   },
   "engines": {
     "node": "16.x"
@@ -38,6 +42,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
+    "redis": "^4.0.4",
     "utf-8": "^2.0.0",
     "utf8": "^3.0.0"
   }

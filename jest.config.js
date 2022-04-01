@@ -1,9 +1,5 @@
 const config = {
-  verbose: true,
-
   collectCoverageFrom: ['**/*.{js}', '!**/node_modules/**'],
-
-  globalSetup: './test/jestGlobalSetup.js',
 
   coverageThreshold: {
     global: {
@@ -13,6 +9,12 @@ const config = {
       statements: -10,
     },
   },
+
+  globalSetup: './test/jestGlobalSetup.js',
+
+  setupFiles: ['./test/setup.js'],
+
+  verbose: true,
 };
 
 module.exports = config;

@@ -4,11 +4,25 @@
 ![Automation Tests](https://github.com/davidholyko/smite-ql-api/actions/workflows/automation-tests.yml/badge.svg)
 ![Linting Check](https://github.com/davidholyko/smite-ql-api/actions/workflows/linting-check.yml/badge.svg)
 
+## Versioning
+
+This project uses [semantic versioning](https://semver.org/).
+
 ## Pre-Requisites
 
 - [Node](https://nodejs.org/en/)
 - [NVM](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
 - [Smite Developer Account](https://www.hirezstudios.com/)
+- [Redis](https://redis.io/)
+- [Docker]()
+
+#### Download Pre-Requisites with Homebrew
+
+```
+brew install node
+brew install redis
+brew install docker
+```
 
 ## Official Developer Guide
 
@@ -40,21 +54,47 @@ npm ci
 npm start
 ```
 
+## Redis (with Docker)
+
+```
+# Start redis server
+docker run -p 6379:6379 --name redis-redisjson -d redislabs/rejson:latest
+
+# Check connection
+redis-cli ping
+
+# Access redis cli in docker
+docker exec -it <image> redis-cli
+```
+
 ## Sandbox
 
 ```
 # Run sandbox
-npm run sandbox
+npm run start:sandbox
 
 # Skip git from noticing changes to sandbox
 git update-index --skip-worktree src/sandbox/sandbox.js
 ```
 
-## Versioning
+# Troubleshooting
 
-This project uses [semantic versioning](https://semver.org/).
+### Redis is not working
 
-#### Deleting a broken version
+```
+Redis Client Error Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1133:16) {
+  errno: -61,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 6379
+}
+```
+
+See Redis (with Docker) section above
+
+### Deleting a broken version
 
 _Deleting a remote tag is for when you need to unpublish a version update because it's bad_
 

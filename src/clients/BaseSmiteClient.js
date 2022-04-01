@@ -12,14 +12,15 @@ const { BASE_URL } = API;
 
 const { DEV_ID, AUTH_KEY } = API;
 
-export class SmiteClient {
-  constructor() {
-    this.lang = LANGS.ENGLISH;
+export class BaseSmiteClient {
+  constructor(lang = LANGS.ENGLISH) {
+    this.lang = lang;
     this.session_id = null;
   }
 
   /**
    * creates a request url
+   * @private
    * @param {String} method - type of method
    * @param {String} signature - signature
    * @param {String} timestamp - timestamp
@@ -30,7 +31,7 @@ export class SmiteClient {
     const session = this.session_id ? `/${this.session_id}` : '';
     let url = `${BASE_URL}/${method}/${DEV_ID}/${signature}${session}/${timestamp}`;
 
-    [...args].forEach((arg) => {
+    _.forEach([...args], (arg) => {
       url += `/${arg}`;
     });
 
@@ -38,7 +39,15 @@ export class SmiteClient {
   }
 
   /**
-   * creates a timestamp
+   * generates a timestamp like '20220328080808'
+   * format of                  'yyyyMMDDHHmmss'
+   *                             2022 -> year
+   *                                 03 -> month (March)
+   *                                   28 -> day (March 28th)
+   *                                     08 -> hour (8am)
+   *                                       08 -> minute (8:08am)
+   *                                         08 -> second (8:08:08am)
+   * @private
    * @returns {String} timestamp
    */
   _generateTimeStamp() {
@@ -47,7 +56,7 @@ export class SmiteClient {
   }
 
   /**
-   *
+   * @private
    * @param {String} method - type of method
    * @returns {void}
    */
@@ -60,7 +69,7 @@ export class SmiteClient {
   }
 
   /**
-   *
+   * @private
    * @param {String} method - method - like 'createsession' or 'createsessionJson'
    * @param {...String} args - extra args
    * @returns {String} - url
@@ -74,7 +83,23 @@ export class SmiteClient {
   }
 
   /**
-   *
+   * @public
+   * @param {String} method - method
+   * @param {...String} args - extra args
+   * @returns {Object} - data
+   */
+  async _performRequest(method, ...args) {
+    if (_.isEmpty(this.session_id)) {
+      await this.createSession();
+    }
+
+    const url = this._generateEndpoint(method, ...args);
+    const data = await this._processRequest(url);
+    return data;
+  }
+
+  /**
+   * @private
    * @param {String} url - url
    * @returns {Object} - data
    */
@@ -93,6 +118,7 @@ export class SmiteClient {
 
   /**
    * creates a session
+   * @public
    * @returns {void}
    */
   async createSession() {
@@ -101,64 +127,49 @@ export class SmiteClient {
   }
 
   /**
-   *
-   * @param {String} method - method
-   * @param {...String} args - extra args
+   * @public
+   * @param {String} matchId - match id like '1229914631'
+   * @returns {Array<Object>} - match details
+   */
+  async getMatchDetails(matchId) {
+    const response = await this._performRequest(METHODS.GET_MATCH_DETAILS_JSON, matchId);
+    return response;
+  }
+
+  /**
+   * @public
+   * @param {String} accountName - account name for player, like 'dhko'
+   * @returns {Array<Object>} - data of last 50 matches
+   */
+  async getMatchHistory(accountName) {
+    const response = await this._performRequest(METHODS.GET_MATCH_HISTORY_JSON, accountName);
+    return response;
+  }
+
+  /**
+   * @public
+   * @param {String} accountName - account name for player, like 'dhko'
    * @returns {Object} - data
    */
-  async makeRequest(method, ...args) {
-    if (_.isEmpty(this.session_id)) {
-      await this.createSession();
-    }
-
-    const url = this._generateEndpoint(method, ...args);
-    const data = await this._processRequest(url);
-    return data;
+  async getPlayer(accountName) {
+    const response = await this._performRequest(METHODS.GET_PLAYER_JSON, accountName);
+    return response;
   }
 
   /**
    * tests if createsession was successful
+   * @public
    * @returns {void}
    */
   async testSession() {
-    const response = await this.makeRequest(METHODS.TEST_SESSION_JSON);
+    const response = await this._performRequest(METHODS.TEST_SESSION_JSON);
 
     if (!_.includes(response, 'This was a successful test')) {
       throw new Error('Test Session Failed!');
     }
   }
-
-  /**
-   *
-   * @param {String} accountName - account name for player, like 'dhko'
-   * @returns {Object} - data
-   */
-  async getPlayer(accountName) {
-    const response = await this.makeRequest(METHODS.GET_PLAYER_JSON, accountName);
-    return response;
-  }
-
-  /**
-   *
-   * @param {String} accountName - account name for player, like 'dhko'
-   * @returns {Array<Object>} - data of last 50 matches
-   */
-  async getMatchHistory(accountName) {
-    const response = await this.makeRequest(METHODS.GET_MATCH_HISTORY_JSON, accountName);
-    return response;
-  }
-
-  /**
-   *
-   * @param {String} matchId - match id like '1229914631'
-   * @returns {Array<Object>} - match details
-   */
-  async getMatchDetails(matchId) {
-    const response = await this.makeRequest(METHODS.GET_MATCH_DETAILS_JSON, matchId);
-    return response;
-  }
 }
 
-const client = new SmiteClient();
+const client = new BaseSmiteClient();
 
 export default client;

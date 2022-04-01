@@ -33,3 +33,11 @@ export const LANGS = {
   POLISH: 12,
   TURKISH: 13,
 };
+
+export const REDIS = {
+  ENTRY: 'noderedis:jsondata',
+  ROOT: '$',
+  MATCH_DETAILS: 'matchDetails',
+  MATCHES: 'matches',
+  PLAYERS: 'players',
+};
