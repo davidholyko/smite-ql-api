@@ -46,10 +46,13 @@ AUTH_KEY=23DF3C7E9BD14D84BF892AD206B6755C
 ```
 # Install project's node version
 nvm install
+
 # Use project's node version
 nvm use
+
 # Install packages
 npm ci
+
 # Start application
 npm start
 ```
@@ -75,6 +78,9 @@ npm run start:sandbox
 
 # Skip git from noticing changes to sandbox
 git update-index --skip-worktree src/sandbox/sandbox.js
+
+# Undo skip
+git update-index --no-skip-worktree src/sandbox/sandbox.js
 ```
 
 # Troubleshooting

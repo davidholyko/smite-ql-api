@@ -1,18 +1,28 @@
 /* eslint-disable */
 import 'dotenv/config';
-import { SmiteClient } from '../clients/SmiteClient';
-import { matchDetails } from './mocks/getMatchDetails';
+
+import SmiteApiClient from '../clients/SmiteApiClient';
 import HELPERS from '../helpers';
+import CONSTANTS from '../constants';
 
-// export const startSandbox = async () => {
-//   //   const res = await SmiteClient.getMatchHistory('dhko');
-//   //   const res = await SmiteClient.getMatchDetails(1229914631);
-//   console.log('Sandbox started!');
-// };
+import mocks from './mocks';
 
-// startSandbox();
+const { ENTRY } = CONSTANTS;
 
-const a = HELPERS.transformMatchDetails(matchDetails);
-const b = HELPERS.parsePlayerName('[LRT]dalvon2');
-console.log(a);
-console.log(b);
+let res;
+
+export const startSandbox = async () => {
+  console.info('Sandbox started!');
+  await SmiteApiClient.ready();
+  // res = await SmiteApiClient.getPlayer('dhko');
+  res = await SmiteApiClient.getMatchHistory('dhko');
+  // res = await SmiteApiClient.getMatchDetails(1232511801);
+  // res = HELPERS.transformMatchDetails(res);
+
+  console.log(res);
+
+  await SmiteApiClient.redisClient.flushAll();
+  await SmiteApiClient.redisClient.quit();
+};
+
+startSandbox();
