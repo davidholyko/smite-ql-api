@@ -149,7 +149,7 @@ export const mockPlayer = [
     Total_Worshippers: 118158,
     Wins: 5514,
     hz_gamer_tag: null,
-    hz_player_name: 'dhko',
+    hz_player_name: 'dhko', // actual name in game
     ret_msg: null,
   },
 ];

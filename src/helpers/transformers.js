@@ -1,11 +1,36 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import { parsePlayerName } from './parsers';
 
 /**
  *
+ * @param {String} date - like '3/22/2022 12:06:35 AM'
+ * @returns {String} - formatted date as string of numbers
+ */
+export const transformMatchDate = (date) => {
+  const newDate = moment(date).utc().format('yyyyMMDDHHmmss');
+  return newDate;
+};
+
+/**
+ *
+ * @param {Object} match - match details
+ * @returns {Object} match with only date and victory status
+ */
+export const transformMatchState = (match) => {
+  const matchState = {
+    date: transformMatchDate(match.Match_Time),
+    isVictory: match.Win_Status === 'Win',
+  };
+
+  return matchState;
+};
+
+/**
+ *
  * @param {Array<Object>} matchDetails - list of details for each player
- * @returns {Object} - list of teams, playerIds, and playerNames
+ * @returns {Object} - map of teams, playerIds, and playerNames
  */
 export const transformMatchDetails = (matchDetails) => {
   // map of teams
@@ -20,7 +45,7 @@ export const transformMatchDetails = (matchDetails) => {
   });
 
   _.forEach(matchDetails, (player, index) => {
-    const hiddenPlayerName = player.Reference_Name + index;
+    const hiddenPlayerName = `_${player.Reference_Name}_${index}`;
     let name = parsePlayerName(player.playerName);
 
     // account for when player profiles are hidden
@@ -47,5 +72,25 @@ export const transformMatchDetails = (matchDetails) => {
     teams,
     playerIds,
     playerNames,
+  };
+};
+
+/**
+ *
+ * @param {Array<Object>} matchHistory - list of matches for each player
+ * @returns {Object} - map of history and matches
+ */
+export const transformMatchHistory = (matchHistory) => {
+  const history = [];
+  const matches = {};
+
+  _.forEach(matchHistory, (match) => {
+    history.push(match);
+    matches[match.Match] = transformMatchState(match);
+  });
+
+  return {
+    history,
+    matches,
   };
 };

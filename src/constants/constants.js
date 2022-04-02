@@ -35,9 +35,11 @@ export const LANGS = {
 };
 
 export const REDIS = {
-  ENTRY: 'noderedis:jsondata',
+  ENTRY: 'smite-ql',
   ROOT: '$',
-  MATCH_DETAILS: 'matchDetails',
   MATCHES: 'matches',
   PLAYERS: 'players',
+  NAMES: 'name',
+  HISTORY: 'history',
+  DETAILS: 'details',
 };

@@ -1,10 +1,13 @@
+import _ from 'lodash';
+
+import CONSTANTS from '../constants';
+import HELPERS from '../helpers';
+
 import { BaseSmiteClient } from './BaseSmiteClient';
 import RedisClient from './RedisClient';
 
-import CONSTANTS from '../constants';
-
 const { REDIS } = CONSTANTS;
-const { ENTRY, ROOT, PLAYERS, MATCHES, MATCH_DETAILS } = REDIS;
+const { ENTRY, ROOT, PLAYERS, MATCHES, HISTORY, DETAILS, GLOBALS } = REDIS;
 
 export class SmiteApiClient extends BaseSmiteClient {
   constructor() {
@@ -24,6 +27,50 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 
   /**
+   * throws error if SmiteApiClient is not ready. accountName can refer to a player's
+   * steam name or epic games name
+   * @param {String} name - hirez player name
+   * @param {String} accountName - name to lookup
+   * @returns {void}
+   */
+  _assertPlayerNameExists(name, accountName) {
+    if (!name) {
+      throw new Error(`PlayerName not for found for ${accountName}`);
+    }
+  }
+
+  /**
+   *
+   * @param {String} path - path to object in redis
+   * @returns {Boolean} response - true or false
+   */
+  async _exists(path) {
+    const response = await this.redisClient.json.type(ENTRY, path);
+    return !!response;
+  }
+
+  /**
+   *
+   * @param {String} path - path to object in redis
+   * @returns {Object} data
+   */
+  async _get(path) {
+    const data = await this.redisClient.json.get(ENTRY, { path });
+    return data;
+  }
+
+  /**
+   *
+   * @param {String} path - path to object
+   * @param {Object} data - data
+   * @returns {Object} data
+   */
+  async _set(path, data) {
+    const output = await this.redisClient.json.set(ENTRY, path, data);
+    return output;
+  }
+
+  /**
    *
    * @param {Number} matchId - like 1232096830
    * @returns {Array<Object>} - data
@@ -32,7 +79,7 @@ export class SmiteApiClient extends BaseSmiteClient {
     this._assertReady();
 
     const data = await super.getMatchDetails(matchId);
-    await this.redisClient.json.set(ENTRY, `${MATCH_DETAILS}.${matchId}`, data);
+    await this.redisClient.json.set(ENTRY, `${GLOBALS}.${MATCHES}.${matchId}`, data);
 
     return data;
   }
@@ -45,10 +92,21 @@ export class SmiteApiClient extends BaseSmiteClient {
   async getMatchHistory(accountName) {
     this._assertReady();
 
-    const data = await super.getMatchHistory(accountName);
-    await this.redisClient.json.set(ENTRY, `${MATCHES}.${accountName}`, data);
+    const doesAccountExist = await this._exists(accountName);
 
-    return data;
+    if (!doesAccountExist) {
+      await this.getPlayer(accountName);
+    }
+
+    const newData = await super.getMatchHistory(accountName);
+    const oldData = await this._get(`${PLAYERS}.${accountName}`);
+
+    const { history, matches } = HELPERS.processMatchHistory(oldData, newData);
+
+    await this._set(`${PLAYERS}.${accountName}.${HISTORY}`, history);
+    await this._set(`${PLAYERS}.${accountName}.${MATCHES}`, matches);
+
+    return { history, matches };
   }
 
   /**
@@ -59,8 +117,19 @@ export class SmiteApiClient extends BaseSmiteClient {
   async getPlayer(accountName) {
     this._assertReady();
 
-    const data = await super.getPlayer(accountName);
-    await this.redisClient.json.set(ENTRY, `${PLAYERS}.${accountName}`, data);
+    const playerDetails = await super.getPlayer(accountName);
+    const playerName = _.get(playerDetails, '[0].hz_player_name');
+
+    this._assertPlayerNameExists(playerName);
+
+    const data = {
+      alias: playerName,
+      [DETAILS]: playerDetails,
+      [MATCHES]: {},
+      [HISTORY]: [],
+    };
+
+    await this._set(`${PLAYERS}.${playerName}`, data);
 
     return data;
   }
@@ -73,9 +142,26 @@ export class SmiteApiClient extends BaseSmiteClient {
     this.isReady = true;
 
     await this.redisClient.json.set(ENTRY, ROOT, {
-      players: {},
-      matches: {},
-      matchDetails: {},
+      players: {
+        // example:
+        // key is a player's ign name
+        // value is an object with
+        //
+        // dhko: {
+        //   info: {}, // player info from 'getPlayer'
+        //   matches: {}, // map of matchIds
+        //   history: [], // list of match details for a player
+        // },
+      },
+      global: {
+        matches: {
+          // example:
+          // key is a matchId
+          // value is data from 'getMatchDetails'
+          //
+          // 1232511801: [{}, {}, {}] // array of objects which are details for each player
+        },
+      },
     });
   }
 }
