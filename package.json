@@ -10,6 +10,7 @@
     "build": "npx babel src -d dist",
     "lint": "npx eslint --max-warnings=0",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:unit": "npx jest test/unit-tests",
     "test:automation": "npx jest test/automation-tests",
     "prestart": "npm run build",
