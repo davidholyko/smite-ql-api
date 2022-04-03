@@ -2,9 +2,22 @@
 
 Copy over settings.sample.json into settings.json
 
-```
+```sh
 cp .vscode/settings.sample.json .vscode/settings.json
 ```
+
+### Extensions
+
+This project uses specific vscode extensions. Install extensions with commands below.
+
+```sh
+code --install-extension esbenp.prettier-vscode
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension waderyan.gitblame
+code --install-extension aaron-bond.better-comments
+```
+
+### settings.json
 
 ```javascript
 {
