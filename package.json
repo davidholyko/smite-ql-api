@@ -12,7 +12,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:unit": "npx jest test/unit-tests",
-    "test:automation": "npx jest test/automation-tests",
+    "test:integration": "npx jest test/integration-tests",
     "prestart": "npm run build",
     "prestart:redis": "npm run build",
     "prestart:sandbox": "npm run build",

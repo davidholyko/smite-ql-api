@@ -1,5 +1,3 @@
-import * as globals from './globals';
-
-export default {
-  ...globals,
+export const globals = {
+  isTestEnv: false,
 };

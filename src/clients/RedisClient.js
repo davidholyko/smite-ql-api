@@ -1,6 +1,6 @@
 import { createClient } from 'redis';
 
-import { globals } from '../globals';
+import globals from '../globals';
 
 const client = createClient();
 

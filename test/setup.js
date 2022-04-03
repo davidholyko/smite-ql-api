@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { globals } from '../src/globals';
+import globals from '../src/globals';
 
 _.assign(globals, { isTestEnv: true });
 
