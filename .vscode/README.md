@@ -6,7 +6,7 @@ Copy over settings.sample.json into settings.json
 cp .vscode/settings.sample.json .vscode/settings.json
 ```
 
-```json
+```javascript
 {
   "workbench.colorCustomizations": {
     "activityBar.background": "#06351E",
