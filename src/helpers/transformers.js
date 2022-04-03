@@ -9,7 +9,8 @@ import { parsePlayerName } from './parsers';
  * @returns {String} - formatted date as string of numbers
  */
 export const transformMatchDate = (date) => {
-  const newDate = moment(date).utc().format('yyyyMMDDHHmmss');
+  const isoDateFormat = new Date(date);
+  const newDate = moment(isoDateFormat).utc().format('yyyyMMDDHHmmss');
   return newDate;
 };
 

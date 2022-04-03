@@ -98,15 +98,20 @@ export class SmiteApiClient extends BaseSmiteClient {
       await this.getPlayer(accountName);
     }
 
-    const newData = await super.getMatchHistory(accountName);
-    const oldData = await this._get(`${PLAYERS}.${accountName}`);
+    const playerDetails = await this._get(`${PLAYERS}.${accountName}`);
+    const matchHistory = await super.getMatchHistory(accountName);
 
-    const { history, matches } = HELPERS.processMatchHistory(oldData, newData);
+    const { history, matches, hasDiff } = HELPERS.processMatchHistory(playerDetails, matchHistory);
 
-    await this._set(`${PLAYERS}.${accountName}.${HISTORY}`, history);
-    await this._set(`${PLAYERS}.${accountName}.${MATCHES}`, matches);
+    if (hasDiff) {
+      await this._set(`${PLAYERS}.${accountName}.${HISTORY}`, history);
+      await this._set(`${PLAYERS}.${accountName}.${MATCHES}`, matches);
+    }
 
-    return { history, matches };
+    return {
+      history,
+      matches,
+    };
   }
 
   /**
@@ -123,7 +128,7 @@ export class SmiteApiClient extends BaseSmiteClient {
     this._assertPlayerNameExists(playerName);
 
     const data = {
-      alias: playerName,
+      ign: playerName, // in game name
       [DETAILS]: playerDetails,
       [MATCHES]: {},
       [HISTORY]: [],

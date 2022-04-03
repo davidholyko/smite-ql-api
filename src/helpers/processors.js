@@ -4,21 +4,23 @@ import { transformMatchState } from './transformers';
 
 /**
  *
- * @param {Object} oldMatchLog - object with matches and history
- * @param {Object} newMatchLog - object with matches and history. History is in order of most recent games at beginning
+ * @param {Object} playerDetails - object with ign, matches, history, and info
+ * @param {Object} matchHistory - object with matches and history. History is in order of most recent games at beginning
  * @returns {Object} compiledMatchLog
  */
-export const processMatchHistory = (oldMatchLog, newMatchLog) => {
-  const compiledMatchLog = _.cloneDeep(oldMatchLog);
+export const processMatchHistory = (playerDetails, matchHistory) => {
+  const compiledMatchLog = _.cloneDeep(playerDetails);
   let hasDiff = false;
 
-  for (const match in newMatchLog) {
-    if (!oldMatchLog.matches[match.Match]) {
+  for (const match of matchHistory) {
+    const { Match: matchId } = match;
+    if (!_.get(playerDetails.matches, matchId)) {
       hasDiff = true;
       compiledMatchLog.history.unshift(match);
-      compiledMatchLog.matches[match.Match] = transformMatchState(match);
+      compiledMatchLog.matches[matchId] = transformMatchState(match);
     } else {
-      // if a match already exists, the rest of the matches in the newMatchLog already exist
+      // if a match already exists,
+      // the rest of the matches in the matchHistory already exist
       break;
     }
   }
