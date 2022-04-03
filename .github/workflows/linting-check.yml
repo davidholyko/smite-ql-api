@@ -1,15 +1,19 @@
 name: Linting Check
 
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
-      - '*'
 
 jobs:
   release:
     name: Check Linting
     runs-on: ubuntu-latest
+    # Don't run job when commit is made by semantic release
+    if: "!contains(github.event.head_commit.message, 'semantic-release')"
     steps:
       - name: Checkout
         uses: actions/checkout@v3

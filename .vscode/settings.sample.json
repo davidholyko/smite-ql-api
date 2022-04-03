@@ -10,6 +10,7 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "better-comments.multilineComments": true,
   "editor.formatOnSave": true,
   "editor.wordWrapColumn": 100,
   "files.exclude": {
