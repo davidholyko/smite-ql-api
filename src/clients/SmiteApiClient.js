@@ -85,9 +85,9 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 
   /**
-   * Returns last 50 matches of a player
+   *
    * @param {String} accountName - like 'dhko'
-   * @returns {Array<Object>} - data
+   * @returns {Object} - data
    */
   async getMatchHistory(accountName) {
     this._assertReady();
