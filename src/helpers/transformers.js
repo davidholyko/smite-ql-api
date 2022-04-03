@@ -86,8 +86,9 @@ export const transformMatchHistory = (matchHistory) => {
   const matches = {};
 
   _.forEach(matchHistory, (match) => {
+    const { Match: matchId } = match;
     history.push(match);
-    matches[match.Match] = transformMatchState(match);
+    matches[matchId] = transformMatchState(match);
   });
 
   return {

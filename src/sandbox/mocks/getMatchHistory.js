@@ -3,6 +3,7 @@
  * /getmatchhistory[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
  *
  * Includes last 50 matches for a single player
+ * Matches are in order by most recent first (match.Match)
  */
 export const mockMatchHistory = [
   {

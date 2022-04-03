@@ -16,7 +16,7 @@ export const processMatchHistory = (playerDetails, matchHistory) => {
     const { Match: matchId } = match;
     if (!_.get(playerDetails.matches, matchId)) {
       hasDiff = true;
-      compiledMatchLog.history.unshift(match);
+      compiledMatchLog.history.push(match);
       compiledMatchLog.matches[matchId] = transformMatchState(match);
     } else {
       // if a match already exists,
