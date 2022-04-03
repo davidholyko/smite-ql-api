@@ -10,7 +10,12 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['sort-class-members'],
+  plugins: [
+    // for sorting class methods and properties
+    'sort-class-members',
+    // for import sort order
+    'import',
+  ],
   rules: {
     'valid-jsdoc': 'error',
 
@@ -27,6 +32,26 @@ module.exports = {
           '[methods]',
         ],
         accessorPairPositioning: 'getThenSet',
+      },
+    ],
+
+    'import/order': [
+      'error',
+      {
+        groups: [
+          //
+          'builtin',
+          'internal',
+          'external',
+          'parent',
+          'sibling',
+          'index',
+        ],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
       },
     ],
   },

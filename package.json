@@ -32,6 +32,7 @@
     "@babel/preset-env": "^7.16.11",
     "@semantic-release/git": "^9.0.0",
     "eslint": "^8.11.0",
+    "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-sort-class-members": "^1.14.1",
     "jest": "^27.5.1",
     "semantic-release": "^17.0.0"
