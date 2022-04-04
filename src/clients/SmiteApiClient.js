@@ -6,8 +6,9 @@ import HELPERS from '../helpers';
 import { BaseSmiteClient } from './BaseSmiteClient';
 import RedisClient from './RedisClient';
 
-const { REDIS } = CONSTANTS;
+const { REDIS, SMITE_QL } = CONSTANTS;
 const { ENTRY, ROOT, PLAYERS, MATCHES, HISTORY, DETAILS, GLOBALS } = REDIS;
+const { IGN, HZ_PLAYER_NAME } = SMITE_QL;
 
 export class SmiteApiClient extends BaseSmiteClient {
   constructor() {
@@ -92,7 +93,7 @@ export class SmiteApiClient extends BaseSmiteClient {
   async getMatchHistory(accountName) {
     this._assertReady();
 
-    const doesAccountExist = await this._exists(accountName);
+    const doesAccountExist = await this._exists(`${PLAYERS}.${accountName}`);
 
     if (!doesAccountExist) {
       await this.getPlayer(accountName);
@@ -123,18 +124,18 @@ export class SmiteApiClient extends BaseSmiteClient {
     this._assertReady();
 
     const playerDetails = await super.getPlayer(accountName);
-    const playerName = _.get(playerDetails, '[0].hz_player_name');
+    const ign = _.get(playerDetails, `[0].${HZ_PLAYER_NAME}`);
 
-    this._assertPlayerNameExists(playerName);
+    this._assertPlayerNameExists(ign);
 
     const data = {
-      ign: playerName, // in game name
+      [IGN]: ign, // in game name
       [DETAILS]: playerDetails,
       [MATCHES]: {},
       [HISTORY]: [],
     };
 
-    await this._set(`${PLAYERS}.${playerName}`, data);
+    await this._set(`${PLAYERS}.${accountName}`, data);
 
     return data;
   }
@@ -146,7 +147,14 @@ export class SmiteApiClient extends BaseSmiteClient {
   async ready() {
     this.isReady = true;
 
-    await this.redisClient.json.set(ENTRY, ROOT, {
+    const doesRootExist = await this._exists(ROOT);
+
+    // if redis DB already exists, we do not need to remake the initial state
+    if (doesRootExist) {
+      return;
+    }
+
+    const initialState = {
       players: {
         // example:
         // key is a player's ign name
@@ -167,7 +175,9 @@ export class SmiteApiClient extends BaseSmiteClient {
           // 1232511801: [{}, {}, {}] // array of objects which are details for each player
         },
       },
-    });
+    };
+
+    await this._set(ROOT, initialState);
   }
 }
 

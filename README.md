@@ -69,6 +69,22 @@ redis-cli ping
 docker exec -it <image> redis-cli
 ```
 
+### RedisJSON commands
+
+```
+# Get all keys
+KEYs *
+
+# Get JSON
+JSON.GET smite:ql
+
+# Get matches for a player
+JSON.GET smite:ql players <accountName> matches
+
+# Clear DB
+FLUSHALL
+```
+
 ## Sandbox
 
 ```

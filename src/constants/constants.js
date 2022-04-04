@@ -35,11 +35,16 @@ export const LANGS = {
 };
 
 export const REDIS = {
-  ENTRY: 'smite-ql',
+  ENTRY: 'smite:ql',
   ROOT: '$',
   MATCHES: 'matches',
   PLAYERS: 'players',
   NAMES: 'name',
   HISTORY: 'history',
   DETAILS: 'details',
+};
+
+export const SMITE_QL = {
+  IGN: 'ign',
+  HZ_PLAYER_NAME: 'hz_player_name',
 };
