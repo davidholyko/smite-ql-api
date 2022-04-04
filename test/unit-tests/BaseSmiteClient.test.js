@@ -5,6 +5,8 @@ import BaseSmiteClient, { BaseSmiteClient as Client } from '../../src/clients/Ba
 describe('BaseSmiteClient', () => {
   beforeEach(() => {
     BaseSmiteClient.session_id = null;
+    BaseSmiteClient.dev_id = '0000';
+    BaseSmiteClient.auth_key = 'ABC123ABC123ABC123ABC123ABC12345';
   });
 
   describe('constructor', () => {
@@ -19,7 +21,7 @@ describe('BaseSmiteClient', () => {
       const signature = '1234';
       const timestamp = '5678';
       const url = BaseSmiteClient._composeUrl(method, signature, timestamp);
-      expect(url).toBe('https://api.smitegame.com/smiteapi.svc/createsession/2787/1234/5678');
+      expect(url).toBe('https://api.smitegame.com/smiteapi.svc/createsession/0000/1234/5678');
     });
     it('should compose a url with method, signature, and timestamp and session if session_id exists', () => {
       BaseSmiteClient.session_id = '0000';
@@ -27,7 +29,7 @@ describe('BaseSmiteClient', () => {
       const signature = '1234';
       const timestamp = '5678';
       const url = BaseSmiteClient._composeUrl(method, signature, timestamp);
-      expect(url).toBe('https://api.smitegame.com/smiteapi.svc/createsession/2787/1234/0000/5678');
+      expect(url).toBe('https://api.smitegame.com/smiteapi.svc/createsession/0000/1234/0000/5678');
     });
     it('should compose a url with method, signature, and timestamp, and additional args', () => {
       const method = 'createsession';
@@ -37,7 +39,7 @@ describe('BaseSmiteClient', () => {
       const bar = 'bar';
       const url = BaseSmiteClient._composeUrl(method, signature, timestamp, foo, bar);
       expect(url).toBe(
-        'https://api.smitegame.com/smiteapi.svc/createsession/2787/1234/5678/foo/bar',
+        'https://api.smitegame.com/smiteapi.svc/createsession/0000/1234/5678/foo/bar',
       );
     });
   });

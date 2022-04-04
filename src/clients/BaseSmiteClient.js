@@ -16,6 +16,24 @@ export class BaseSmiteClient {
   constructor(lang = LANGS.ENGLISH) {
     this.lang = lang;
     this.session_id = null;
+    this.dev_id = DEV_ID;
+    this.auth_key = AUTH_KEY;
+  }
+
+  _assertEnvVariables() {
+    const errors = [];
+
+    if (!this.dev_id) {
+      errors.push('DEV_ID cannot be undefined. Please update top level .env file.');
+    }
+
+    if (!this.auth_key) {
+      errors.push('AUTH_KEY cannot be undefined. Please update top level .env file.');
+    }
+
+    if (_.size(errors)) {
+      throw new Error(errors.join(' '));
+    }
   }
 
   /**
@@ -29,7 +47,7 @@ export class BaseSmiteClient {
    */
   _composeUrl(method, signature, timestamp, ...args) {
     const session = this.session_id ? `/${this.session_id}` : '';
-    let url = `${BASE_URL}/${method}/${DEV_ID}/${signature}${session}/${timestamp}`;
+    let url = `${BASE_URL}/${method}/${this.dev_id}/${signature}${session}/${timestamp}`;
 
     _.forEach([...args], (arg) => {
       url += `/${arg}`;
@@ -62,7 +80,7 @@ export class BaseSmiteClient {
    */
   _generateSignature(method = METHODS.CREATE_SESSION) {
     const timestamp = this._generateTimeStamp();
-    const text = DEV_ID + method + AUTH_KEY + timestamp;
+    const text = this.dev_id + method + this.auth_key + timestamp;
     const encodedText = utf8.encode(text);
     const signature = md5(encodedText);
     return signature;
@@ -104,7 +122,7 @@ export class BaseSmiteClient {
    * @returns {Object} - data
    */
   async _processRequest(url) {
-    const response = await await axios({ method: 'get', url });
+    const response = await axios({ method: 'get', url });
     const { data } = response;
 
     // This might not belong here. sets up
@@ -162,6 +180,8 @@ export class BaseSmiteClient {
    * @returns {void}
    */
   async testSession() {
+    this._assertEnvVariables();
+
     const response = await this._performRequest(METHODS.TEST_SESSION_JSON);
 
     if (!_.includes(response, 'This was a successful test')) {
