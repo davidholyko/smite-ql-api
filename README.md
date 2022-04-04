@@ -56,14 +56,11 @@ npm ci
 npm start
 ```
 
-## Redis (with Docker)
+## Redis with Docker
 
 ```
 # Start redis server
 docker run -p 6379:6379 --name redis-redisjson -d redislabs/rejson:latest
-
-# Check connection
-redis-cli ping
 
 # Access redis cli in docker
 docker exec -it <image> redis-cli
@@ -72,6 +69,9 @@ docker exec -it <image> redis-cli
 ### RedisJSON commands
 
 ```
+# Check connection
+redis-cli ping
+
 # Get all keys
 KEYs *
 
@@ -113,7 +113,7 @@ Redis Client Error Error: connect ECONNREFUSED 127.0.0.1:6379
 }
 ```
 
-See Redis (with Docker) section above
+See [Redis section](#redis-with-docker) above.
 
 ### Deleting a broken version
 

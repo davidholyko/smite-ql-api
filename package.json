@@ -12,12 +12,13 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:unit": "npx jest test/unit-tests",
+    "posttest:coverage": "open -a 'Google Chrome' './coverage/index.html'",
     "test:integration": "npx jest test/integration-tests",
-    "prestart": "npm run build",
-    "prestart:redis": "npm run build",
     "prestart:sandbox": "npm run build",
     "start:redis": "node dist/redis/redis.js",
+    "prestart:redis": "npm run build",
     "start:sandbox": "node dist/sandbox/sandbox.js",
+    "prestart": "npm run build",
     "start": "node dist/index.js"
   },
   "engines": {

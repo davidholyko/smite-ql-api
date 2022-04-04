@@ -1,7 +1,12 @@
 import _ from 'lodash';
 import moment from 'moment';
 
+import CONSTANTS from '../constants';
+
 import { parsePlayerName } from './parsers';
+
+const { API } = CONSTANTS;
+const { TIME_FORMAT } = API;
 
 /**
  *
@@ -10,7 +15,7 @@ import { parsePlayerName } from './parsers';
  */
 export const transformMatchDate = (date) => {
   const isoDateFormat = new Date(date);
-  const newDate = moment(isoDateFormat).utc().format('yyyyMMDDHHmmss');
+  const newDate = moment(isoDateFormat).format(TIME_FORMAT);
   return newDate;
 };
 
