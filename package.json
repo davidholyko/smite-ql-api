@@ -1,6 +1,6 @@
 {
   "name": "smite-ql-api",
-  "version": "1.12.14",
+  "version": "1.12.15",
   "description": "Smite API for Node",
   "main": "src/index.js",
   "private": true,
