@@ -3,9 +3,11 @@ const config = {
 
   coverageReporters: ['json', 'html'],
 
-  globalSetup: './test/setupGlobals.js',
+  globalSetup: './test/setup/setupGlobals.js',
 
-  setupFiles: ['./test/setup.js'],
+  setupFiles: ['./test/setup/setup.js'],
+
+  setupFilesAfterEnv: ['./test/setup/setupFilesAfterEnv.js'],
 
   verbose: true,
 };
