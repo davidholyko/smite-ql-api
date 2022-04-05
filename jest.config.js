@@ -3,7 +3,7 @@ const config = {
 
   coverageReporters: ['json', 'html'],
 
-  globalSetup: './test/jestGlobalSetup.js',
+  globalSetup: './test/setupGlobals.js',
 
   setupFiles: ['./test/setup.js'],
 
