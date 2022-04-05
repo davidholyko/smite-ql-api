@@ -20,6 +20,11 @@ export class BaseSmiteClient {
     this.auth_key = AUTH_KEY;
   }
 
+  /**
+   * throws error if .env file does not exist or contain values for
+   * DEV_ID or AUTH_KEY
+   * @returns {void}
+   */
   _assertEnvVariables() {
     const errors = [];
 
