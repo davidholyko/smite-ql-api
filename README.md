@@ -13,23 +13,22 @@ This project uses [semantic versioning](https://semver.org/).
 - [NVM](https://npm.github.io/installation-setup-docs/installing/using-a-node-version-manager.html)
 - [Smite Developer Account](https://www.hirezstudios.com/)
 - [Redis](https://redis.io/)
-- [Docker]()
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 #### Download Pre-Requisites with Homebrew
 
 ```
 brew install node
 brew install redis
-brew install docker
 ```
 
-## Official Developer Guide
+## Official Smite API and Developer Starter Instructions
 
-[Official Developer Guide](https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit) contains api endpoints documentation for a developer.
+[Official Developer Guide](https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit) contains API endpoints documentation for a developer.
 
 #### Register for Smite API Developer Account
 
-Follow instructrions [here](https://fs12.formsite.com/HiRez/form48/secure_index.html) to request access.
+Follow instructions [here](https://fs12.formsite.com/HiRez/form48/secure_index.html) to request access for a `DEV_ID` and `AUTH_KEY`.
 
 #### Replacing **.env** credentials
 
@@ -66,14 +65,16 @@ docker run -p 6379:6379 --name redis-redisjson -d redislabs/rejson:latest
 docker exec -it <image> redis-cli
 ```
 
-### RedisJSON commands
+### RedisJSON commands (with redis-cli)
+
+_These redis commands are for local development when you want to look directly into redis DB in its natural shell._
 
 ```
 # Check connection
-redis-cli ping
+Ping
 
 # Get all keys
-KEYs *
+KEYS *
 
 # Get JSON
 JSON.GET smite:ql
@@ -91,10 +92,10 @@ FLUSHALL
 # Run sandbox
 npm run start:sandbox
 
-# Skip git from noticing changes to sandbox
+# Tell git to skip noticing changes to sandbox
 git update-index --skip-worktree src/sandbox/sandbox.js
 
-# Undo skip
+# Tell git to notice changes to sandbox
 git update-index --no-skip-worktree src/sandbox/sandbox.js
 ```
 
@@ -104,17 +105,17 @@ View this repo's [test coverage](https://david-ko.com/smite-ql-api/).
 
 ### Integration Tests
 
-Integration Tests require a real DEV_ID and AUTH_KEY from Hirez Studios. These tests make real API calls to the Official Smite API.
+Integration Tests require a real `DEV_ID` and `AUTH_KEY` from Hirez Studios. These tests make real API calls to the Official Smite API.
 
 ### Unit Tests
 
-Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real DEV_ID and AUTH_KEY
+Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real `DEV_ID` and `AUTH_KEY`
 
 # Troubleshooting
 
 ### Redis is not working
 
-```
+```sh
 Redis Client Error Error: connect ECONNREFUSED 127.0.0.1:6379
     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1133:16) {
   errno: -61,
@@ -127,11 +128,11 @@ Redis Client Error Error: connect ECONNREFUSED 127.0.0.1:6379
 
 See [Redis section](#redis-with-docker) above.
 
-### Deleting a broken version
+### Deleting a remote tag
 
-_Deleting a remote tag is for when you need to unpublish a version update because it's bad_
+_Deleting a remote tag happens when you want to rewrite history and a semantic release is auto-generated. The automatic semantic release will fail if the tag already exists._
 
 ```
-# tagname is string like "v1.8.1"
+# tagname is string like "v1.0.0"
 git push --delete origin <tagname>
 ```

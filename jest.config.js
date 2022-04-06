@@ -7,7 +7,7 @@ const config = {
 
   setupFiles: ['./test/setup/setup.js'],
 
-  setupFilesAfterEnv: ['./test/setup/setupFilesAfterEnv.js'],
+  setupFilesAfterEnv: ['./test/setup/setupRedisMock.js'],
 
   verbose: true,
 };

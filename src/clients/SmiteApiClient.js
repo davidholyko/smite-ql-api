@@ -28,19 +28,6 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 
   /**
-   * throws error if SmiteApiClient is not ready. accountName can refer to a player's
-   * steam name or epic games name
-   * @param {String} name - hirez player name
-   * @param {String} accountName - name to lookup
-   * @returns {void}
-   */
-  _assertPlayerNameExists(name, accountName) {
-    if (!name) {
-      throw new Error(`PlayerName not for found for ${accountName}`);
-    }
-  }
-
-  /**
    *
    * @param {String} path - path to object in redis
    * @returns {Boolean} response - true or false
@@ -118,15 +105,13 @@ export class SmiteApiClient extends BaseSmiteClient {
   /**
    *
    * @param {String} accountName - like 'dhko'
-   * @returns {Object} - data
+   * @returns {Object} data
    */
   async getPlayer(accountName) {
     this._assertReady();
 
     const playerDetails = await super.getPlayer(accountName);
     const ign = _.get(playerDetails, `[0].${HZ_PLAYER_NAME}`);
-
-    this._assertPlayerNameExists(ign);
 
     const data = {
       [IGN]: ign, // in game name
