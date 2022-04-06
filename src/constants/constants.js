@@ -6,6 +6,7 @@ export const API = {
   BASE_URL: 'https://api.smitegame.com/smiteapi.svc',
   RESPONSE_FORMAT: 'Json',
   TIME_FORMAT: 'yyyyMMDDHHmmss',
+  SESSION_ID: 'session_id',
 };
 
 export const METHODS = {
@@ -19,6 +20,8 @@ export const METHODS = {
   GET_MATCH_HISTORY_JSON: 'getmatchhistoryJson',
   GET_MATCH_DETAILS: 'getmatchdetails',
   GET_MATCH_DETAILS_JSON: 'getmatchdetailsJson',
+  GET_DATA_USED: 'getdataused',
+  GET_DATA_USED_JSON: 'getdatausedJson',
 };
 
 export const LANGS = {

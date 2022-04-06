@@ -8,7 +8,7 @@ import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
 
 const { API, METHODS, LANGS } = CONSTANTS;
-const { BASE_URL } = API;
+const { BASE_URL, SESSION_ID } = API;
 
 const { DEV_ID, AUTH_KEY } = API;
 
@@ -83,7 +83,7 @@ export class BaseSmiteClient {
    * @param {String} method - type of method
    * @returns {void}
    */
-  _generateSignature(method = METHODS.CREATE_SESSION) {
+  _generateSignature(method) {
     const timestamp = this._generateTimeStamp();
     const text = this.dev_id + method + this.auth_key + timestamp;
     const encodedText = utf8.encode(text);
@@ -97,7 +97,7 @@ export class BaseSmiteClient {
    * @param {...String} args - extra args
    * @returns {String} - url
    */
-  _generateEndpoint(method = METHODS.CREATE_SESSION_JSON, ...args) {
+  _generateEndpoint(method, ...args) {
     const parsedMethod = HELPERS.parseMethod(method);
     const signature = this._generateSignature(parsedMethod);
     const timestamp = this._generateTimeStamp();
@@ -132,7 +132,7 @@ export class BaseSmiteClient {
 
     // This might not belong here. sets up
     // session id if we are making createsession request
-    if (_.get(data, 'session_id')) {
+    if (_.get(data, SESSION_ID)) {
       this.session_id = data.session_id;
     }
 
@@ -147,6 +147,11 @@ export class BaseSmiteClient {
   async createSession() {
     const url = this._generateEndpoint(METHODS.CREATE_SESSION_JSON);
     return await this._processRequest(url);
+  }
+
+  async getDataUsed() {
+    const response = await this._performRequest(METHODS.GET_DATA_USED_JSON);
+    return response;
   }
 
   /**
@@ -187,9 +192,9 @@ export class BaseSmiteClient {
   async testSession() {
     this._assertEnvVariables();
 
-    const response = await this._performRequest(METHODS.TEST_SESSION_JSON);
-
-    if (!_.includes(response, 'This was a successful test')) {
+    try {
+      await this._performRequest(METHODS.TEST_SESSION_JSON);
+    } catch (error) {
       throw new Error('Test Session Failed!');
     }
   }

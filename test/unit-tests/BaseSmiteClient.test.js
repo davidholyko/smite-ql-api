@@ -15,6 +15,41 @@ describe('BaseSmiteClient', () => {
     });
   });
 
+  describe('_assertEnvVariables', () => {
+    beforeEach(() => {
+      BaseSmiteClient.session_id = null;
+      BaseSmiteClient.dev_id = null;
+      BaseSmiteClient.auth_key = null;
+    });
+
+    it('should throw error if dev_id is undefined', () => {
+      BaseSmiteClient.auth_key = '1234';
+      const error = 'DEV_ID cannot be undefined. Please update top level .env file.';
+      const fn = () => BaseSmiteClient._assertEnvVariables();
+      expect(fn).toThrow(error);
+    });
+    it('should throw error if auth_key is undefined', () => {
+      BaseSmiteClient.dev_id = '1234';
+      const error = 'AUTH_KEY cannot be undefined. Please update top level .env file.';
+      const fn = () => BaseSmiteClient._assertEnvVariables();
+      expect(fn).toThrow(error);
+    });
+    it('should throw error if auth_key and dev_id are undefined', () => {
+      const error = [
+        'DEV_ID cannot be undefined. Please update top level .env file.',
+        'AUTH_KEY cannot be undefined. Please update top level .env file.',
+      ].join(' ');
+      const fn = () => BaseSmiteClient._assertEnvVariables();
+      expect(fn).toThrow(error);
+    });
+    it('should not throw error if dev_id and auth_key are both defined', () => {
+      BaseSmiteClient.auth_key = '1234';
+      BaseSmiteClient.dev_id = '1234';
+      const fn = () => BaseSmiteClient._assertEnvVariables();
+      expect(fn).not.toThrow(undefined);
+    });
+  });
+
   describe('_composeUrl', () => {
     it('should compose a url with method, dev_id, signature, and timestamp', () => {
       const method = 'createsession';
