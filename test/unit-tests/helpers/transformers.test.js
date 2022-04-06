@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import * as tranformers from '../../src/helpers/transformers';
-import MOCKS from '../../src/sandbox/mocks';
+import * as tranformers from '../../../src/helpers/transformers';
+import MOCKS from '../../../src/sandbox/mocks';
 
 const {
   //

@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import BaseSmiteClient, { BaseSmiteClient as Client } from '../../src/clients/BaseSmiteClient';
+import BaseSmiteClient, { BaseSmiteClient as Client } from '../../../src/clients/BaseSmiteClient';
 
 describe('BaseSmiteClient', () => {
   beforeEach(() => {

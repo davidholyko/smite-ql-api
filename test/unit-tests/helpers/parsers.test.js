@@ -1,4 +1,4 @@
-import { parsePlayerName, parseMethod } from '../../src/helpers/parsers';
+import { parsePlayerName, parseMethod } from '../../../src/helpers/parsers';
 
 describe('Parsers', () => {
   describe('parsePlayerName', () => {

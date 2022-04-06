@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { makeServer } from '../../src/server';
+import { makeServer } from '../../../src/server';
 
 describe('makeServer', () => {
   jest.spyOn(console, 'info').mockImplementation(_.noop);
