@@ -29,3 +29,8 @@ jobs:
         env:
           DEV_ID: ${{ secrets.DEV_ID }}
           AUTH_KEY: ${{ secrets.AUTH_KEY }}
+      - name: Deploy Test Coverage Report
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: coverage # The folder the action should deploy.

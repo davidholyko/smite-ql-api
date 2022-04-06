@@ -98,6 +98,18 @@ git update-index --skip-worktree src/sandbox/sandbox.js
 git update-index --no-skip-worktree src/sandbox/sandbox.js
 ```
 
+## Testing Strategy
+
+View this repo's [test coverage](https://david-ko.com/smite-ql-api/).
+
+### Integration Tests
+
+Integration Tests require a real DEV_ID and AUTH_KEY from Hirez Studios. These tests make real API calls to the Official Smite API.
+
+### Unit Tests
+
+Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real DEV_ID and AUTH_KEY
+
 # Troubleshooting
 
 ### Redis is not working
