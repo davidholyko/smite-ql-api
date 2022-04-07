@@ -2,6 +2,11 @@ import Emitter from 'events';
 
 import _ from 'lodash';
 
+import CONSTANTS from '../../src/constants';
+
+const { REDIS } = CONSTANTS;
+const { ROOT } = REDIS;
+
 /**
  * Custom mock for RedisJSON
  * @class
@@ -13,18 +18,22 @@ class RedisJsonMock {
 
   set(key, path, value) {
     // when objects are set on the root '$', the key '$' doesn't appear
-    const pathToObject = path === '$' ? key : `${key}.${path}`;
+    const pathToObject = path === ROOT ? key : `${key}.${path}`;
 
     _.set(this.data, pathToObject, value);
   }
 
   get(key, { path }) {
-    return _.get(this.data, `${key}.${path}`);
+    const data = _.get(this.data, `${key}.${path}`);
+
+    return path === ROOT ? this.data : data;
   }
 
   type(key, path) {
     const value = _.get(this.data, `${key}.${path}`);
-    return value ? typeof value : null;
+    const returnType = value ? typeof value : null;
+
+    return path === ROOT ? !_.isEmpty(this.data) : returnType;
   }
 }
 

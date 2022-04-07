@@ -52,3 +52,7 @@ export const SMITE_QL = {
   IGN: 'ign',
   HZ_PLAYER_NAME: 'hz_player_name',
 };
+
+export const ERRORS = {
+  CLIENT_NOT_READY: 'RedisClient is not ready. Call async function SmiteApiClient.ready()',
+};

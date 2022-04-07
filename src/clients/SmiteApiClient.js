@@ -6,9 +6,10 @@ import HELPERS from '../helpers';
 import { BaseSmiteClient } from './BaseSmiteClient';
 import RedisClient from './RedisClient';
 
-const { REDIS, SMITE_QL } = CONSTANTS;
+const { REDIS, SMITE_QL, ERRORS } = CONSTANTS;
 const { ENTRY, ROOT, PLAYERS, MATCHES, HISTORY, DETAILS, GLOBAL } = REDIS;
 const { IGN, HZ_PLAYER_NAME } = SMITE_QL;
+const { CLIENT_NOT_READY } = ERRORS;
 
 export class SmiteApiClient extends BaseSmiteClient {
   constructor() {
@@ -23,7 +24,7 @@ export class SmiteApiClient extends BaseSmiteClient {
    */
   _assertReady() {
     if (!this.isReady) {
-      throw new Error('RedisClient is not ready. Call async function SmiteApiClient.ready()');
+      throw new Error(CLIENT_NOT_READY);
     }
   }
 
@@ -95,10 +96,10 @@ export class SmiteApiClient extends BaseSmiteClient {
       await this.getPlayer(accountName);
     }
 
-    const playerDetails = await this._get(`${PLAYERS}.${accountName}`);
+    const playerInfo = await this._get(`${PLAYERS}.${accountName}`);
     const matchHistory = await super.getMatchHistory(accountName);
 
-    const { history, matches, hasDiff } = HELPERS.processMatchHistory(playerDetails, matchHistory);
+    const { history, matches, hasDiff } = HELPERS.processMatchHistory(playerInfo, matchHistory);
 
     if (hasDiff) {
       await this._set(`${PLAYERS}.${accountName}.${HISTORY}`, history);
@@ -122,16 +123,16 @@ export class SmiteApiClient extends BaseSmiteClient {
     const playerDetails = await super.getPlayer(accountName);
     const ign = _.get(playerDetails, `[0].${HZ_PLAYER_NAME}`);
 
-    const data = {
+    const playerInfo = {
       [IGN]: ign, // in game name
       [DETAILS]: playerDetails,
       [MATCHES]: {},
       [HISTORY]: [],
     };
 
-    await this._set(`${PLAYERS}.${accountName}`, data);
+    await this._set(`${PLAYERS}.${accountName}`, playerInfo);
 
-    return data;
+    return playerInfo;
   }
 
   /**

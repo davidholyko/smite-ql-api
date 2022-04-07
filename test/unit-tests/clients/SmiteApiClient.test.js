@@ -1,9 +1,14 @@
+import { BaseSmiteClient } from '../../../src/clients/BaseSmiteClient';
 import SmiteApiClient, { SmiteApiClient as Client } from '../../../src/clients/SmiteApiClient';
 import CONSTANTS from '../../../src/constants';
+import MOCKS from '../../../src/mocks';
 import { RedisMockClient } from '../../setup/setupRedisMock';
 
-const { REDIS } = CONSTANTS;
+const { REDIS, ERRORS } = CONSTANTS;
 const { ENTRY, ROOT, PLAYERS, GLOBAL } = REDIS;
+const { CLIENT_NOT_READY } = ERRORS;
+
+const { mockMatchDetails, mockMatchHistory, mockPlayer } = MOCKS;
 
 describe('SmiteApiClient', () => {
   beforeEach(() => {
@@ -95,15 +100,66 @@ describe('SmiteApiClient', () => {
   });
 
   describe('getMatchDetails', () => {
-    //
+    beforeEach(async () => {
+      await SmiteApiClient.ready();
+
+      jest.spyOn(BaseSmiteClient.prototype, 'getMatchDetails').mockImplementation(() => {
+        return mockMatchDetails;
+      });
+    });
+
+    it('should ...', () => {
+      //
+    });
   });
 
   describe('getMatchHistory', () => {
-    //
+    beforeEach(async () => {
+      await SmiteApiClient.ready();
+
+      jest.spyOn(BaseSmiteClient.prototype, 'getMatchHistory').mockImplementation(() => {
+        return mockMatchHistory;
+      });
+    });
+
+    it('should ...', () => {
+      //
+    });
   });
 
   describe('getPlayer', () => {
-    //
+    beforeEach(async () => {
+      await SmiteApiClient.ready();
+
+      jest.spyOn(BaseSmiteClient.prototype, 'getPlayer').mockImplementation(() => {
+        return mockPlayer;
+      });
+    });
+
+    it('should throw an error if client is not ready', async () => {
+      const errorMsg = new Error(CLIENT_NOT_READY);
+      await SmiteApiClient._reset();
+
+      try {
+        await SmiteApiClient.getPlayer('dhko');
+      } catch (error) {
+        expect(error).toEqual(errorMsg);
+      }
+    });
+
+    it('should get playerInfo', async () => {
+      const data = await SmiteApiClient.getPlayer('dhko');
+      const expectedData = expect.objectContaining({
+        hz_player_name: expect.any(String),
+      });
+
+      expect(data).toEqual({
+        ign: expect.any(String),
+        details: [expectedData],
+        history: expect.any(Array),
+        matches: expect.any(Object),
+      });
+    });
   });
 
   describe('ready', () => {
@@ -120,9 +176,10 @@ describe('SmiteApiClient', () => {
       const ready = await SmiteApiClient.ready();
       expect(ready).toEqual(false);
     });
-    it('should true if if SmiteApiClient.ready was already called', async () => {
+    it('should true if SmiteApiClient.ready was already called', async () => {
+      await SmiteApiClient.ready();
       const ready = await SmiteApiClient.ready();
-      expect(ready).toEqual(false);
+      expect(ready).toEqual(true);
     });
     it('should set the initial state with players and global objects', async () => {
       await SmiteApiClient.ready();
