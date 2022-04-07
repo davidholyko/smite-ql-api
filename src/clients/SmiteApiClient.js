@@ -7,7 +7,7 @@ import { BaseSmiteClient } from './BaseSmiteClient';
 import RedisClient from './RedisClient';
 
 const { REDIS, SMITE_QL } = CONSTANTS;
-const { ENTRY, ROOT, PLAYERS, MATCHES, HISTORY, DETAILS, GLOBALS } = REDIS;
+const { ENTRY, ROOT, PLAYERS, MATCHES, HISTORY, DETAILS, GLOBAL } = REDIS;
 const { IGN, HZ_PLAYER_NAME } = SMITE_QL;
 
 export class SmiteApiClient extends BaseSmiteClient {
@@ -59,6 +59,15 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 
   /**
+   * resets database and smite client state
+   * @returns {void}
+   */
+  async _reset() {
+    await this.redisClient.flushAll();
+    this.isReady = false;
+  }
+
+  /**
    *
    * @param {Number} matchId - like 1232096830
    * @returns {Array<Object>} - data
@@ -67,7 +76,7 @@ export class SmiteApiClient extends BaseSmiteClient {
     this._assertReady();
 
     const data = await super.getMatchDetails(matchId);
-    await this.redisClient.json.set(ENTRY, `${GLOBALS}.${MATCHES}.${matchId}`, data);
+    await this.redisClient.json.set(ENTRY, `${GLOBAL}.${MATCHES}.${matchId}`, data);
 
     return data;
   }
@@ -127,7 +136,8 @@ export class SmiteApiClient extends BaseSmiteClient {
 
   /**
    * Sets up top level schema for redis db
-   * @returns {void}
+   * @returns {Boolean} - true if ready was already called
+   *                    - false if ready was not already called
    */
   async ready() {
     this.isReady = true;
@@ -136,11 +146,11 @@ export class SmiteApiClient extends BaseSmiteClient {
 
     // if redis DB already exists, we do not need to remake the initial state
     if (doesRootExist) {
-      return;
+      return true;
     }
 
     const initialState = {
-      players: {
+      [PLAYERS]: {
         // example:
         // key is a player's ign name
         // value is an object with
@@ -151,8 +161,8 @@ export class SmiteApiClient extends BaseSmiteClient {
         //   history: [], // list of match details for a player
         // },
       },
-      global: {
-        matches: {
+      [GLOBAL]: {
+        [MATCHES]: {
           // example:
           // key is a matchId
           // value is data from 'getMatchDetails'
@@ -163,6 +173,8 @@ export class SmiteApiClient extends BaseSmiteClient {
     };
 
     await this._set(ROOT, initialState);
+
+    return false;
   }
 }
 

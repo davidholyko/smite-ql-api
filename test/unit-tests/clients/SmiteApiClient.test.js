@@ -1,5 +1,9 @@
 import SmiteApiClient, { SmiteApiClient as Client } from '../../../src/clients/SmiteApiClient';
+import CONSTANTS from '../../../src/constants';
 import { RedisMockClient } from '../../setup/setupRedisMock';
+
+const { REDIS } = CONSTANTS;
+const { ENTRY, ROOT, PLAYERS, GLOBAL } = REDIS;
 
 describe('SmiteApiClient', () => {
   beforeEach(() => {
@@ -38,24 +42,55 @@ describe('SmiteApiClient', () => {
   });
 
   describe('_exists', () => {
-    //
+    it('should return true if key exists', async () => {
+      SmiteApiClient.redisClient.json.set(ENTRY, ROOT, { foo: 'bar' });
+      const doesExist = await SmiteApiClient._exists('foo');
+      expect(doesExist).toEqual(true);
+    });
+    it('should return false if key does not exist', async () => {
+      SmiteApiClient.redisClient.json.set(ENTRY, ROOT, { foo: 'bar' });
+      const doesExist = await SmiteApiClient._exists('bar');
+      expect(doesExist).toEqual(false);
+    });
   });
 
   describe('_get', () => {
-    //
+    it('should get a value from a key from redisClient', async () => {
+      SmiteApiClient.redisClient.json.set(ENTRY, ROOT, { foo: 'bar' });
+      const data = await SmiteApiClient._get('foo');
+      expect(data).toEqual('bar');
+    });
   });
 
   describe('_set', () => {
-    it('should add key value pair to the root of redisClient', () => {
-      SmiteApiClient._set('$', { foo: 'bar' });
-      const data = SmiteApiClient.redisClient.json.get('smite:ql', { path: 'foo' });
+    it('should add key value pair to the root of redisClient', async () => {
+      await SmiteApiClient._set(ROOT, { foo: 'bar' });
+      const data = SmiteApiClient.redisClient.json.get(ENTRY, { path: 'foo' });
       expect(data).toEqual('bar');
     });
-    it('should add key value pair to redisClient', () => {
-      SmiteApiClient._set('$', { foo: 'bar' });
+    it('should add key value pair to redisClient', async () => {
+      SmiteApiClient._set(ROOT, { foo: 'bar' });
       SmiteApiClient._set('foo.whatever', 'something');
-      const data = SmiteApiClient.redisClient.json.get('smite:ql', { path: 'foo.whatever' });
+      const data = await SmiteApiClient.redisClient.json.get(ENTRY, { path: 'foo.whatever' });
       expect(data).toEqual('something');
+    });
+  });
+
+  describe('_reset', () => {
+    it('should flush all values from redis', async () => {
+      let exists;
+      SmiteApiClient.redisClient.json.set(ENTRY, ROOT, { foo: 'bar' });
+      exists = await SmiteApiClient._exists('foo');
+      expect(exists).toEqual(true);
+      await SmiteApiClient._reset();
+      exists = await SmiteApiClient._exists('foo');
+      expect(exists).toEqual(false);
+    });
+    it('should set isReady to false on SmiteApiClient', async () => {
+      await SmiteApiClient.ready();
+      expect(SmiteApiClient.isReady).toEqual(true);
+      await SmiteApiClient._reset();
+      expect(SmiteApiClient.isReady).toEqual(false);
     });
   });
 
@@ -72,6 +107,29 @@ describe('SmiteApiClient', () => {
   });
 
   describe('ready', () => {
-    //
+    beforeEach(async () => {
+      SmiteApiClient.isReady = false;
+      await SmiteApiClient.redisClient.flushAll();
+    });
+
+    it('should set SmiteApiClient.isReady to true', async () => {
+      await SmiteApiClient.ready();
+      expect(SmiteApiClient.isReady).toEqual(true);
+    });
+    it('should false if SmiteApiClient.ready was not already called', async () => {
+      const ready = await SmiteApiClient.ready();
+      expect(ready).toEqual(false);
+    });
+    it('should true if if SmiteApiClient.ready was already called', async () => {
+      const ready = await SmiteApiClient.ready();
+      expect(ready).toEqual(false);
+    });
+    it('should set the initial state with players and global objects', async () => {
+      await SmiteApiClient.ready();
+      const doesPlayersExist = await SmiteApiClient._exists(PLAYERS);
+      const doesGlobalExist = await SmiteApiClient._exists(GLOBAL);
+      expect(doesPlayersExist).toEqual(true);
+      expect(doesGlobalExist).toEqual(true);
+    });
   });
 });

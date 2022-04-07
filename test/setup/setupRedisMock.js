@@ -12,13 +12,10 @@ class RedisJsonMock {
   }
 
   set(key, path, value) {
-    if (path === '$') {
-      // set objects on the root '$'
-      // key '$' doesn't appear
-      _.set(this.data, `${key}`, value);
-    } else {
-      _.set(this.data, `${key}.${path}`, value);
-    }
+    // when objects are set on the root '$', the key '$' doesn't appear
+    const pathToObject = path === '$' ? key : `${key}.${path}`;
+
+    _.set(this.data, pathToObject, value);
   }
 
   get(key, { path }) {

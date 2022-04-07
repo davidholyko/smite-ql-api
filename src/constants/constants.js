@@ -45,6 +45,7 @@ export const REDIS = {
   NAMES: 'name',
   HISTORY: 'history',
   DETAILS: 'details',
+  GLOBAL: 'global',
 };
 
 export const SMITE_QL = {
