@@ -7,6 +7,10 @@ import utf8 from 'utf8';
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
 
+// extend axios timeout on real Smite API requests
+// in case Smite API is unresponsive
+axios.defaults.timeout = 30000;
+
 const { API, METHODS, LANGS } = CONSTANTS;
 const { BASE_URL, SESSION_ID } = API;
 
@@ -181,6 +185,12 @@ export class BaseSmiteClient {
    */
   async getPlayer(accountName) {
     const response = await this._performRequest(METHODS.GET_PLAYER_JSON, accountName);
+    return response;
+  }
+
+  async ping() {
+    const url = `${BASE_URL}/${METHODS.PING_JSON}`;
+    const response = await this._processRequest(url);
     return response;
   }
 

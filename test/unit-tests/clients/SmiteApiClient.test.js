@@ -108,8 +108,26 @@ describe('SmiteApiClient', () => {
       });
     });
 
-    it('should ...', () => {
-      //
+    it('should throw an error if client is not ready', async () => {
+      const errorMsg = new Error(CLIENT_NOT_READY);
+      await SmiteApiClient._reset();
+
+      try {
+        await SmiteApiClient.getMatchDetails('12345');
+      } catch (error) {
+        expect(error).toEqual(errorMsg);
+      }
+    });
+
+    it('should get getMatchDetails', async () => {
+      const matchDetails = await SmiteApiClient.getMatchDetails('12345');
+      const expectedMatchDetails = expect.arrayContaining([
+        expect.objectContaining({
+          hz_player_name: expect.any(String),
+        }),
+      ]);
+
+      expect(matchDetails).toEqual(expectedMatchDetails);
     });
   });
 
@@ -117,13 +135,46 @@ describe('SmiteApiClient', () => {
     beforeEach(async () => {
       await SmiteApiClient.ready();
 
+      jest.spyOn(BaseSmiteClient.prototype, 'getPlayer').mockImplementation(() => {
+        return mockPlayer;
+      });
       jest.spyOn(BaseSmiteClient.prototype, 'getMatchHistory').mockImplementation(() => {
         return mockMatchHistory;
       });
     });
 
-    it('should ...', () => {
-      //
+    it('should throw an error if client is not ready', async () => {
+      const errorMsg = new Error(CLIENT_NOT_READY);
+      await SmiteApiClient._reset();
+
+      try {
+        await SmiteApiClient.getMatchHistory('12345');
+      } catch (error) {
+        expect(error).toEqual(errorMsg);
+      }
+    });
+
+    it('should get getMatchHistory', async () => {
+      // TODO: 1. get this test working with expected matches
+      // TODO: 2. make global expect objects for each significant object
+      const matchHistory = await SmiteApiClient.getMatchHistory('12345');
+      //   const expectedMatches = expect.objectContaining({
+      //     [expect.any(String)]: expect.objectContaining({
+      //       date: expect.any(String),
+      //       isVictory: expect.any(Boolean),
+      //     }),
+      //   });
+      const expectedHistory = expect.arrayContaining([
+        expect.objectContaining({
+          Match: expect.any(Number),
+        }),
+      ]);
+      const expectedMatchHistory = expect.objectContaining({
+        history: expectedHistory,
+        // matches: expectedMatches,
+      });
+
+      expect(matchHistory).toEqual(expectedMatchHistory);
     });
   });
 

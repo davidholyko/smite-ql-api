@@ -22,6 +22,8 @@ export const METHODS = {
   GET_MATCH_DETAILS_JSON: 'getmatchdetailsJson',
   GET_DATA_USED: 'getdataused',
   GET_DATA_USED_JSON: 'getdatausedJson',
+  PING: 'ping',
+  PING_JSON: 'pingJson',
 };
 
 export const LANGS = {
