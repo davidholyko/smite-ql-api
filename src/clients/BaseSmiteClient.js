@@ -25,8 +25,9 @@ export class BaseSmiteClient {
   }
 
   /**
-   * throws error if .env file does not exist or contain values for
-   * DEV_ID or AUTH_KEY
+   * throws error if these values do not exist in .env:
+   *   * DEV_ID
+   *   * AUTH_KEY
    * @returns {void}
    */
   _assertEnvVariables() {
@@ -153,6 +154,10 @@ export class BaseSmiteClient {
     return await this._processRequest(url);
   }
 
+  /**
+   * returns data used for a developer account
+   * @returns {Array<Object>} - data
+   */
   async getDataUsed() {
     const response = await this._performRequest(METHODS.GET_DATA_USED_JSON);
     return response;
