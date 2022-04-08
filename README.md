@@ -30,7 +30,7 @@ brew install redis
 
 Follow instructions [here](https://fs12.formsite.com/HiRez/form48/secure_index.html) to request access for a `DEV_ID` and `AUTH_KEY`.
 
-#### Replacing **.env** credentials
+#### Replace `.env` credentials
 
 ```
 # This is an example file
@@ -55,38 +55,9 @@ npm ci
 npm start
 ```
 
-## Redis with Docker
-
-```
-# Start redis server
-docker run -p 6379:6379 --name redis-redisjson -d redislabs/rejson:latest
-
-# Access redis cli in docker
-docker exec -it <image> redis-cli
-```
-
-### RedisJSON commands (with redis-cli)
-
-_These redis commands are for local development when you want to look directly into redis DB in its natural shell._
-
-```
-# Check connection
-Ping
-
-# Get all keys
-KEYS *
-
-# Get JSON
-JSON.GET smite:ql
-
-# Get matches for a player
-JSON.GET smite:ql players <accountName> matches
-
-# Clear DB
-FLUSHALL
-```
-
 ## Sandbox
+
+This repo provides a sandbox file for a developer to play around with and see what data comes back. This file is not meant to be frequently updated with git. Below are some git commands to ignore or un-ignore the file as manual testing is done.
 
 ```
 # Run sandbox
@@ -126,7 +97,7 @@ Redis Client Error Error: connect ECONNREFUSED 127.0.0.1:6379
 }
 ```
 
-See [Redis section](#redis-with-docker) above.
+See [Redis tutorial](./documentation/redis/redis-tutorial.md) to start redis with docker.
 
 ### Deleting a remote tag
 
