@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { BaseSmiteClient } from '../../../src/clients/BaseSmiteClient';
 import SmiteApiClient, { SmiteApiClient as Client } from '../../../src/clients/SmiteApiClient';
 import CONSTANTS from '../../../src/constants';
@@ -8,7 +10,15 @@ const { REDIS, ERRORS } = CONSTANTS;
 const { ENTRY, ROOT, PLAYERS, GLOBAL } = REDIS;
 const { CLIENT_NOT_READY } = ERRORS;
 
-const { mockMatchDetails, mockMatchHistory, mockPlayer } = MOCKS;
+const {
+  // mocks are real data from Smite API
+  mockMatchDetails,
+  // mockMatchHistory,
+  mockSingleMatchHistory,
+  mockPlayer,
+} = MOCKS;
+
+// TODO: make global expect objects for each significant object
 
 describe('SmiteApiClient', () => {
   beforeEach(() => {
@@ -139,7 +149,7 @@ describe('SmiteApiClient', () => {
         return mockPlayer;
       });
       jest.spyOn(BaseSmiteClient.prototype, 'getMatchHistory').mockImplementation(() => {
-        return mockMatchHistory;
+        return mockSingleMatchHistory;
       });
     });
 
@@ -155,25 +165,20 @@ describe('SmiteApiClient', () => {
     });
 
     it('should get getMatchHistory', async () => {
-      // TODO: 1. get this test working with expected matches
-      // TODO: 2. make global expect objects for each significant object
       const matchHistory = await SmiteApiClient.getMatchHistory('12345');
-      //   const expectedMatches = expect.objectContaining({
-      //     [expect.any(String)]: expect.objectContaining({
-      //       date: expect.any(String),
-      //       isVictory: expect.any(Boolean),
-      //     }),
-      //   });
-      const expectedHistory = expect.arrayContaining([
-        expect.objectContaining({
-          date: expect.any(String),
-          isVictory: expect.any(Boolean),
-          matchId: expect.any(Number),
-        }),
-      ]);
+      const matchObj = {
+        date: expect.any(String),
+        isVictory: expect.any(Boolean),
+        matchId: expect.any(Number),
+      };
+      const expectedHistory = expect.arrayContaining([matchObj]);
+      const expectedMatches = expect.objectContaining({
+        [_.first(mockSingleMatchHistory).Match]: matchObj,
+      });
+
       const expectedMatchHistory = expect.objectContaining({
         history: expectedHistory,
-        // matches: expectedMatches,
+        matches: expectedMatches,
       });
 
       expect(matchHistory).toEqual(expectedMatchHistory);
