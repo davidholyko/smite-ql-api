@@ -202,7 +202,7 @@ export class BaseSmiteClient {
   /**
    * tests if createsession was successful
    * @public
-   * @returns {void}
+   * @returns {void | Error} - error
    */
   async testSession() {
     this._assertEnvVariables();
@@ -210,7 +210,7 @@ export class BaseSmiteClient {
     try {
       await this._performRequest(METHODS.TEST_SESSION_JSON);
     } catch (error) {
-      throw new Error('Test Session Failed!');
+      return new Error('Test Session Failed!');
     }
   }
 }

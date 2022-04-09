@@ -24,6 +24,10 @@ describe('BaseSmiteClient Endpoints', () => {
   });
 
   describe('testSession', () => {
+    afterEach(() => {
+      jest.spyOn(BaseSmiteClient, '_performRequest').mockRestore();
+    });
+
     it('should create a new session if a session_id does not already exist', async () => {
       BaseSmiteClient.session_id = null;
       await BaseSmiteClient.testSession();
@@ -37,13 +41,14 @@ describe('BaseSmiteClient Endpoints', () => {
       expect(fn).not.toThrow(undefined);
     });
     it('should throw error if response is not successful', async () => {
-      BaseSmiteClient.dev_id = '1111';
-      try {
-        await BaseSmiteClient.testSession();
-      } catch (error) {
-        const expectedError = new Error('Test Session Failed!');
-        expect(error).toEqual(expectedError);
-      }
+      jest.spyOn(BaseSmiteClient, '_performRequest').mockImplementation(() => {
+        throw new Error('Simulated Error!');
+      });
+
+      const response = await BaseSmiteClient.testSession();
+
+      const expectedError = new Error('Test Session Failed!');
+      expect(response).toEqual(expectedError);
     });
   });
 
@@ -138,6 +143,17 @@ describe('BaseSmiteClient Endpoints', () => {
         const expectedError = new Error('Request failed with status code 400');
         expect(error).toEqual(expectedError);
       }
+    });
+  });
+
+  describe('ping', () => {
+    beforeEach(() => {
+      BaseSmiteClient.session_id = sessionId;
+    });
+
+    it('should get ping smite api', async () => {
+      const response = await BaseSmiteClient.ping();
+      expect(response).toEqual(expect.stringContaining('Ping successful.'));
     });
   });
 });
