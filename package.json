@@ -10,6 +10,7 @@
     "build": "npx babel src -d dist",
     "lint": "npx eslint --max-warnings=0",
     "test": "jest",
+    "test:badges": "npx jest-coverage-badges --output './coverage/badges'",
     "test:coverage": "jest --coverage",
     "test:unit": "npx jest test/unit-tests",
     "posttest:coverage": "open -a 'Google Chrome' './coverage/index.html'",
@@ -42,6 +43,7 @@
   "dependencies": {
     "axios": "^0.26.1",
     "dotenv": "^16.0.0",
+    "jest-coverage-badges": "^1.1.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "^2.29.1",

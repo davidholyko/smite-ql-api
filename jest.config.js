@@ -1,7 +1,7 @@
 const config = {
   collectCoverage: true,
 
-  coverageReporters: ['json', 'html'],
+  coverageReporters: ['json-summary', 'json', 'html'],
 
   globalSetup: './test/setup/setupGlobals.js',
 

@@ -29,6 +29,8 @@ jobs:
         env:
           DEV_ID: ${{ secrets.DEV_ID }}
           AUTH_KEY: ${{ secrets.AUTH_KEY }}
+      - name: Create Jest Coverage badges
+        run: npm run test:badges
       - name: Deploy Test Coverage Report
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:

@@ -1,7 +1,21 @@
 # Smite QL API
 
-![Unit Tests](https://github.com/davidholyko/smite-ql-api/actions/workflows/unit-tests.yml/badge.svg)
-![Linting Check](https://github.com/davidholyko/smite-ql-api/actions/workflows/linting-check.yml/badge.svg)
+## Testing Strategy
+
+![Statements](https://raw.githubusercontent.com/davidholyko/smite-ql-api/gh-pages/badges/badge-statements.svg)
+![Branches](https://raw.githubusercontent.com/davidholyko/smite-ql-api/gh-pages/badges/badge-branches.svg)
+![Functions](https://raw.githubusercontent.com/davidholyko/smite-ql-api/gh-pages/badges/badge-functions.svg)
+![Lines](https://raw.githubusercontent.com/davidholyko/smite-ql-api/gh-pages/badges/badge-lines.svg)
+
+View this repo's [test coverage](https://david-ko.com/smite-ql-api/).
+
+### Integration Tests
+
+Integration Tests require a real `DEV_ID` and `AUTH_KEY` from Hirez Studios. These tests make real API calls to the Official Smite API.
+
+### Unit Tests
+
+Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real `DEV_ID` and `AUTH_KEY`
 
 ## Versioning
 
@@ -69,18 +83,6 @@ git update-index --skip-worktree src/sandbox/sandbox.js
 # Tell git to notice changes to sandbox
 git update-index --no-skip-worktree src/sandbox/sandbox.js
 ```
-
-## Testing Strategy
-
-View this repo's [test coverage](https://david-ko.com/smite-ql-api/).
-
-### Integration Tests
-
-Integration Tests require a real `DEV_ID` and `AUTH_KEY` from Hirez Studios. These tests make real API calls to the Official Smite API.
-
-### Unit Tests
-
-Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real `DEV_ID` and `AUTH_KEY`
 
 # Troubleshooting
 
