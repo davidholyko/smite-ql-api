@@ -1,4 +1,4 @@
-# Redis
+# [Redis with RedisJSON](https://redis.io/commands/?group=json)
 
 ## Redis with Docker
 

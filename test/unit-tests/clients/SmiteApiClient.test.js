@@ -171,7 +171,7 @@ describe('SmiteApiClient', () => {
         isVictory: expect.any(Boolean),
         matchId: expect.any(Number),
       };
-      const expectedHistory = expect.arrayContaining([matchObj]);
+      const expectedHistory = [expect.any(Number)];
       const expectedMatches = expect.objectContaining({
         [_.first(mockSingleMatchHistory).Match]: matchObj,
       });
