@@ -166,7 +166,9 @@ describe('SmiteApiClient', () => {
       //   });
       const expectedHistory = expect.arrayContaining([
         expect.objectContaining({
-          Match: expect.any(Number),
+          date: expect.any(String),
+          isVictory: expect.any(Boolean),
+          matchId: expect.any(Number),
         }),
       ]);
       const expectedMatchHistory = expect.objectContaining({

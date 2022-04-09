@@ -28,6 +28,7 @@ export const transformMatchState = (match) => {
   const matchState = {
     date: transformMatchDate(match.Match_Time),
     isVictory: match.Win_Status === 'Win',
+    matchId: match.Match,
   };
 
   return matchState;

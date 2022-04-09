@@ -76,10 +76,10 @@ export class SmiteApiClient extends BaseSmiteClient {
   async getMatchDetails(matchId) {
     this._assertReady();
 
-    const data = await super.getMatchDetails(matchId);
-    await this.redisClient.json.set(ENTRY, `${GLOBAL}.${MATCHES}.${matchId}`, data);
+    const matchDetails = await super.getMatchDetails(matchId);
+    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, matchDetails);
 
-    return data;
+    return matchDetails;
   }
 
   /**
@@ -104,6 +104,15 @@ export class SmiteApiClient extends BaseSmiteClient {
     if (hasDiff) {
       await this._set(`${PLAYERS}.${accountName}.${HISTORY}`, history);
       await this._set(`${PLAYERS}.${accountName}.${MATCHES}`, matches);
+
+      // Find match details for all matches and request
+      // that information in parallel
+      await Promise.allSettled(
+        _.map(matches, async (match) => {
+          const matchDetails = await this.getMatchDetails(match.matchId);
+          return matchDetails;
+        }),
+      );
     }
 
     return {

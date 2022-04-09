@@ -16,8 +16,9 @@ export const processMatchHistory = (playerDetails, matchHistory) => {
     const { Match: matchId } = match;
     if (!_.get(playerDetails.matches, matchId)) {
       hasDiff = true;
-      compiledMatchLog.history.push(match);
-      compiledMatchLog.matches[matchId] = transformMatchState(match);
+      const transformedMatch = transformMatchState(match);
+      compiledMatchLog.history.push(transformedMatch);
+      compiledMatchLog.matches[matchId] = transformedMatch;
     } else {
       // if a match already exists,
       // the rest of the matches in the matchHistory already exist
@@ -30,7 +31,8 @@ export const processMatchHistory = (playerDetails, matchHistory) => {
   // call redis set and array append multiple times
   // than pass through big objects to overwrite
   return {
-    ...compiledMatchLog,
+    history: compiledMatchLog.history,
+    matches: compiledMatchLog.matches,
     hasDiff,
   };
 };

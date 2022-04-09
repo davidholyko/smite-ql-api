@@ -4,7 +4,7 @@
  *
  * Includes Information about each player in the match (upto 10)
  */
-export const mockMatchDetails = [
+const firstMatch = [
   {
     Account_Level: 144,
     ActiveId1: 21572,
@@ -141,6 +141,9 @@ export const mockMatchDetails = [
     playerPortalUserId: '2533274884342827',
     ret_msg: null,
   },
+];
+
+const restMatches = [
   {
     Account_Level: 155,
     ActiveId1: 21564,
@@ -1366,3 +1369,5 @@ export const mockMatchDetails = [
     ret_msg: null,
   },
 ];
+
+export const mockMatchDetails = [...firstMatch, ...restMatches];

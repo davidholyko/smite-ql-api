@@ -33,6 +33,7 @@ describe('Transformers', () => {
       const expectedMatch = {
         date: '20220322000635',
         isVictory: false,
+        matchId: 1229914631,
       };
       const transformedMatchState = transformMatchState(match);
 
