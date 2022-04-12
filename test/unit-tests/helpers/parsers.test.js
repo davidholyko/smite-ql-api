@@ -1,4 +1,4 @@
-import { parsePlayerName, parseMethod } from '../../../src/helpers/parsers';
+import { parsePlayerName } from '../../../src/helpers/parsers';
 
 describe('Parsers', () => {
   describe('parsePlayerName', () => {
@@ -11,14 +11,6 @@ describe('Parsers', () => {
       const name = 'dhko';
       const parsedName = parsePlayerName(name);
       expect(parsedName).toEqual('dhko');
-    });
-  });
-
-  describe('parseMethod', () => {
-    it('should remove responseType from method', () => {
-      const method = 'getPlayerJson';
-      const parsedMathod = parseMethod(method);
-      expect(parsedMathod).toEqual('getPlayer');
     });
   });
 });

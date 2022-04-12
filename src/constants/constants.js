@@ -7,27 +7,20 @@ export const API = {
   RESPONSE_FORMAT: 'Json',
   TIME_FORMAT: 'yyyyMMDDHHmmss',
   SESSION_ID: 'session_id',
+  JSON: 'Json',
 };
 
 export const METHODS = {
   TEST_SESSION: 'testsession',
-  TEST_SESSION_JSON: 'testsessionJson',
   CREATE_SESSION: 'createsession',
-  CREATE_SESSION_JSON: 'createsessionJson',
   GET_PLAYER: 'getplayer',
-  GET_PLAYER_JSON: 'getplayerJson',
   GET_MATCH_HISTORY: 'getmatchhistory',
-  GET_MATCH_HISTORY_JSON: 'getmatchhistoryJson',
   GET_MATCH_DETAILS: 'getmatchdetails',
-  GET_MATCH_DETAILS_JSON: 'getmatchdetailsJson',
   GET_DATA_USED: 'getdataused',
-  GET_DATA_USED_JSON: 'getdatausedJson',
   PING: 'ping',
-  PING_JSON: 'pingJson',
-  GET_PATCH_INFO_JSON: 'getpatchinfoJson',
   GET_PATCH_INFO: 'getpatchinfo',
-  GET_ITEMS_JSON: 'getitemsJson',
   GET_ITEMS: 'getitems',
+  GET_HIREZ_SERVER_STATUS: 'gethirezserverstatus',
 };
 
 export const LANGS = {

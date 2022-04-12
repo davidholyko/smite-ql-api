@@ -50,9 +50,7 @@ describe('SmiteApiClient', () => {
       const fn = () => {
         SmiteApiClient._assertReady();
       };
-      expect(fn).not.toThrow(
-        'RedisClient is not ready. Call async function SmiteApiClient.ready()',
-      );
+      expect(fn).not.toThrow('RedisClient is not ready. Call async function SmiteApiClient.ready()');
     });
   });
 
