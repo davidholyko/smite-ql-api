@@ -131,11 +131,16 @@ describe('SmiteApiClient', () => {
 
     it('should get getMatchDetails', async () => {
       const matchDetails = await SmiteApiClient.getMatchDetails('12345');
-      const expectedMatchDetails = expect.arrayContaining([
+      const expectedRawDetails = expect.arrayContaining([
         expect.objectContaining({
           hz_player_name: expect.any(String),
         }),
       ]);
+
+      const expectedMatchDetails = expect.objectContaining({
+        raw: expectedRawDetails,
+        partyDetails: expect.any(Object),
+      });
 
       expect(matchDetails).toEqual(expectedMatchDetails);
     });

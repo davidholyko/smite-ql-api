@@ -10,7 +10,7 @@ const config = {
   setupFilesAfterEnv: ['./test/setup/setupRedisMock.js'],
 
   // extend test timeout for integration tests
-  // if Official Smite API is not responsive
+  // if Smite API is not responsive
   testTimeout: 30000,
 
   verbose: true,

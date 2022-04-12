@@ -11,11 +11,29 @@ View this repo's [test coverage](https://david-ko.com/smite-ql-api/).
 
 ### Integration Tests
 
-Integration Tests require a real `DEV_ID` and `AUTH_KEY` from Hirez Studios. These tests make real API calls to the Official Smite API.
+Integration Tests require a real `DEV_ID` and `AUTH_KEY` from Hirez Studios. These tests make real API calls to the Smite API.
 
 ### Unit Tests
 
-Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real `DEV_ID` and `AUTH_KEY`
+Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real `DEV_ID` and `AUTH_KEY`.
+
+Tests should ideally be in the following format:
+
+```javascript
+describe('Some function', () => {
+  it('should do something', () => {
+    /* 1. SETUP */
+    //   setup scenario (if needed) for test case
+    //   could mean mocking functions
+    /* 2. PROCESSING */
+    //   invoking the funcction with the correct params
+    /* 3. EXPECTATIONS */
+    //   explicitly calling out what we expect the function to return or perform
+    /* 4. ASSERTIONS */
+    //   assert that expectations were maet
+  });
+});
+```
 
 ## Versioning
 
@@ -36,9 +54,9 @@ brew install node
 brew install redis
 ```
 
-## Official Smite API and Developer Starter Instructions
+## Smite API and Developer Starter Instructions
 
-[Official Developer Guide](https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit) contains API endpoints documentation for a developer.
+[Smite API Developer Guide](https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit) contains API endpoints documentation for a developer.
 
 #### Register for Smite API Developer Account
 

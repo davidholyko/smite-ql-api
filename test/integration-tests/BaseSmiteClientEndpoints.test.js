@@ -80,7 +80,7 @@ describe('BaseSmiteClient Endpoints', () => {
     });
 
     it('should get matchDetails for a matchId', async () => {
-      const matchDetails = await BaseSmiteClient.getMatchDetails('1229914631');
+      const matchDetails = await BaseSmiteClient.getMatchDetails('1233987056');
       const playerDetails = _.first(matchDetails);
       expect(playerDetails).toEqual(
         expect.objectContaining({

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
 
-import { BaseSmiteClient } from './BaseSmiteClient';
+import baseClient, { BaseSmiteClient } from './BaseSmiteClient';
 import RedisClient from './RedisClient';
 
 const { REDIS, SMITE_QL, ERRORS } = CONSTANTS;
@@ -15,6 +15,7 @@ export class SmiteApiClient extends BaseSmiteClient {
   constructor() {
     super();
     this.redisClient = RedisClient;
+    this.baseClient = baseClient; // for sandbox purposes
     this.isReady = false;
   }
 
@@ -69,21 +70,36 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 
   /**
-   *
+   * get's a match's detais. details include raw data from Smite API.
+   * partyDetails refer to processed data that split out who is in which party
+   * for each player. If the match already exists in redis, we do not have to fetch
+   * data from Smite API again.
    * @param {Number} matchId - like 1232096830
    * @returns {Array<Object>} - data
    */
   async getMatchDetails(matchId) {
     this._assertReady();
 
-    const matchDetails = await super.getMatchDetails(matchId);
-    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, matchDetails);
+    const doesMatchExist = await this._exists(`${GLOBAL}.${MATCHES}.${matchId}`);
 
-    return matchDetails;
+    if (doesMatchExist) {
+      return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
+    }
+
+    const matchDetails = await super.getMatchDetails(matchId);
+    const partyDetails = HELPERS.processPartyDetails(matchDetails);
+    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, { raw: matchDetails, partyDetails });
+
+    return {
+      raw: matchDetails,
+      partyDetails,
+    };
   }
 
   /**
-   *
+   * gets a player's match history (upto last 50 matches). If the most recent
+   * history is already in redis, it will not make any redis updates. If the player's
+   * account information doesn't exist, it will fill that in
    * @param {String} accountName - like 'dhko'
    * @returns {Object} - data
    */
@@ -98,8 +114,9 @@ export class SmiteApiClient extends BaseSmiteClient {
 
     const playerInfo = await this._get(`${PLAYERS}.${accountName}`);
     const matchHistory = await super.getMatchHistory(accountName);
+    const prevMatchInfo = { history: playerInfo.history, matches: playerInfo.matches };
 
-    const { history, matches, hasDiff } = HELPERS.processMatchHistory(playerInfo, matchHistory);
+    const { history, matches, hasDiff } = HELPERS.processMatchHistory(prevMatchInfo, matchHistory);
 
     if (hasDiff) {
       await this._set(`${PLAYERS}.${accountName}.${HISTORY}`, history);
@@ -177,7 +194,11 @@ export class SmiteApiClient extends BaseSmiteClient {
           // key is a matchId
           // value is data from 'getMatchDetails'
           //
-          // 1232511801: [{}, {}, {}] // array of objects which are details for each player
+          // 1232511801: {
+          //   raw: {}, // non-mutated data from Smite API
+          //   partyDetails: {}, // party details for a match calculated by SmiteQL
+          // }
+          //
         },
       },
     };
