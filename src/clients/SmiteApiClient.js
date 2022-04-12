@@ -177,6 +177,10 @@ export class SmiteApiClient extends BaseSmiteClient {
     }
 
     const initialState = {
+      schemaVersion: '1.0.0',
+      // schemaVersion refers to version for all JSON and Array shapes
+      // The shapes for objects could change over time and when those updates
+      // hit production, the old redis DB info has to be updated to the latest schema
       [PLAYERS]: {
         // example:
         // key is a player's ign name
@@ -199,6 +203,14 @@ export class SmiteApiClient extends BaseSmiteClient {
           //   partyDetails: {}, // party details for a match calculated by SmiteQL
           // }
           //
+        },
+        items: {
+          // example:
+          // key is a patch version
+          //
+          // '9.3': {
+          //
+          // }
         },
       },
     };

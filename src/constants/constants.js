@@ -24,6 +24,10 @@ export const METHODS = {
   GET_DATA_USED_JSON: 'getdatausedJson',
   PING: 'ping',
   PING_JSON: 'pingJson',
+  GET_PATCH_INFO_JSON: 'getpatchinfoJson',
+  GET_PATCH_INFO: 'getpatchinfo',
+  GET_ITEMS_JSON: 'getitemsJson',
+  GET_ITEMS: 'getitems',
 };
 
 export const LANGS = {

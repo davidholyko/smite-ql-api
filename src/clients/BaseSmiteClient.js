@@ -164,6 +164,15 @@ export class BaseSmiteClient {
   }
 
   /**
+   * returns data used for a developer account
+   * @returns {Array<Object>} - data
+   */
+  async getItems() {
+    const response = await this._performRequest(METHODS.GET_ITEMS_JSON, this.lang);
+    return response;
+  }
+
+  /**
    * if a match if very old (more than ~50 games ago), the match might not actually
    * be available in the Smite API anymore
    * @public
@@ -182,6 +191,15 @@ export class BaseSmiteClient {
    */
   async getMatchHistory(accountName) {
     const response = await this._performRequest(METHODS.GET_MATCH_HISTORY_JSON, accountName);
+    return response;
+  }
+
+  /**
+   * @public
+   * @returns {Object} - data
+   */
+  async getPatchInfo() {
+    const response = await this._performRequest(METHODS.GET_PATCH_INFO_JSON);
     return response;
   }
 
