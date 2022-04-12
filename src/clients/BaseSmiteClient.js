@@ -164,6 +164,8 @@ export class BaseSmiteClient {
   }
 
   /**
+   * if a match if very old (more than ~50 games ago), the match might not actually
+   * be available in the Smite API anymore
    * @public
    * @param {String} matchId - match id like '1229914631'
    * @returns {Array<Object>} - match details

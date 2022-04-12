@@ -80,6 +80,10 @@ describe('BaseSmiteClient Endpoints', () => {
     });
 
     it('should get matchDetails for a matchId', async () => {
+      // TODO: this matchId is actually dependent on
+      // the latest data from Smite API.
+      // it should be exactly what the top match is for a given player
+      // in the integrated test
       const matchDetails = await BaseSmiteClient.getMatchDetails('1233987056');
       const playerDetails = _.first(matchDetails);
       expect(playerDetails).toEqual(
@@ -151,7 +155,7 @@ describe('BaseSmiteClient Endpoints', () => {
       BaseSmiteClient.session_id = sessionId;
     });
 
-    it('should get ping smite api', async () => {
+    it('should get ping Smite API', async () => {
       const response = await BaseSmiteClient.ping();
       expect(response).toEqual(expect.stringContaining('Ping successful.'));
     });
