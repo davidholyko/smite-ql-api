@@ -24,6 +24,7 @@ describe('processors', () => {
             isVictory: false,
             matchId: 1232099678,
             god: 'Raijin',
+            patchVersion: '10.0',
           },
         },
       };
@@ -40,6 +41,7 @@ describe('processors', () => {
             isVictory: false,
             matchId: 1232099678,
             god: 'Raijin',
+            patchVersion: '10.0',
           },
         },
       };

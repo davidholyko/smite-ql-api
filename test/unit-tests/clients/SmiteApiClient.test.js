@@ -174,6 +174,7 @@ describe('SmiteApiClient', () => {
         isVictory: expect.any(Boolean),
         matchId: expect.any(Number),
         god: expect.any(String),
+        patchVersion: expect.any(String),
       };
       const expectedHistory = [expect.any(Number)];
       const expectedMatches = expect.objectContaining({

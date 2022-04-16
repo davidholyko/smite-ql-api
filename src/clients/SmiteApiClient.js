@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import CONSTANTS from '../constants';
-import globals from '../globals';
+import GLOBALS from '../globals';
 import HELPERS from '../helpers';
 
 import baseClient, { BaseSmiteClient } from './BaseSmiteClient';
@@ -170,14 +170,14 @@ export class SmiteApiClient extends BaseSmiteClient {
     const latestPatchInfo = !_.isEmpty(patchInfo) ? patchInfo : await this.getPatchInfo();
     const patchVersion = latestPatchInfo.version_string;
 
-    if (globals.patchVersion === patchVersion) {
+    if (GLOBALS.patchVersion === patchVersion) {
       // if our latest patchVersion is already upto date
       // skip any updates to redis
       return patchVersion;
     }
 
     // update globals
-    _.assign(globals, { patchVersion });
+    _.assign(GLOBALS, { patchVersion });
 
     const previousPatches = await this._get(`${GLOBAL}.${PATCH_VERSIONS}.previousPatches`);
 

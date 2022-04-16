@@ -7,6 +7,7 @@
 import moment from 'moment';
 
 import CONSTANTS from '../constants';
+import GLOBALS from '../globals';
 
 const { API } = CONSTANTS;
 const { TIME_FORMAT } = API;
@@ -33,6 +34,9 @@ export const transformMatchState = (match) => {
     isVictory: match.Win_Status === 'Win',
     matchId: match.Match,
     god: match.God,
+    // required to map the items to a match
+    // as items change over time
+    patchVersion: GLOBALS.patch_version,
   };
 
   return matchState;

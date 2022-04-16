@@ -36,6 +36,7 @@ describe('Transformers', () => {
         date: '20220322000635',
         isVictory: false,
         matchId: 1229914631,
+        patchVersion: '10.0',
       };
 
       expect(transformedMatchState).toEqual(expectedMatch);
