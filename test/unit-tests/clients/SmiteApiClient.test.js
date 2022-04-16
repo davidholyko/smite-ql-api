@@ -173,6 +173,7 @@ describe('SmiteApiClient', () => {
         date: expect.any(String),
         isVictory: expect.any(Boolean),
         matchId: expect.any(Number),
+        god: expect.any(String),
       };
       const expectedHistory = [expect.any(Number)];
       const expectedMatches = expect.objectContaining({
@@ -233,11 +234,11 @@ describe('SmiteApiClient', () => {
       await SmiteApiClient.ready();
       expect(SmiteApiClient.isReady).toEqual(true);
     });
-    it('should false if SmiteApiClient.ready was not already called', async () => {
+    it('should return false if SmiteApiClient.ready was not already called', async () => {
       const ready = await SmiteApiClient.ready();
       expect(ready).toEqual(false);
     });
-    it('should true if SmiteApiClient.ready was already called', async () => {
+    it('should return true if SmiteApiClient.ready was already called', async () => {
       await SmiteApiClient.ready();
       const ready = await SmiteApiClient.ready();
       expect(ready).toEqual(true);

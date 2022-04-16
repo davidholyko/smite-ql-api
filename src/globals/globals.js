@@ -1,5 +1,7 @@
-// TODO: this file is unused now that
-// we are mocking redis in unit tests
-// we can repurpose this later
+// These globals are meant to contain information
+// that any file can use and is always up to date
 
-export const globals = {};
+export const globals = {
+  patch_version: null,
+  schema_version: null,
+};

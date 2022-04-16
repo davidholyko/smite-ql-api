@@ -23,6 +23,7 @@ describe('processors', () => {
             date: '20220322000635',
             isVictory: false,
             matchId: 1232099678,
+            god: 'Raijin',
           },
         },
       };
@@ -38,6 +39,7 @@ describe('processors', () => {
             date: '20220322000635',
             isVictory: false,
             matchId: 1232099678,
+            god: 'Raijin',
           },
         },
       };
