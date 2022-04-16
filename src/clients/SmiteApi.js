@@ -19,7 +19,7 @@ axios.defaults.timeout = 30000;
 const { API, LANGS, METHODS } = CONSTANTS;
 const { BASE_URL, SESSION_ID, DEV_ID, AUTH_KEY, JSON } = API;
 
-export class BaseSmiteClient {
+export class SmiteApi {
   constructor({
     // options
     auth_key = AUTH_KEY,
@@ -243,7 +243,7 @@ export class BaseSmiteClient {
 
   // /getgodleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{queue}
   // Returns the current season’s leaderboard for a god/queue combination.
-  // [SmiteAPI; only queues 440, 450, 451]
+  // [SmiteApi; only queues 440, 450, 451]
 
   // /getchampionleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{championId}/{queue}
   // Returns the current season’s leaderboard for a champion/queue combination.
@@ -251,7 +251,7 @@ export class BaseSmiteClient {
 
   // /getgodaltabilities[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
   // Returns alt abilities for all gods.
-  //  [SmiteAPI only]
+  //  [SmiteApi only]
 
   // /getgodskins[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{languageCode}
   // Returns all available skins for a particular God.
@@ -260,7 +260,7 @@ export class BaseSmiteClient {
   // Returns all available skins for a particular Champion. Use “-1” as {championId} to get data for all champions. [PaladinsAPI only]
   // /getgodrecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godid}/{languageCode}
   // Returns the Recommended Items for a particular God.
-  // [SmiteAPI only]
+  // [SmiteApi only]
 
   // /getchampionecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{championId}/{languageCode}
   // Returns the Recommended Items for a particular Champion. [PaladinsAPI only; Osbsolete - no data returned]
@@ -454,9 +454,7 @@ export class BaseSmiteClient {
 
   // /searchteams[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchTeam}
   // Returns high level information for Clan names containing the “searchTeam” string.
-  // [SmiteAPI only]
+  // [SmiteApi only]
 }
 
-const client = new BaseSmiteClient();
-
-export default client;
+export const smiteApiClient = new SmiteApi();

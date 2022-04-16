@@ -4,8 +4,8 @@ import CONSTANTS from '../constants';
 import GLOBALS from '../globals';
 import HELPERS from '../helpers';
 
-import baseClient, { BaseSmiteClient } from './BaseSmiteClient';
-import RedisClient from './RedisClient';
+import { redisClient } from './Redis';
+import { smiteApiClient, SmiteApi } from './SmiteApi';
 
 const { REDIS, SMITE_QL, ERRORS } = CONSTANTS;
 const {
@@ -24,11 +24,11 @@ const {
 const { IGN, HZ_PLAYER_NAME } = SMITE_QL;
 const { CLIENT_NOT_READY } = ERRORS;
 
-export class SmiteApiClient extends BaseSmiteClient {
+export class SmiteQL extends SmiteApi {
   constructor() {
     super();
-    this.redisClient = RedisClient;
-    this.baseClient = baseClient; // for sandbox purposes
+    this.redis = redisClient;
+    this.smiteApi = smiteApiClient; // for sandbox purposes
     this.isReady = false;
   }
 
@@ -37,7 +37,7 @@ export class SmiteApiClient extends BaseSmiteClient {
   // ******************************************************************** //
 
   /**
-   * throws error if SmiteApiClient is not ready
+   * throws error if SmiteQL is not ready
    * @returns {void}
    */
   _assertReady() {
@@ -56,7 +56,7 @@ export class SmiteApiClient extends BaseSmiteClient {
    * @returns {Boolean} response - true or false
    */
   async _exists(path) {
-    const response = await this.redisClient.json.type(ENTRY, path);
+    const response = await this.redis.json.type(ENTRY, path);
     return !!response;
   }
 
@@ -66,7 +66,7 @@ export class SmiteApiClient extends BaseSmiteClient {
    * @returns {Object} data
    */
   async _get(path) {
-    const data = await this.redisClient.json.get(ENTRY, { path });
+    const data = await this.redis.json.get(ENTRY, { path });
     return data;
   }
 
@@ -77,7 +77,7 @@ export class SmiteApiClient extends BaseSmiteClient {
    * @returns {Object} data
    */
   async _set(path, data) {
-    const output = await this.redisClient.json.set(ENTRY, path, data);
+    const output = await this.redis.json.set(ENTRY, path, data);
     return output;
   }
 
@@ -86,7 +86,7 @@ export class SmiteApiClient extends BaseSmiteClient {
    * @returns {void}
    */
   async _reset() {
-    await this.redisClient.flushAll();
+    await this.redis.flushAll();
     this.isReady = false;
   }
 
@@ -314,6 +314,4 @@ export class SmiteApiClient extends BaseSmiteClient {
   }
 }
 
-const client = new SmiteApiClient();
-
-export default client;
+export const smiteQLClient = new SmiteQL();

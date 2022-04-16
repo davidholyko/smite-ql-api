@@ -4,11 +4,11 @@ const onError = (err) => {
   console.error(`Redis Client Error: ${err}`);
 };
 
-const client = createClient();
-client.on('error', onError);
+const redisClient = createClient();
+redisClient.on('error', onError);
 
 (async () => {
-  await client.connect();
+  await redisClient.connect();
 })();
 
-export default client;
+export { redisClient };

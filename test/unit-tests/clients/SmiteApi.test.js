@@ -1,37 +1,37 @@
 import moment from 'moment';
 
-import BaseSmiteClient, { BaseSmiteClient as Client } from '../../../src/clients/BaseSmiteClient';
+import { smiteApiClient, SmiteApi } from '../../../src/clients/SmiteApi';
 
-describe('BaseSmiteClient', () => {
+describe('SmiteApi', () => {
   beforeEach(() => {
-    BaseSmiteClient.session_id = null;
-    BaseSmiteClient.dev_id = '0110';
-    BaseSmiteClient.auth_key = 'ABC123ABC123ABC123ABC123ABC12345';
+    smiteApiClient.session_id = null;
+    smiteApiClient.dev_id = '0110';
+    smiteApiClient.auth_key = 'ABC123ABC123ABC123ABC123ABC12345';
   });
 
   describe('constructor', () => {
-    it('should be an instance of class "BaseSmiteClient"', async () => {
-      expect(BaseSmiteClient).toBeInstanceOf(Client);
+    it('should be an instance of class "SmiteApi"', async () => {
+      expect(smiteApiClient).toBeInstanceOf(SmiteApi);
     });
   });
 
   describe('_assertEnvVariables', () => {
     beforeEach(() => {
-      BaseSmiteClient.session_id = null;
-      BaseSmiteClient.dev_id = null;
-      BaseSmiteClient.auth_key = null;
+      smiteApiClient.session_id = null;
+      smiteApiClient.dev_id = null;
+      smiteApiClient.auth_key = null;
     });
 
     it('should throw error if dev_id is undefined', () => {
-      BaseSmiteClient.auth_key = '1234';
+      smiteApiClient.auth_key = '1234';
       const error = 'DEV_ID cannot be undefined. Please update top level .env file.';
-      const fn = () => BaseSmiteClient._assertEnvVariables();
+      const fn = () => smiteApiClient._assertEnvVariables();
       expect(fn).toThrow(error);
     });
     it('should throw error if auth_key is undefined', () => {
-      BaseSmiteClient.dev_id = '1234';
+      smiteApiClient.dev_id = '1234';
       const error = 'AUTH_KEY cannot be undefined. Please update top level .env file.';
-      const fn = () => BaseSmiteClient._assertEnvVariables();
+      const fn = () => smiteApiClient._assertEnvVariables();
       expect(fn).toThrow(error);
     });
     it('should throw error if auth_key and dev_id are undefined', () => {
@@ -39,13 +39,13 @@ describe('BaseSmiteClient', () => {
         'DEV_ID cannot be undefined. Please update top level .env file.',
         'AUTH_KEY cannot be undefined. Please update top level .env file.',
       ].join(' ');
-      const fn = () => BaseSmiteClient._assertEnvVariables();
+      const fn = () => smiteApiClient._assertEnvVariables();
       expect(fn).toThrow(error);
     });
     it('should not throw error if dev_id and auth_key are both defined', () => {
-      BaseSmiteClient.auth_key = '1234';
-      BaseSmiteClient.dev_id = '1234';
-      const fn = () => BaseSmiteClient._assertEnvVariables();
+      smiteApiClient.auth_key = '1234';
+      smiteApiClient.dev_id = '1234';
+      const fn = () => smiteApiClient._assertEnvVariables();
       expect(fn).not.toThrow(undefined);
     });
   });
@@ -55,16 +55,16 @@ describe('BaseSmiteClient', () => {
       const method = 'createsession';
       const signature = '1234';
       const timestamp = '5678';
-      const url = BaseSmiteClient._composeUrl(method, signature, timestamp);
+      const url = smiteApiClient._composeUrl(method, signature, timestamp);
       const expectedUrl = 'https://api.smitegame.com/smiteapi.svc/createsessionJson/0110/1234/5678';
       expect(url).toBe(expectedUrl);
     });
     it('should compose a url with method, signature, and timestamp and session if session_id exists', () => {
-      BaseSmiteClient.session_id = '0000';
+      smiteApiClient.session_id = '0000';
       const method = 'createsession';
       const signature = '1234';
       const timestamp = '5678';
-      const url = BaseSmiteClient._composeUrl(method, signature, timestamp);
+      const url = smiteApiClient._composeUrl(method, signature, timestamp);
       const expectedUrl = 'https://api.smitegame.com/smiteapi.svc/createsessionJson/0110/1234/0000/5678';
       expect(url).toBe(expectedUrl);
     });
@@ -74,14 +74,14 @@ describe('BaseSmiteClient', () => {
       const timestamp = '5678';
       const foo = 'foo';
       const bar = 'bar';
-      const url = BaseSmiteClient._composeUrl(method, signature, timestamp, foo, bar);
+      const url = smiteApiClient._composeUrl(method, signature, timestamp, foo, bar);
       const expectedUrl = 'https://api.smitegame.com/smiteapi.svc/createsessionJson/0110/1234/5678/foo/bar';
       expect(url).toBe(expectedUrl);
     });
   });
 
   describe('_generateTimeStamp', () => {
-    const timestamp = BaseSmiteClient._generateTimeStamp();
+    const timestamp = smiteApiClient._generateTimeStamp();
     const now = moment.utc().format('yyyyMMDDHHmm');
 
     it('should output the correct year', () => {

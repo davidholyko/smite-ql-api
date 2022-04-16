@@ -1,16 +1,16 @@
 import _ from 'lodash';
 
-import BaseSmiteClient from '../../src/clients/BaseSmiteClient';
+import { smiteApiClient } from '../../src/clients/SmiteApi';
 import CONSTANTS from '../../src/constants';
 
 const { API } = CONSTANTS;
 const { DEV_ID, AUTH_KEY } = API;
 
-describe('BaseSmiteClient Endpoints', () => {
+describe('SmiteApi Endpoints', () => {
   let sessionId = null;
 
   it('should create sessionId', async () => {
-    const session = await BaseSmiteClient.createSession();
+    const session = await smiteApiClient.createSession();
     // save sessionId to reuse session in test
     // avoids having a lot of sessions from unit tests
     sessionId = session.session_id;
@@ -18,34 +18,34 @@ describe('BaseSmiteClient Endpoints', () => {
   });
 
   beforeEach(async () => {
-    BaseSmiteClient.session_id = null;
-    BaseSmiteClient.dev_id = DEV_ID;
-    BaseSmiteClient.auth_key = AUTH_KEY;
+    smiteApiClient.session_id = null;
+    smiteApiClient.dev_id = DEV_ID;
+    smiteApiClient.auth_key = AUTH_KEY;
   });
 
   describe('testSession', () => {
     afterEach(() => {
-      jest.spyOn(BaseSmiteClient, '_performRequest').mockRestore();
+      jest.spyOn(smiteApiClient, '_performRequest').mockRestore();
     });
 
     it('should create a new session if a session_id does not already exist', async () => {
-      BaseSmiteClient.session_id = null;
-      await BaseSmiteClient.testSession();
-      expect(BaseSmiteClient.session_id).not.toBe(null);
+      smiteApiClient.session_id = null;
+      await smiteApiClient.testSession();
+      expect(smiteApiClient.session_id).not.toBe(null);
     });
     it('should get a successful response when pinging testsession endpoint', async () => {
       const fn = async () => {
-        await BaseSmiteClient.testSession();
+        await smiteApiClient.testSession();
       };
 
       expect(fn).not.toThrow(undefined);
     });
     it('should throw error if response is not successful', async () => {
-      jest.spyOn(BaseSmiteClient, '_performRequest').mockImplementation(() => {
+      jest.spyOn(smiteApiClient, '_performRequest').mockImplementation(() => {
         throw new Error('Simulated Error!');
       });
 
-      const response = await BaseSmiteClient.testSession();
+      const response = await smiteApiClient.testSession();
 
       const expectedError = new Error('Test Session Failed!');
       expect(response).toEqual(expectedError);
@@ -54,11 +54,11 @@ describe('BaseSmiteClient Endpoints', () => {
 
   describe('getUsedData', () => {
     beforeEach(() => {
-      BaseSmiteClient.session_id = sessionId;
+      smiteApiClient.session_id = sessionId;
     });
 
     it('should get used data for a session', async () => {
-      const dataUsed = await BaseSmiteClient.getDataUsed();
+      const dataUsed = await smiteApiClient.getDataUsed();
       const data = _.first(dataUsed);
       const expectedData = {
         Active_Sessions: expect.any(Number),
@@ -76,7 +76,7 @@ describe('BaseSmiteClient Endpoints', () => {
 
   describe('getMatchDetails', () => {
     beforeEach(() => {
-      BaseSmiteClient.session_id = sessionId;
+      smiteApiClient.session_id = sessionId;
     });
 
     it('should get matchDetails for a matchId', async () => {
@@ -84,7 +84,7 @@ describe('BaseSmiteClient Endpoints', () => {
       // the latest data from Smite API.
       // it should be exactly what the top match is for a given player
       // in the integrated test
-      const matchDetails = await BaseSmiteClient.getMatchDetails('1233987056');
+      const matchDetails = await smiteApiClient.getMatchDetails('1233987056');
       const playerDetails = _.first(matchDetails);
       expect(playerDetails).toEqual(
         expect.objectContaining({
@@ -94,7 +94,7 @@ describe('BaseSmiteClient Endpoints', () => {
     });
     it('should error out if matchId doesnt exist', async () => {
       try {
-        await BaseSmiteClient.getMatchDetails('abc123');
+        await smiteApiClient.getMatchDetails('abc123');
       } catch (error) {
         const expectedError = new Error('Request failed with status code 400');
         expect(error).toEqual(expectedError);
@@ -104,11 +104,11 @@ describe('BaseSmiteClient Endpoints', () => {
 
   describe('getMatchHistory', () => {
     beforeEach(() => {
-      BaseSmiteClient.session_id = sessionId;
+      smiteApiClient.session_id = sessionId;
     });
 
     it('should get matchHistory for an accountName', async () => {
-      const matchHistory = await BaseSmiteClient.getMatchHistory('dhko');
+      const matchHistory = await smiteApiClient.getMatchHistory('dhko');
       const matchDetails = _.first(matchHistory);
       expect(matchDetails).toEqual(
         expect.objectContaining({
@@ -118,7 +118,7 @@ describe('BaseSmiteClient Endpoints', () => {
     });
     it('should error out if accountName doesnt exist', async () => {
       try {
-        await BaseSmiteClient.getMatchHistory('_dhko');
+        await smiteApiClient.getMatchHistory('_dhko');
       } catch (error) {
         const expectedError = new Error('Request failed with status code 400');
         expect(error).toEqual(expectedError);
@@ -128,11 +128,11 @@ describe('BaseSmiteClient Endpoints', () => {
 
   describe('getPlayer', () => {
     beforeEach(() => {
-      BaseSmiteClient.session_id = sessionId;
+      smiteApiClient.session_id = sessionId;
     });
 
     it('should get Player details for an accountName', async () => {
-      const playerDetails = await BaseSmiteClient.getPlayer('dhko');
+      const playerDetails = await smiteApiClient.getPlayer('dhko');
       const player = _.first(playerDetails);
       expect(player).toEqual(
         expect.objectContaining({
@@ -142,7 +142,7 @@ describe('BaseSmiteClient Endpoints', () => {
     });
     it('should error out if accountName doesnt exist', async () => {
       try {
-        await BaseSmiteClient.getPlayer('_dhko');
+        await smiteApiClient.getPlayer('_dhko');
       } catch (error) {
         const expectedError = new Error('Request failed with status code 400');
         expect(error).toEqual(expectedError);
@@ -152,11 +152,11 @@ describe('BaseSmiteClient Endpoints', () => {
 
   describe('ping', () => {
     beforeEach(() => {
-      BaseSmiteClient.session_id = sessionId;
+      smiteApiClient.session_id = sessionId;
     });
 
     it('should get ping Smite API', async () => {
-      const response = await BaseSmiteClient.ping();
+      const response = await smiteApiClient.ping();
       expect(response).toEqual(expect.stringContaining('Ping successful.'));
     });
   });

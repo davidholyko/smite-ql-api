@@ -56,5 +56,5 @@ export const SMITE_QL = {
 };
 
 export const ERRORS = {
-  CLIENT_NOT_READY: 'RedisClient is not ready. Call async function SmiteApiClient.ready()',
+  CLIENT_NOT_READY: 'SmiteQL.redis is not ready. Call async function SmiteQL.ready()',
 };
