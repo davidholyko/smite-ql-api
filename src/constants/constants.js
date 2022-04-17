@@ -70,9 +70,12 @@ export const SMITE_QL_KEYS = {
   IGN: 'ign',
   CURRENT_PATCH: 'current_patch',
   PREVIOUS_PATCHES: 'previous_patches',
+  ACCOUNT_NUMBER: 'account_number',
+  RAW: 'raw',
+  PARTY: 'party',
 };
 
-export const SMITE_RAW_KEYS = {
+export const SMITE_API_KEYS = {
   HZ_PLAYER_NAME: 'hz_player_name',
   MATCH: 'Match',
   ENTRY_DATETIME: 'Entry_Datetime',
@@ -84,6 +87,7 @@ export const SMITE_RAW_KEYS = {
   PLAYER_ID: 'playerId',
   PARTY_ID: 'PartyId',
   PLAYER_NAME: 'playerName',
+  ID: 'Id',
 };
 
 export const ERRORS = {

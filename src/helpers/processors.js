@@ -11,8 +11,8 @@ import CONSTANTS from '../constants';
 import { parsePlayerName } from './parsers';
 import { toSmiteQLMatch } from './transformers';
 
-const { SMITE_RAW_KEYS } = CONSTANTS;
-const { HZ_PLAYER_NAME, REFERENCE_NAME, MATCH, PLAYER_ID, PARTY_ID, PLAYER_NAME } = SMITE_RAW_KEYS;
+const { SMITE_API_KEYS } = CONSTANTS;
+const { HZ_PLAYER_NAME, REFERENCE_NAME, MATCH, PLAYER_ID, PARTY_ID, PLAYER_NAME } = SMITE_API_KEYS;
 
 /**
  * Compares match history of new match history with old. If there are new matches, loads that
@@ -65,47 +65,63 @@ export const processSmiteQLMatch = (rawMatchDetails, playerId, patchVersion) => 
 /**
  * Takes in matchDetails and returns the parties and list of players in each party
  * @param {Array<Object>} matchDetails - list of details for each player
- * @returns {Object} - map of parties, playerIds, and playerNames
+ * @returns {Object} - map of parties
  */
 export const processPartyDetails = (matchDetails) => {
-  // map of parties
-  const parties = {};
-  // map of playerIds to parties
-  const playerIds = {};
-  // map of playerNames to parties
-  const playerNames = {};
+  // map of parties to partyIds
+  // example:
+  // {
+  //   <partyId>   <ign>     <playerId>
+  //   1234:     { player_1: '0123',    player_2: '0234'}
+  //   5678:     { player_3: '0567',    player_4: '0678'}
+  // }
+  const partiesByPartyIds = {};
+  // map of parties to playerIds
+  // example:
+  // {
+  //   <ign>       <ign>     <playerId>
+  //   player_1: { player_1: '0123',    player_2: '0234'}
+  //   player_2: { player_1: '0123',    player_2: '0234'}
+  //   player_3: { player_3: '0567',    player_3: '0678'}
+  //   player_4: { player_3: '0567',    player_4: '0678'}
+  // }
+  const partiesByPlayerIds = {};
 
-  _.forEach(matchDetails, (player) => {
-    parties[player[PARTY_ID]] = {};
-  });
-
+  // create partiesByPartyIds
   _.forEach(matchDetails, (player, index) => {
-    const hiddenPlayerName = `_${player[REFERENCE_NAME]}_${index}`;
-    let name = parsePlayerName(player[PLAYER_NAME]);
-
     // account for when player profiles are hidden
     //   player.playerId = 0
     //   player.playerName = ''
-    if (_.isEmpty(name)) {
-      name = hiddenPlayerName;
-      player[PLAYER_ID] = hiddenPlayerName;
-    }
+    const hiddenIGN = `_${player[REFERENCE_NAME]}_${index}`;
+    const name = parsePlayerName(player[PLAYER_NAME]);
+    const ign = !_.isEmpty(name) ? name : hiddenIGN;
+    const partyId = player[PARTY_ID];
 
-    parties[player[PARTY_ID]][name] = player[PLAYER_ID];
-    playerIds[player[PLAYER_ID]] = player[PARTY_ID];
-    playerNames[name] = player[PARTY_ID];
+    // setup empty objects
+    partiesByPartyIds[partyId] = partiesByPartyIds[partyId] || {};
+    partiesByPlayerIds[ign] = partiesByPlayerIds[ign] || {};
+
+    // apply players to their respective party
+    partiesByPartyIds[partyId][ign] = player[PLAYER_ID];
+    partiesByPlayerIds[ign] = partiesByPartyIds[partyId];
   });
 
   // sift parties that are of size 1 (who are solo queued)
-  _.forEach(_.keys(parties), (team) => {
-    if (_.size(parties[team]) <= 1) {
-      delete parties[team];
+  _.forEach(_.keys(partiesByPartyIds), (team) => {
+    if (_.size(partiesByPartyIds[team]) <= 1) {
+      delete partiesByPartyIds[team];
+    }
+  });
+
+  // sift parties that are of size 1 (who are solo queued)
+  _.forEach(_.keys(partiesByPlayerIds), (ign) => {
+    if (_.size(partiesByPlayerIds[ign]) <= 1) {
+      delete partiesByPlayerIds[ign];
     }
   });
 
   return {
-    parties,
-    playerIds,
-    playerNames,
+    partiesByPartyIds,
+    partiesByPlayerIds,
   };
 };

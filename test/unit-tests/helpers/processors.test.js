@@ -82,32 +82,25 @@ describe('processors', () => {
       const partyDetails = processPartyDetails(mockMatchDetails);
 
       const expectedPartyDetails = {
-        playerIds: {
-          10846378: 743320,
-          4553282: 732129,
-          500597761: 735488,
-          500755287: 735488,
-          504439576: 735488,
-          700467170: 753091,
-          704820239: 753174,
-          7749704: 612260,
-          8286706: 742515,
-          _Danzaburou_8: 672168,
-        },
-        playerNames: {
-          DesertGardener: 612260,
-          Kira474: 735488,
-          MexicanMagikarp: 735488,
-          Mowo089: 743320,
-          NickiMinajVËVO: 742515,
-          Shinra_Tensei97: 735488,
-          _Danzaburou_8: 672168,
-          dalvon21: 753091,
-          declan129: 753174,
-          dhko: 732129,
-        },
-        parties: {
+        partiesByPartyIds: {
           735488: {
+            Kira474: '500755287',
+            MexicanMagikarp: '504439576',
+            Shinra_Tensei97: '500597761',
+          },
+        },
+        partiesByPlayerIds: {
+          Kira474: {
+            Kira474: '500755287',
+            MexicanMagikarp: '504439576',
+            Shinra_Tensei97: '500597761',
+          },
+          MexicanMagikarp: {
+            Kira474: '500755287',
+            MexicanMagikarp: '504439576',
+            Shinra_Tensei97: '500597761',
+          },
+          Shinra_Tensei97: {
             Kira474: '500755287',
             MexicanMagikarp: '504439576',
             Shinra_Tensei97: '500597761',

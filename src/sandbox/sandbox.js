@@ -47,15 +47,15 @@ export const startSandbox = async () => {
 
   // res = await smiteQLClient.getPlayer('dhko');
   // res = await smiteQLClient.getMatchHistory('dhko');
-  res = await smiteQLClient.getMatchHistory('Sailum');
-  // res = await smiteQLClient.getMatchHistory('TripleCCC1');
+  // res = await smiteQLClient.getMatchHistory('Sailum');
+  res = await smiteQLClient.getMatchHistory('TripleCCC1');
   // res = await smiteQLClient.getMatchDetails('1237226753');
   // res = await smiteQLClient.smiteApi.getMatchDetails('1229914631');
   // res = await smiteQLClient.smiteApi.getMatchDetails('1237199832');
 
   // res = await smiteQLClient._get('$');
   // res = await smiteQLClient._get('players.dhko');
-  res = await smiteQLClient._get('players.Sailum');
+  // res = await smiteQLClient._get('players.Sailum');
   // res = await smiteQLClient._get('players.TripleCCC1.matches');
   // res = await smiteQLClient._get('global.matches');
   // res = await smiteQLClient._get('players');

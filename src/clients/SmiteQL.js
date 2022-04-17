@@ -6,7 +6,7 @@ import HELPERS from '../helpers';
 import { redisClient } from './Redis';
 import { smiteApiClient, SmiteApi } from './SmiteApi';
 
-const { SMITE_QL_KEYS, SMITE_RAW_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -25,8 +25,11 @@ const {
   IGN,
   CURRENT_PATCH,
   PREVIOUS_PATCHES,
+  ACCOUNT_NUMBER,
+  RAW,
+  PARTY,
 } = SMITE_QL_KEYS;
-const { HZ_PLAYER_NAME } = SMITE_RAW_KEYS;
+const { HZ_PLAYER_NAME, ID } = SMITE_API_KEYS;
 const { CLIENT_NOT_READY } = ERRORS;
 
 export class SmiteQL extends SmiteApi {
@@ -261,17 +264,19 @@ export class SmiteQL extends SmiteApi {
 
     if (playerId) {
       const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, this.patchVersion);
+      const partyInfo = _.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});
       const winLossPath = `${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;
+      const data = { ...newMatchInfo, party: partyInfo };
 
       await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, newMatchInfo.matchId);
-      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, newMatchInfo);
+      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, data);
     }
 
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, { raw: rawMatchDetails, partyDetails });
 
     return {
-      raw: rawMatchDetails,
-      partyDetails,
+      [RAW]: rawMatchDetails,
+      [PARTY]: partyDetails,
     };
   }
 
@@ -280,7 +285,7 @@ export class SmiteQL extends SmiteApi {
    * history is already in redis, it will not make any redis updates. If the player's
    * account information doesn't exist, it will fill that in
    * @param {String} playerId - like 'dhko'
-   * @returns {Object} - data
+   * @returns {Array<String>} - list of last matchIds (upto 50)
    */
   async getMatchHistory(playerId) {
     this._assertReady();
@@ -302,11 +307,10 @@ export class SmiteQL extends SmiteApi {
         await this._append(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
       }
 
-      // Find match details for all matches and request
-      // that information in parallel
+      // Find match details for all matches information in parallel
       await Promise.allSettled(
         _.map(newMatchHistory, async (matchId) => {
-          await this.getMatchDetails(matchId, playerId);
+          return await this.getMatchDetails(matchId, playerId);
         }),
       );
     }
@@ -325,7 +329,8 @@ export class SmiteQL extends SmiteApi {
     const playerDetails = await super.getPlayer(playerId);
 
     const playerInfo = {
-      [IGN]: _.get(playerDetails, `[0].${HZ_PLAYER_NAME}`), // in game name
+      [IGN]: _.get(playerDetails, `[0][${HZ_PLAYER_NAME}]`), // in game name, like 'dhko'
+      [ACCOUNT_NUMBER]: _.get(playerDetails, `[0][${ID}]`), // associated number, like 4553282
       [DETAILS]: _.first(playerDetails),
       [MATCHES]: {},
       [HISTORY]: [],

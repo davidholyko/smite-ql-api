@@ -9,7 +9,7 @@ import moment from 'moment';
 
 import CONSTANTS from '../constants';
 
-const { API, SMITE_RAW_KEYS } = CONSTANTS;
+const { API, SMITE_API_KEYS } = CONSTANTS;
 const { TIME_FORMAT } = API;
 
 const {
@@ -21,7 +21,7 @@ const {
   MATCH,
   MATCH_DURATION,
   REFERENCE_NAME,
-} = SMITE_RAW_KEYS;
+} = SMITE_API_KEYS;
 
 /**
  *

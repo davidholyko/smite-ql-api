@@ -132,9 +132,14 @@ describe('SmiteQL', () => {
         }),
       ]);
 
+      const expectedPartyDetails = expect.objectContaining({
+        partiesByPartyIds: expect.any(Object),
+        partiesByPlayerIds: expect.any(Object),
+      });
+
       const expectedMatchDetails = expect.objectContaining({
         raw: expectedRawDetails,
-        partyDetails: expect.any(Object),
+        party: expectedPartyDetails,
       });
 
       expect(matchDetails).toEqual(expectedMatchDetails);
@@ -203,6 +208,7 @@ describe('SmiteQL', () => {
       });
 
       expect(data).toEqual({
+        account_number: expect.any(Number),
         ign: expect.any(String),
         details: expectedDetails,
         history: expect.any(Array),
