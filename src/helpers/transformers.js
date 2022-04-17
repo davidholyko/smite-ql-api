@@ -31,9 +31,9 @@ export const transformMatchDate = (date) => {
  */
 export const transformMatchState = (rawMatchDetails, patchVersion) => {
   const matchState = {
+    // this date refers to a match's UTC time
     date: transformMatchDate(rawMatchDetails.Entry_Datetime),
     isVictory: _.startsWith(rawMatchDetails.Win_Status, 'Win'),
-    // match.name does not exist for casual matches
     isRanked: _.startsWith(rawMatchDetails.name, 'Ranked'),
     map: rawMatchDetails.Map_Game,
     matchId: rawMatchDetails.Match,
