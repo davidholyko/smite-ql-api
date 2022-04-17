@@ -6,7 +6,7 @@ import HELPERS from '../helpers';
 import { redisClient } from './Redis';
 import { smiteApiClient, SmiteApi } from './SmiteApi';
 
-const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS, ERRORS } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -17,20 +17,13 @@ const {
   PLAYERS,
   MATCHES,
   HISTORY,
-  DETAILS,
   GLOBAL,
   PATCH_VERSIONS,
-  MISC,
-  ITEMS,
-  IGN,
   CURRENT_PATCH,
   PREVIOUS_PATCHES,
-  ACCOUNT_NUMBER,
   RAW,
   PARTY,
 } = SMITE_QL_KEYS;
-const { HZ_PLAYER_NAME, ID } = SMITE_API_KEYS;
-const { CLIENT_NOT_READY } = ERRORS;
 
 export class SmiteQL extends SmiteApi {
   constructor() {
@@ -55,7 +48,7 @@ export class SmiteQL extends SmiteApi {
    */
   _assertReady() {
     if (!this.isReady) {
-      throw new Error(CLIENT_NOT_READY);
+      throw new Error(ERRORS.CLIENT_NOT_READY);
     }
   }
 
@@ -144,55 +137,7 @@ export class SmiteQL extends SmiteApi {
       return true;
     }
 
-    const initialState = {
-      [MISC]: {
-        // schemaVersion refers to version for all JSON and Array shapes
-        // The shapes for objects could change over time and when those updates
-        // hit production, the old redis DB info has to be updated to the latest schema
-        schema_version: '1.0.0',
-      },
-
-      [PLAYERS]: {
-        // example:
-        // key is a player's ign name
-        // value is an object with
-        //
-        // dhko: {
-        //   info: {}, // player info from 'getPlayer'
-        //   matches: {}, // map of matchIds
-        //   history: [], // list of match details for a player
-        //   ranked: { wins: [], losses: [] }
-        //   normal: { wins: [], losses: [] }
-        // },
-      },
-
-      [GLOBAL]: {
-        [MATCHES]: {
-          // example:
-          // key is a matchId
-          // value is data from 'getMatchDetails'
-          //
-          // 1232511801: {
-          //   raw: {}, // non-mutated data from Smite API
-          //   partyDetails: {}, // party details for a match calculated by SmiteQL
-          // }
-          //
-        },
-        [ITEMS]: {
-          // example:
-          // key is a patch version
-          //
-          // '9.3': {
-          //   'Asi': {}
-          // }
-        },
-        [PATCH_VERSIONS]: {
-          [CURRENT_PATCH]: null, // like '9.3'
-          [PREVIOUS_PATCHES]: [], // like ['9.3', '9.2']
-        },
-      },
-    };
-
+    const initialState = HELPERS.buildRootState();
     await this._set(ROOT, initialState);
 
     return false;
@@ -327,26 +272,11 @@ export class SmiteQL extends SmiteApi {
     this._assertReady();
 
     const playerDetails = await super.getPlayer(playerId);
+    const playerState = HELPERS.buildPlayerState(playerDetails);
 
-    const playerInfo = {
-      [IGN]: _.get(playerDetails, `[0][${HZ_PLAYER_NAME}]`), // in game name, like 'dhko'
-      [ACCOUNT_NUMBER]: _.get(playerDetails, `[0][${ID}]`), // associated number, like 4553282
-      [DETAILS]: _.first(playerDetails),
-      [MATCHES]: {},
-      [HISTORY]: [],
-      [NORMAL]: {
-        [WINS]: [],
-        [LOSSES]: [],
-      },
-      [RANKED]: {
-        [WINS]: [],
-        [LOSSES]: [],
-      },
-    };
+    await this._set(`${PLAYERS}.${playerId}`, playerState);
 
-    await this._set(`${PLAYERS}.${playerId}`, playerInfo);
-
-    return playerInfo;
+    return playerState;
   }
 }
 

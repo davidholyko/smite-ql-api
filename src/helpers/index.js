@@ -1,9 +1,11 @@
 import * as parsers from './parsers';
 import * as processors from './processors';
-import * as transfomers from './transformers';
+import * as state from './state';
+import * as transformers from './transformers';
 
 export default {
   ...parsers,
   ...processors,
-  ...transfomers,
+  ...state,
+  ...transformers,
 };

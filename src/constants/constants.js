@@ -73,6 +73,7 @@ export const SMITE_QL_KEYS = {
   ACCOUNT_NUMBER: 'account_number',
   RAW: 'raw',
   PARTY: 'party',
+  GODS: 'gods',
 };
 
 export const SMITE_API_KEYS = {
