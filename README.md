@@ -22,15 +22,16 @@ Tests should ideally be in the following format:
 ```javascript
 describe('Some function', () => {
   it('should do something', () => {
-    /* 1. SETUP */
+    // 1. SETUP
     //      setup scenario (if needed) for test case
     //      could mean mocking functions
-    /* 2. PROCESSING */
-    //      invoking the funcction with the correct params
-    /* 3. EXPECTATIONS */
-    //      explicitly calling out what we expect the function to return or perform
-    /* 4. ASSERTIONS */
-    //      assert that expectations were maet
+    // 2. PROCESSING
+    //      invoking the function with the correct params
+    // 3. EXPECTATIONS
+    //      explicitly calling out what we expect the function to return or
+    //      perform expect any side effects to happen
+    // 4. ASSERTIONS
+    //      assert that expectations were met
   });
 });
 ```
