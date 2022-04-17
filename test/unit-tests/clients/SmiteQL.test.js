@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { SmiteApi } from '../../../src/clients/SmiteApi';
 import { smiteQLClient, SmiteQL } from '../../../src/clients/SmiteQL';
 import CONSTANTS from '../../../src/constants';
@@ -167,24 +165,9 @@ describe('SmiteQL', () => {
       }
     });
 
-    it('should get getMatchHistory', async () => {
-      const matchHistory = await smiteQLClient.getMatchHistory('12345');
-      const matchObj = {
-        date: expect.any(String),
-        isVictory: expect.any(Boolean),
-        matchId: expect.any(Number),
-        god: expect.any(String),
-        patchVersion: expect.any(String),
-      };
-      const expectedHistory = [expect.any(Number)];
-      const expectedMatches = expect.objectContaining({
-        [_.first(mockSingleMatchHistory).Match]: matchObj,
-      });
-
-      const expectedMatchHistory = expect.objectContaining({
-        history: expectedHistory,
-        matches: expectedMatches,
-      });
+    it('should return an array of matchIds', async () => {
+      const matchHistory = await smiteQLClient.getMatchHistory('any-player');
+      const expectedMatchHistory = [expect.any(Number)];
 
       expect(matchHistory).toEqual(expectedMatchHistory);
     });
@@ -210,17 +193,23 @@ describe('SmiteQL', () => {
       }
     });
 
-    it('should get playerInfo', async () => {
+    it('should return playerInfo initial state', async () => {
       const data = await smiteQLClient.getPlayer('dhko');
-      const expectedData = expect.objectContaining({
+      const expectedMatches = expect.objectContaining({
+        wins: [],
+        losses: [],
+      });
+      const expectedDetails = expect.objectContaining({
         hz_player_name: expect.any(String),
       });
 
       expect(data).toEqual({
         ign: expect.any(String),
-        details: [expectedData],
+        details: expectedDetails,
         history: expect.any(Array),
         matches: expect.any(Object),
+        ranked: expectedMatches,
+        normal: expectedMatches,
       });
     });
   });

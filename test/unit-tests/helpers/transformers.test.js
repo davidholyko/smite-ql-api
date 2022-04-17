@@ -30,11 +30,15 @@ describe('Transformers', () => {
         Win_Status: 'Loss',
       };
 
-      const transformedMatchState = transformMatchState(match);
+      const transformedMatchState = transformMatchState(match, '10.0');
 
       const expectedMatch = {
-        date: '20220322000635',
+        date: '20220310043610',
         isVictory: false,
+        isRanked: false,
+        map: 'Slash',
+        god: 'Nu Wa',
+        duration: 1189,
         matchId: 1229914631,
         patchVersion: '10.0',
       };

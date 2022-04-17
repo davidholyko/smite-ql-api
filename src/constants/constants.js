@@ -48,6 +48,10 @@ export const REDIS = {
   PATCH_VERSIONS: 'patch_versions',
   MISC: 'misc',
   ITEMS: 'items',
+  RANKED: 'ranked',
+  NORMAL: 'normal',
+  WINS: 'wins',
+  LOSSES: 'losses',
 };
 
 export const SMITE_QL = {

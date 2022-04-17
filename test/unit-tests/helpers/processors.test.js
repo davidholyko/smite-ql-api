@@ -11,28 +11,15 @@ const { mockMatchDetails, mockSingleMatchHistory } = MOCKS;
 
 describe('processors', () => {
   describe('processMatchHistory', () => {
-    it('should return hasDiff false and fill in matches and history if current data is not upto date', () => {
+    it('should return an array of new matches current data is not up to date', () => {
       const mockPrevMatchInfo = { matches: {}, history: [] };
       const processedMatchHistory = processMatchHistory(mockPrevMatchInfo, mockSingleMatchHistory);
-
-      const expectedMatchHistory = {
-        hasDiff: false,
-        history: [1232099678],
-        matches: {
-          1232099678: {
-            date: '20220322000635',
-            isVictory: false,
-            matchId: 1232099678,
-            god: 'Raijin',
-            patchVersion: '10.0',
-          },
-        },
-      };
+      const expectedMatchHistory = [1232099678];
 
       expect(processedMatchHistory).toEqual(expectedMatchHistory);
     });
 
-    it('should return hasDiff true with empty objects and arrays if current data is already up to date', () => {
+    it('should return [] if current data is already up to date', () => {
       const mockPrevMatchInfo = {
         history: [1232099678],
         matches: {
@@ -47,11 +34,7 @@ describe('processors', () => {
       };
       const processedMatchHistory = processMatchHistory(mockPrevMatchInfo, mockSingleMatchHistory);
 
-      const expectedMatchHistory = {
-        hasDiff: true,
-        history: [],
-        matches: {},
-      };
+      const expectedMatchHistory = [];
 
       expect(processedMatchHistory).toEqual(expectedMatchHistory);
     });

@@ -1,3 +1,12 @@
+/**
+ * @example
+ * An item in matchHistory array. This match is a casual conquest match and
+ * the keys can be different for different match types (ranked vs casuals)
+ * arena vs joust, etc...
+ *
+ * matchHistory cannot tell whether a match is ranked or normal but
+ * matchDetails can tell whether a match is ranked or normal
+ */
 export const singleMatchHistory = [
   {
     ActiveId1: 21476,

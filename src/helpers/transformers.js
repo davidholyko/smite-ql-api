@@ -4,10 +4,10 @@
  * heavy business logic
  */
 
+import _ from 'lodash';
 import moment from 'moment';
 
 import CONSTANTS from '../constants';
-import GLOBALS from '../globals';
 
 const { API } = CONSTANTS;
 const { TIME_FORMAT } = API;
@@ -25,18 +25,26 @@ export const transformMatchDate = (date) => {
 
 /**
  *
- * @param {Object} match - match details
+ * @param {Object} rawMatchDetails - matchDetails
+ * @param {String} patchVersion - patchVersion at the time of the match
  * @returns {Object} match with only date and victory status
  */
-export const transformMatchState = (match) => {
+export const transformMatchState = (rawMatchDetails, patchVersion) => {
   const matchState = {
-    date: transformMatchDate(match.Match_Time),
-    isVictory: match.Win_Status === 'Win',
-    matchId: match.Match,
-    god: match.God,
+    date: transformMatchDate(rawMatchDetails.Entry_Datetime),
+    isVictory: _.startsWith(rawMatchDetails.Win_Status, 'Win'),
+    // match.name does not exist for casual matches
+    isRanked: _.startsWith(rawMatchDetails.name, 'Ranked'),
+    map: rawMatchDetails.Map_Game,
+    matchId: rawMatchDetails.Match,
+    duration: rawMatchDetails.Match_Duration,
+    god: rawMatchDetails.Reference_Name,
     // required to map the items to a match
     // as items change over time
-    patchVersion: GLOBALS.patch_version,
+    // ! There is a potential bug that if a player's data has not been updated
+    // ! and a new patch has been released, previous matches can be associated
+    // ! with the new patch and those item descriptions will be incorrect
+    patchVersion: patchVersion,
   };
 
   return matchState;

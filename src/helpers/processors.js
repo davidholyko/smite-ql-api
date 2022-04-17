@@ -14,39 +14,38 @@ import { transformMatchState } from './transformers';
  * into an object to update redis DB with.
  * @param {Object} prevMatchInfo - object with ign, matches, history, and info
  * @param {Object} latestMatchHistory - object with matches and history. History is in order of most recent games at beginning
- * @returns {Object} prevMatchInfo
+ * @returns {Array<String>} prevMatchInfo
  */
 export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
-  const matchInfo = _.cloneDeep(prevMatchInfo);
-  // if the first match in the latestMatchHistory already exists
-  // in the previous match info, the rest of the matches
-  // will also exist.
   const hasDiff = _.get(prevMatchInfo, `matches[${_.first(latestMatchHistory).Match}]`);
+  const newMatches = [];
 
   if (hasDiff) {
-    return {
-      hasDiff: true,
-      history: [],
-      matches: {},
-    };
+    // if the first match in the latestMatchHistory already exists
+    // in the previous match info, the rest of the matches
+    // will also exist.
+    return [];
   }
 
   for (const match of latestMatchHistory) {
-    const { Match: matchId } = match;
-    const transformedMatch = transformMatchState(match);
-    matchInfo.history.push(transformedMatch.matchId);
-    matchInfo.matches[matchId] = transformedMatch;
+    newMatches.push(match.Match);
   }
 
-  // TODO: currently this outputs big objects and arrays
-  // to update redis with. Maybe its more performant to
-  // call redis set and array append multiple times
-  // than pass through big objects to overwrite
-  return {
-    hasDiff: false,
-    history: matchInfo.history,
-    matches: matchInfo.matches,
-  };
+  return newMatches;
+};
+
+/**
+ *
+ * @param {Array<Object>} rawMatchDetails - raw matchDetails from Smite API
+ * @param {String} accountName - accountName we are looking for
+ * @param {String} patchVersion - patchVersion at the time
+ * @returns {Object} newMatchInfo
+ */
+export const processMatchDetails = (rawMatchDetails, accountName, patchVersion) => {
+  const match = _.find(rawMatchDetails, ['hz_player_name', accountName]);
+  const newMatchState = transformMatchState(match, patchVersion);
+
+  return newMatchState;
 };
 
 /**

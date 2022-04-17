@@ -16,6 +16,14 @@ class RedisJsonMock {
     this.data = {};
   }
 
+  arrAppend() {
+    //
+  }
+
+  arrInsert() {
+    //
+  }
+
   set(key, path, value) {
     // when objects are set on the root '$', the key '$' doesn't appear
     const pathToObject = path === ROOT ? key : `${key}.${path}`;
