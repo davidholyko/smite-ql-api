@@ -21,6 +21,21 @@ export const METHODS = {
   GET_PATCH_INFO: 'getpatchinfo',
   GET_ITEMS: 'getitems',
   GET_HIREZ_SERVER_STATUS: 'gethirezserverstatus',
+  GET_GODS: 'getgods',
+  GET_GOD_ALT_ABILTIES: 'getgodaltabilities',
+  GET_GOD_SKINS: 'getgodskins',
+};
+
+export const QUEUE_IDS = {
+  NORMAL_CONQUEST: 426,
+  NORMAL_ARENA: 435,
+  NORMAL_JOUST: 448,
+  NORMAL_SLASH: 448,
+  NORMAL_ASSAULT: 10189,
+  RANKED_CONQUEST_PC: 451,
+  RANKED_CONQUEST_CONTROLLER: 504,
+  RANKED_JOUST: 450,
+  RANKED_DUEL: 440, // Official name is 'Ranked Joust 1v1'
 };
 
 export const LANGS = {

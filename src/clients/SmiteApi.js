@@ -1,7 +1,7 @@
 /**
  * @file
  * Based on endpoints from:
- * https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit#
+ * https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM
  */
 
 import axios from 'axios';
@@ -30,16 +30,19 @@ export class SmiteApi {
     // session_id will be set once createSession is invoked
     this.session_id = null;
 
+    // these two are required to visit real SmiteApi endpoints
     this.auth_key = auth_key;
     this.dev_id = dev_id;
+
+    // internal state for this class
     this.lang = lang;
     this.responseType = responseType;
   }
 
   /**
    * throws error if these values do not exist in .env:
-   * - DEV_ID
-   * - AUTH_KEY
+   *   * DEV_ID
+   *   * AUTH_KEY
    * @returns {void}
    */
   _assertEnvVariables() {
@@ -79,14 +82,17 @@ export class SmiteApi {
   }
 
   /**
-   * generates a timestamp like '20220328080808'
-   * format of                  'yyyyMMDDHHmmss'
-   *                             2022 -> year
-   *                                 03 -> month (March)
-   *                                   28 -> day (March 28th)
-   *                                     08 -> hour (8am)
-   *                                       08 -> minute (8:08am)
-   *                                         08 -> second (8:08:08am)
+   * generates a timestamp like  in UTC format
+   *
+   * @example
+   *   * timestamp: '20220328080808'
+   *   * format of: 'yyyyMMDDHHmmss'
+   *   *             2022 -> 'year'
+   *   *                 03 -> 'month (March)'
+   *   *                   28 -> 'day (March 28th)'
+   *   *                     08 -> 'hour (8am)'
+   *   *                       08 -> 'minute (8:08am)'
+   *   *                         08 -> 'second (8:08:08am)'
    * @private
    * @returns {String} timestamp
    */
@@ -138,6 +144,7 @@ export class SmiteApi {
   }
 
   /**
+   * processes request url sets the session_id for the client
    * @private
    * @param {String} url - url
    * @returns {Object} - data
@@ -210,7 +217,7 @@ export class SmiteApi {
   /**
    * /gethirezserverstatus[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
    * Function returns UP/DOWN status for the primary game/platform environments.
-   * // Data is cached once a minute.
+   * Data is cached once a minute.
    * @public
    * @returns {Object} - data
    */
@@ -220,6 +227,8 @@ export class SmiteApi {
   }
 
   /**
+   * /getpatchinfo[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   * Function returns information about current deployed patch. Currently, this information only includes patch version.
    * @public
    * @returns {Object} - data
    */
@@ -232,14 +241,16 @@ export class SmiteApi {
   // * relates to relates to 'APIs - Gods/Champions & Items' section in Smite API * //
   // * ************************************************************************** * //
 
-  // /getgods[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languageCode}
-  // Returns all Gods and their various attributes.
-
-  // /getchampions[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languageCode}
-  // Returns all Champions and their various attributes. [PaladinsAPI only]
-
-  // /getchampioncards[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{championId}/{languageCode}
-  // Returns all Champion cards. [PaladinsAPI only]
+  /**
+   * /getgods[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languageCode}
+   * Returns all Gods and their various attributes.
+   * @public
+   * @returns {Object} - data
+   */
+  async getGods() {
+    const response = await this._performRequest(METHODS.GET_GODS);
+    return response;
+  }
 
   // /getgodleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{queue}
   // Returns the current season’s leaderboard for a god/queue combination.
@@ -249,21 +260,32 @@ export class SmiteApi {
   // Returns the current season’s leaderboard for a champion/queue combination.
   // [PaladinsAPI; only queue 428]
 
-  // /getgodaltabilities[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
-  // Returns alt abilities for all gods.
-  //  [SmiteApi only]
+  /**
+   * /getgodaltabilities[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   * Returns alt abilities for all gods.
+   * SmiteApi only]
+   * @public
+   * @returns {Object} - data
+   */
+  async getGodAltAbilities() {
+    const response = await this._performRequest(METHODS.GET_GOD_ALT_ABILTIES);
+    return response;
+  }
 
-  // /getgodskins[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{languageCode}
-  // Returns all available skins for a particular God.
+  /**
+   * /getgodskins[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{languageCode}
+   * Returns all available skins for a particular God.
+   * @public
+   * @returns {Object} - data
+   */
+  async getGodSkins() {
+    const response = await this._performRequest(METHODS.GET_GOD_SKINS);
+    return response;
+  }
 
-  // /getchampionskins[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{championId}/{languageCode}
-  // Returns all available skins for a particular Champion. Use “-1” as {championId} to get data for all champions. [PaladinsAPI only]
   // /getgodrecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godid}/{languageCode}
   // Returns the Recommended Items for a particular God.
   // [SmiteApi only]
-
-  // /getchampionecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{championId}/{languageCode}
-  // Returns the Recommended Items for a particular Champion. [PaladinsAPI only; Osbsolete - no data returned]
 
   /**
    * /getitems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languagecode}
@@ -274,10 +296,6 @@ export class SmiteApi {
     const response = await this._performRequest(METHODS.GET_ITEMS, this.lang);
     return response;
   }
-
-  // /getbountyitems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
-  // Returns daily Bounty Item history for the past 6 months.
-  // [PaladinsAPI only]
 
   // * ****************************************************************** * //
   // * relates to 'APIs - Leagues, Seasons & Rounds' section in Smite API * //
@@ -294,16 +312,10 @@ export class SmiteApi {
   // * relates to 'APIs - Match Info' section in Smite API *//
   // * *************************************************** *//
 
-  // /getdemodetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
-  // Returns information regarding a particular match.
-  // Rarely used in lieu of getmatchdetails().
-
   /**
    * /getmatchdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
    * Returns the statistics for a particular completed match.
-   *
-   * if a match if very old (more than ~50 games ago), the match might not actually
-   * be available in the Smite API anymore
+   * * if a match if very old (more than ~50 games ago), the match might not actually be available in the Smite API anymore
    * @public
    * @param {String} matchId - match id like '1229914631'
    * @returns {Array<Object>} - match details
@@ -359,19 +371,12 @@ export class SmiteApi {
   // /getgodranks[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
   // Returns the Rank and Worshippers value for each God a player has played.
 
-  // /getchampionranks[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
-  // Returns the Rank and Worshippers value for each Champion a player has played. [PaladinsAPI only]
-
-  // /getplayerloadouts[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/playerId}/{languageCode}
-  // Returns deck loadouts per Champion. [PaladinsAPI only]
-
   // /getplayerachievements[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
   // Returns select achievement totals (Double kills, Tower Kills, First Bloods, etc) for the specified playerId.
   // [SMITEAPI only]
 
   // /getplayerstatus[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
   // Returns player status as follows:
-
   // 0 - Offline
   // 1 - In Lobby  (basically anywhere except god selection or in game)
   // 2 - god Selection (player has accepted match and is selecting god before start of game)
@@ -383,16 +388,26 @@ export class SmiteApi {
    * /getmatchhistory[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
    * Gets recent matches and high level match statistics for a particular player
    * @public
-   * @param {String} accountName - account name for player, like 'dhko'
+   * @param {String} playerId - account name for player, like 'dhko'
    * @returns {Array<Object>} - data of last 50 matches
    */
-  async getMatchHistory(accountName) {
-    const response = await this._performRequest(METHODS.GET_MATCH_HISTORY, accountName);
+  async getMatchHistory(playerId) {
+    const response = await this._performRequest(METHODS.GET_MATCH_HISTORY, playerId);
     return response;
   }
 
-  // /getqueuestats[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}/{queue}
-  // Returns match summary statistics for a (player, queue) combination grouped by gods played.
+  /**
+   * /getqueuestats[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}/{queue}
+   * Returns match summary statistics for a (player, queue) combination grouped by gods played.
+   * @public
+   * @param {String} playerId - account name for player, like 'dhko'
+   * @param {Number} queueId - queueId, see contants
+   * @returns {Array<Object>} - data
+   */
+  async getQueueStats(playerId, queueId) {
+    const response = await this._performRequest(METHODS.GET_QUEUE_STATS, playerId, queueId);
+    return response;
+  }
 
   // /searchplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchPlayer}
   // Returns player_id values for all names and/or gamer_tags containing the “searchPlayer” string.
@@ -405,17 +420,13 @@ export class SmiteApi {
    * /getplayer[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{player}
    * Returns league and other high level data for a particular player.
    * @public
-   * @param {String} accountName - account name for player, like 'dhko'
+   * @param {String} playerId - account name for player, like 'dhko'
    * @returns {Object} - data
    */
-  async getPlayer(accountName) {
-    const response = await this._performRequest(METHODS.GET_PLAYER, accountName);
+  async getPlayer(playerId) {
+    const response = await this._performRequest(METHODS.GET_PLAYER, playerId);
     return response;
   }
-
-  // /getplayerbatch[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId,playerId,playerId,...playerId}
-  // Returns league and other high level data for a particular CSV set of up to 20 playerIds.
-  // [PaladinsAPI only]
 
   // /getplayeridbyname[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerName}
   // Function returns a list of Hi-Rez playerId values (expected list size = 1) for playerName provided.
@@ -444,10 +455,6 @@ export class SmiteApi {
 
   // /getteamdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
   // Lists the number of players and other high level details for a particular clan.
-
-  // /getteammatchhistory[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
-  // Gets recent matches and high level match statistics for a particular clan/team.
-  // *DEPRECATED* - As of 2.14 Patch, /getteammatchhistory is no longer supported and will return a NULL dataset.
 
   // /getteamplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
   // Lists the players for a particular clan.
