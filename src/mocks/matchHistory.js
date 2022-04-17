@@ -1,5 +1,5 @@
-import { multipleMatchHistory } from './multipleMatchHistory';
-import { singleMatchHistory } from './singleMatchHistory';
+import { multipleMatchHistory } from './_matchHistory/multipleMatchHistory';
+import { singleMatchHistory } from './_matchHistory/singleMatchHistory';
 
 export const mockSingleMatchHistory = singleMatchHistory;
 

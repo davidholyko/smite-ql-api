@@ -248,7 +248,7 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async getGods() {
-    const response = await this._performRequest(METHODS.GET_GODS);
+    const response = await this._performRequest(METHODS.GET_GODS, this.lang);
     return response;
   }
 
