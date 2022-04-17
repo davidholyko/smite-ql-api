@@ -51,7 +51,7 @@ export const LANGS = {
   TURKISH: 13,
 };
 
-export const REDIS = {
+export const SMITE_QL_KEYS = {
   ENTRY: 'smite_ql',
   ROOT: '$',
   MATCHES: 'matches',
@@ -67,11 +67,23 @@ export const REDIS = {
   NORMAL: 'normal',
   WINS: 'wins',
   LOSSES: 'losses',
+  IGN: 'ign',
+  CURRENT_PATCH: 'current_patch',
+  PREVIOUS_PATCHES: 'previous_patches',
 };
 
-export const SMITE_QL = {
-  IGN: 'ign',
+export const SMITE_RAW_KEYS = {
   HZ_PLAYER_NAME: 'hz_player_name',
+  MATCH: 'Match',
+  ENTRY_DATETIME: 'Entry_Datetime',
+  WIN_STATUS: 'Win_Status',
+  MAP_GAME: 'Map_Game',
+  MATCH_DURATION: 'Match_Duration',
+  REFERENCE_NAME: 'Reference_Name',
+  NAME: 'name',
+  PLAYER_ID: 'playerId',
+  PARTY_ID: 'PartyId',
+  PLAYER_NAME: 'playerName',
 };
 
 export const ERRORS = {

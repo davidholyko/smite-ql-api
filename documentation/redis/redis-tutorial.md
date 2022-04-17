@@ -27,7 +27,7 @@ KEYS *
 JSON.GET smite:ql
 
 # Get matches for a player
-JSON.GET smite:ql players <accountName> matches
+JSON.GET smite:ql players <playerId> matches
 
 # Clear DB
 FLUSHALL

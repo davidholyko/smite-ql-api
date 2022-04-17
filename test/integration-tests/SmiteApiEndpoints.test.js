@@ -107,7 +107,7 @@ describe('SmiteApi Endpoints', () => {
       smiteApiClient.session_id = sessionId;
     });
 
-    it('should get matchHistory for an accountName', async () => {
+    it('should get matchHistory for an playerId', async () => {
       const matchHistory = await smiteApiClient.getMatchHistory('dhko');
       const matchDetails = _.first(matchHistory);
       expect(matchDetails).toEqual(
@@ -116,7 +116,7 @@ describe('SmiteApi Endpoints', () => {
         }),
       );
     });
-    it('should error out if accountName doesnt exist', async () => {
+    it('should error out if playerId doesnt exist', async () => {
       try {
         await smiteApiClient.getMatchHistory('_dhko');
       } catch (error) {
@@ -131,7 +131,7 @@ describe('SmiteApi Endpoints', () => {
       smiteApiClient.session_id = sessionId;
     });
 
-    it('should get Player details for an accountName', async () => {
+    it('should get Player details for an playerId', async () => {
       const playerDetails = await smiteApiClient.getPlayer('dhko');
       const player = _.first(playerDetails);
       expect(player).toEqual(
@@ -140,7 +140,7 @@ describe('SmiteApi Endpoints', () => {
         }),
       );
     });
-    it('should error out if accountName doesnt exist', async () => {
+    it('should error out if playerId doesnt exist', async () => {
       try {
         await smiteApiClient.getPlayer('_dhko');
       } catch (error) {

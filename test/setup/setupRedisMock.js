@@ -4,8 +4,8 @@ import _ from 'lodash';
 
 import CONSTANTS from '../../src/constants';
 
-const { REDIS } = CONSTANTS;
-const { ROOT } = REDIS;
+const { SMITE_QL_KEYS } = CONSTANTS;
+const { ROOT } = SMITE_QL_KEYS;
 
 /**
  * Custom mock for RedisJSON

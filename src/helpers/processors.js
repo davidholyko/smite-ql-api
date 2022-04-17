@@ -6,8 +6,13 @@
 
 import _ from 'lodash';
 
+import CONSTANTS from '../constants';
+
 import { parsePlayerName } from './parsers';
 import { transformMatchState } from './transformers';
+
+const { SMITE_RAW_KEYS } = CONSTANTS;
+const { HZ_PLAYER_NAME, REFERENCE_NAME, MATCH, PLAYER_ID, PARTY_ID, PLAYER_NAME } = SMITE_RAW_KEYS;
 
 /**
  * Compares match history of new match history with old. If there are new matches, loads that
@@ -17,7 +22,7 @@ import { transformMatchState } from './transformers';
  * @returns {Array<String>} prevMatchInfo
  */
 export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
-  const firstMatchId = _.first(latestMatchHistory).Match;
+  const firstMatchId = _.get(latestMatchHistory, `[0][${MATCH}]`);
   const hasDiff = _.get(prevMatchInfo.matches, firstMatchId);
   const newMatches = [];
 
@@ -29,7 +34,7 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
   }
 
   for (const match of latestMatchHistory) {
-    if (_.get(prevMatchInfo.matches, match.Match)) {
+    if (_.get(prevMatchInfo.matches, match[MATCH])) {
       // if we find a match in latestMatchHistory that already exists,
       // the rest of the matches in latestMatchHistory have already been added to redis DB
       // we do not need to keep adding matches
@@ -37,7 +42,7 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
       break;
     }
 
-    newMatches.push(match.Match);
+    newMatches.push(match[MATCH]);
   }
 
   return newMatches;
@@ -46,12 +51,12 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
 /**
  *
  * @param {Array<Object>} rawMatchDetails - raw matchDetails from Smite API
- * @param {String} accountName - accountName we are looking for
+ * @param {String} playerId - playerId we are looking, like 'dhko'
  * @param {String} patchVersion - patchVersion at the time
  * @returns {Object} newMatchInfo
  */
-export const processMatchDetails = (rawMatchDetails, accountName, patchVersion) => {
-  const match = _.find(rawMatchDetails, ['hz_player_name', accountName]);
+export const processMatchDetails = (rawMatchDetails, playerId, patchVersion) => {
+  const match = _.find(rawMatchDetails, [HZ_PLAYER_NAME, playerId]);
   const newMatchState = transformMatchState(match, patchVersion);
 
   return newMatchState;
@@ -71,24 +76,24 @@ export const processPartyDetails = (matchDetails) => {
   const playerNames = {};
 
   _.forEach(matchDetails, (player) => {
-    parties[player.PartyId] = {};
+    parties[player[PARTY_ID]] = {};
   });
 
   _.forEach(matchDetails, (player, index) => {
-    const hiddenPlayerName = `_${player.Reference_Name}_${index}`;
-    let name = parsePlayerName(player.playerName);
+    const hiddenPlayerName = `_${player[REFERENCE_NAME]}_${index}`;
+    let name = parsePlayerName(player[PLAYER_NAME]);
 
     // account for when player profiles are hidden
     //   player.playerId = 0
     //   player.playerName = ''
     if (_.isEmpty(name)) {
       name = hiddenPlayerName;
-      player.playerId = hiddenPlayerName;
+      player[PLAYER_ID] = hiddenPlayerName;
     }
 
-    parties[player.PartyId][name] = player.playerId;
-    playerIds[player.playerId] = player.PartyId;
-    playerNames[name] = player.PartyId;
+    parties[player[PARTY_ID]][name] = player[PLAYER_ID];
+    playerIds[player[PLAYER_ID]] = player[PARTY_ID];
+    playerNames[name] = player[PARTY_ID];
   });
 
   // sift parties that are of size 1 (who are solo queued)

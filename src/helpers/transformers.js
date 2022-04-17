@@ -9,8 +9,19 @@ import moment from 'moment';
 
 import CONSTANTS from '../constants';
 
-const { API } = CONSTANTS;
+const { API, SMITE_RAW_KEYS } = CONSTANTS;
 const { TIME_FORMAT } = API;
+
+const {
+  //
+  ENTRY_DATETIME,
+  WIN_STATUS,
+  NAME,
+  MAP_GAME,
+  MATCH,
+  MATCH_DURATION,
+  REFERENCE_NAME,
+} = SMITE_RAW_KEYS;
 
 /**
  *
@@ -32,13 +43,13 @@ export const transformMatchDate = (date) => {
 export const transformMatchState = (rawMatchDetails, patchVersion) => {
   const matchState = {
     // this date refers to a match's UTC time
-    date: transformMatchDate(rawMatchDetails.Entry_Datetime),
-    isVictory: _.startsWith(rawMatchDetails.Win_Status, 'Win'),
-    isRanked: _.startsWith(rawMatchDetails.name, 'Ranked'),
-    map: rawMatchDetails.Map_Game,
-    matchId: rawMatchDetails.Match,
-    duration: rawMatchDetails.Match_Duration,
-    god: rawMatchDetails.Reference_Name,
+    date: transformMatchDate(rawMatchDetails[ENTRY_DATETIME]),
+    isVictory: _.startsWith(rawMatchDetails[WIN_STATUS], 'Win'),
+    isRanked: _.startsWith(rawMatchDetails[NAME], 'Ranked'),
+    map: rawMatchDetails[MAP_GAME],
+    matchId: rawMatchDetails[MATCH],
+    duration: rawMatchDetails[MATCH_DURATION],
+    god: rawMatchDetails[REFERENCE_NAME],
     // required to map the items to a match
     // as items change over time
     // ! There is a potential bug that if a player's data has not been updated

@@ -4,14 +4,13 @@ import CONSTANTS from '../../../src/constants';
 import MOCKS from '../../../src/mocks';
 import { RedisMockClient } from '../../setup/setupRedisMock';
 
-const { REDIS, ERRORS } = CONSTANTS;
-const { ENTRY, ROOT, PLAYERS, GLOBAL } = REDIS;
+const { SMITE_QL_KEYS, ERRORS } = CONSTANTS;
+const { ENTRY, ROOT, PLAYERS, GLOBAL } = SMITE_QL_KEYS;
 const { CLIENT_NOT_READY } = ERRORS;
 
 const {
   // mocks are real data from Smite API
   mockMatchDetails,
-  // mockMatchHistory,
   mockSingleMatchHistory,
   mockPlayer,
 } = MOCKS;
