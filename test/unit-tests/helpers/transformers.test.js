@@ -1,28 +1,28 @@
 import _ from 'lodash';
 
-import * as tranformers from '../../../src/helpers/transformers';
+import * as TRANSFORMERS from '../../../src/helpers/transformers';
 import MOCKS from '../../../src/mocks';
 
 const {
   // transformers
-  transformMatchDate,
-  transformMatchState,
-} = tranformers;
+  toDate,
+  toSmiteQLMatch,
+} = TRANSFORMERS;
 
 const { mockMatchDetails } = MOCKS;
 
 describe('Transformers', () => {
-  describe('transformMatchDate', () => {
+  describe('toDate', () => {
     it('should convert date to utc format', () => {
       const date = '3/22/2022 12:06:35 AM';
-      const transformedDate = transformMatchDate(date);
+      const transformedDate = toDate(date);
       const expectedDate = '20220322000635';
 
       expect(transformedDate).toEqual(expectedDate);
     });
   });
 
-  describe('transformMatchState', () => {
+  describe('toSmiteQLMatch', () => {
     it('should covert match object from Offical Smite API to condensed version', () => {
       const match = {
         ..._.first(mockMatchDetails),
@@ -30,7 +30,7 @@ describe('Transformers', () => {
         Win_Status: 'Loss',
       };
 
-      const transformedMatchState = transformMatchState(match, '10.0');
+      const transformedMatchState = toSmiteQLMatch(match, '10.0');
 
       const expectedMatch = {
         date: '20220310043610',

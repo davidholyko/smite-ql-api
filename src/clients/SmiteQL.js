@@ -26,7 +26,7 @@ const {
   CURRENT_PATCH,
   PREVIOUS_PATCHES,
 } = SMITE_QL_KEYS;
-const { HZ_PLAYER_NAME, PLAYER_ID } = SMITE_RAW_KEYS;
+const { HZ_PLAYER_NAME } = SMITE_RAW_KEYS;
 const { CLIENT_NOT_READY } = ERRORS;
 
 export class SmiteQL extends SmiteApi {
@@ -203,7 +203,7 @@ export class SmiteQL extends SmiteApi {
    */
   async _updatePatchVersion() {
     const { version_string: patchVersion } = await this.getPatchInfo();
-    const currentPatch = await this._get(`${GLOBAL}.${PATCH_VERSIONS}.currentPatch`);
+    const currentPatch = await this._get(`${GLOBAL}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
 
     if (currentPatch === patchVersion) {
       // if our latest patchVersion is already upto date
@@ -260,7 +260,7 @@ export class SmiteQL extends SmiteApi {
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
 
     if (playerId) {
-      const newMatchInfo = HELPERS.processMatchDetails(rawMatchDetails, playerId, this.patchVersion);
+      const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, this.patchVersion);
       const winLossPath = `${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;
 
       await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, newMatchInfo.matchId);
@@ -292,6 +292,7 @@ export class SmiteQL extends SmiteApi {
     }
 
     const playerInfo = await this._get(`${PLAYERS}.${playerId}`);
+
     const rawMatchHistory = await super.getMatchHistory(playerId);
     const prevMatchInfo = _.pick(playerInfo, [MATCHES, HISTORY, RANKED, NORMAL]);
     const newMatchHistory = HELPERS.processMatchHistory(prevMatchInfo, rawMatchHistory, this.patchVersion);
@@ -305,8 +306,7 @@ export class SmiteQL extends SmiteApi {
       // that information in parallel
       await Promise.allSettled(
         _.map(newMatchHistory, async (matchId) => {
-          const matchDetails = await this.getMatchDetails(matchId, playerId);
-          return matchDetails;
+          await this.getMatchDetails(matchId, playerId);
         }),
       );
     }
@@ -339,7 +339,7 @@ export class SmiteQL extends SmiteApi {
       },
     };
 
-    await this._set(`${PLAYERS}.${PLAYER_ID}`, playerInfo);
+    await this._set(`${PLAYERS}.${playerId}`, playerInfo);
 
     return playerInfo;
   }

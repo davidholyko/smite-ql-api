@@ -28,7 +28,7 @@ const {
  * @param {String} date - like '3/22/2022 12:06:35 AM'
  * @returns {String} - formatted date as string of numbers
  */
-export const transformMatchDate = (date) => {
+export const toDate = (date) => {
   const isoDateFormat = new Date(date);
   const newDate = moment(isoDateFormat).format(TIME_FORMAT);
   return newDate;
@@ -40,18 +40,19 @@ export const transformMatchDate = (date) => {
  * @param {String} patchVersion - patchVersion at the time of the match
  * @returns {Object} match with only date and victory status
  */
-export const transformMatchState = (rawMatchDetails, patchVersion) => {
+export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
   const matchState = {
     // this date refers to a match's UTC time
-    date: transformMatchDate(rawMatchDetails[ENTRY_DATETIME]),
+    date: toDate(rawMatchDetails[ENTRY_DATETIME]),
+
     isVictory: _.startsWith(rawMatchDetails[WIN_STATUS], 'Win'),
     isRanked: _.startsWith(rawMatchDetails[NAME], 'Ranked'),
+
     map: rawMatchDetails[MAP_GAME],
     matchId: rawMatchDetails[MATCH],
     duration: rawMatchDetails[MATCH_DURATION],
     god: rawMatchDetails[REFERENCE_NAME],
-    // required to map the items to a match
-    // as items change over time
+
     // ! There is a potential bug that if a player's data has not been updated
     // ! and a new patch has been released, previous matches can be associated
     // ! with the new patch and those item descriptions will be incorrect

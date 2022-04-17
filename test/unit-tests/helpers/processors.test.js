@@ -1,48 +1,85 @@
-import * as processors from '../../../src/helpers/processors';
+import _ from 'lodash';
+
+import * as PROCESSORS from '../../../src/helpers/processors';
 import MOCKS from '../../../src/mocks';
 
 const {
   // processors
   processMatchHistory,
+  processSmiteQLMatch,
   processPartyDetails,
-} = processors;
+} = PROCESSORS;
 
-const { mockMatchDetails, mockSingleMatchHistory } = MOCKS;
+const {
+  // mocks
+  mockMatchDetails,
+  mockSingleMatchHistory,
+  mockMultipleMatchHistory,
+} = MOCKS;
 
 describe('processors', () => {
+  const patchVersion = '10.0';
+
   describe('processMatchHistory', () => {
     it('should return an array of new matches current data is not up to date', () => {
       const mockPrevMatchInfo = { matches: {}, history: [] };
-      const processedMatchHistory = processMatchHistory(mockPrevMatchInfo, mockSingleMatchHistory);
+      const matchHistory = processMatchHistory(mockPrevMatchInfo, mockSingleMatchHistory);
       const expectedMatchHistory = [1232099678];
 
-      expect(processedMatchHistory).toEqual(expectedMatchHistory);
+      expect(matchHistory).toEqual(expectedMatchHistory);
     });
-
     it('should return [] if current data is already up to date', () => {
       const mockPrevMatchInfo = {
         history: [1232099678],
         matches: {
-          1232099678: {
-            date: '20220322000635',
-            isVictory: false,
-            matchId: 1232099678,
-            god: 'Raijin',
-            patchVersion: '10.0',
-          },
+          1232099678: {},
         },
       };
-      const processedMatchHistory = processMatchHistory(mockPrevMatchInfo, mockSingleMatchHistory);
 
+      const matchHistory = processMatchHistory(mockPrevMatchInfo, mockSingleMatchHistory);
       const expectedMatchHistory = [];
 
-      expect(processedMatchHistory).toEqual(expectedMatchHistory);
+      expect(matchHistory).toEqual(expectedMatchHistory);
+    });
+    it('should return partial array if there is a match in previous data', () => {
+      const latestMatchHistory = _.slice(mockMultipleMatchHistory, 0, 10);
+      const mockPrevMatchInfo = {
+        history: [1231930477],
+        matches: {
+          // this is the 6th match out of 10
+          1231930477: {},
+        },
+      };
+
+      const matchHistory = processMatchHistory(mockPrevMatchInfo, latestMatchHistory);
+      const matchIds = _.map(latestMatchHistory, (match) => match.Match);
+      const expectedMatchHistory = _.slice(matchIds, 0, 6);
+
+      expect(matchHistory).toEqual(expectedMatchHistory);
+    });
+  });
+
+  describe('processSmiteQLMatch', () => {
+    it('should process raw data into a SmiteQL match object', () => {
+      const smiteQLMatch = processSmiteQLMatch(mockMatchDetails, 'dhko', patchVersion);
+      const expectedSmiteQLMatch = {
+        date: '20220310043610',
+        duration: 1189,
+        god: 'Vulcan',
+        isRanked: false,
+        isVictory: false,
+        map: 'Slash',
+        matchId: 1229914631,
+        patchVersion,
+      };
+
+      expect(smiteQLMatch).toEqual(expectedSmiteQLMatch);
     });
   });
 
   describe('processPartyDetails', () => {
     it('should process a match and output an object to describe parties', () => {
-      const processedPartyDetails = processPartyDetails(mockMatchDetails);
+      const partyDetails = processPartyDetails(mockMatchDetails);
 
       const expectedPartyDetails = {
         playerIds: {
@@ -78,7 +115,7 @@ describe('processors', () => {
         },
       };
 
-      expect(processedPartyDetails).toEqual(expectedPartyDetails);
+      expect(partyDetails).toEqual(expectedPartyDetails);
     });
   });
 });

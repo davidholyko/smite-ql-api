@@ -9,7 +9,7 @@ import _ from 'lodash';
 import CONSTANTS from '../constants';
 
 import { parsePlayerName } from './parsers';
-import { transformMatchState } from './transformers';
+import { toSmiteQLMatch } from './transformers';
 
 const { SMITE_RAW_KEYS } = CONSTANTS;
 const { HZ_PLAYER_NAME, REFERENCE_NAME, MATCH, PLAYER_ID, PARTY_ID, PLAYER_NAME } = SMITE_RAW_KEYS;
@@ -17,7 +17,7 @@ const { HZ_PLAYER_NAME, REFERENCE_NAME, MATCH, PLAYER_ID, PARTY_ID, PLAYER_NAME 
 /**
  * Compares match history of new match history with old. If there are new matches, loads that
  * into an object to update redis DB with.
- * @param {Object} prevMatchInfo - object with ign, matches, history, and info
+ * @param {Object} prevMatchInfo - object with matches, history
  * @param {Object} latestMatchHistory - object with matches and history. History is in order of most recent games at beginning
  * @returns {Array<String>} prevMatchInfo
  */
@@ -36,8 +36,8 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
   for (const match of latestMatchHistory) {
     if (_.get(prevMatchInfo.matches, match[MATCH])) {
       // if we find a match in latestMatchHistory that already exists,
-      // the rest of the matches in latestMatchHistory have already been added to redis DB
-      // we do not need to keep adding matches
+      // the rest of the matches in latestMatchHistory have already been
+      // added to redis DB. we do not need to keep adding matches
 
       break;
     }
@@ -55,11 +55,11 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
  * @param {String} patchVersion - patchVersion at the time
  * @returns {Object} newMatchInfo
  */
-export const processMatchDetails = (rawMatchDetails, playerId, patchVersion) => {
+export const processSmiteQLMatch = (rawMatchDetails, playerId, patchVersion) => {
   const match = _.find(rawMatchDetails, [HZ_PLAYER_NAME, playerId]);
-  const newMatchState = transformMatchState(match, patchVersion);
+  const smiteQLMatch = toSmiteQLMatch(match, patchVersion);
 
-  return newMatchState;
+  return smiteQLMatch;
 };
 
 /**

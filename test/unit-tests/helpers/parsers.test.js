@@ -1,4 +1,6 @@
-import { parsePlayerName } from '../../../src/helpers/parsers';
+import * as PARSERS from '../../../src/helpers/parsers';
+
+const { parsePlayerName } = PARSERS;
 
 describe('Parsers', () => {
   describe('parsePlayerName', () => {
