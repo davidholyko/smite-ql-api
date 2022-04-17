@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.73% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>72/76</span>
+                <span class='fraction'>72/78</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.73% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>72/76</span>
+                <span class='fraction'>72/78</span>
             </div>
         
             
@@ -411,7 +411,12 @@
 <a name='L346'></a><a href='#L346'>346</a>
 <a name='L347'></a><a href='#L347'>347</a>
 <a name='L348'></a><a href='#L348'>348</a>
-<a name='L349'></a><a href='#L349'>349</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -420,6 +425,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -675,6 +683,8 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -713,7 +723,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -752,6 +761,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -767,7 +777,7 @@ import HELPERS from '../helpers';
 import { redisClient } from './Redis';
 import { smiteApiClient, SmiteApi } from './SmiteApi';
 &nbsp;
-const { SMITE_QL_KEYS, SMITE_RAW_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -786,8 +796,11 @@ const {
   IGN,
   CURRENT_PATCH,
   PREVIOUS_PATCHES,
+  ACCOUNT_NUMBER,
+  RAW,
+  PARTY,
 } = SMITE_QL_KEYS;
-const { HZ_PLAYER_NAME } = SMITE_RAW_KEYS;
+const { HZ_PLAYER_NAME, ID } = SMITE_API_KEYS;
 const { CLIENT_NOT_READY } = ERRORS;
 &nbsp;
 export class SmiteQL extends SmiteApi {
@@ -1022,17 +1035,19 @@ export class SmiteQL extends SmiteApi {
 &nbsp;
     if (playerId) {
       const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, this.patchVersion);
+      const partyInfo = <span class="cstat-no" title="statement not covered" >_.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});</span>
       const winLossPath = <span class="cstat-no" title="statement not covered" >`${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;</span>
+      const data = <span class="cstat-no" title="statement not covered" >{ ...newMatchInfo, party: partyInfo };</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, newMatchInfo.matchId);</span>
-<span class="cstat-no" title="statement not covered" >      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, newMatchInfo);</span>
+<span class="cstat-no" title="statement not covered" >      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, data);</span>
     }
 &nbsp;
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, { raw: rawMatchDetails, partyDetails });
 &nbsp;
     return {
-      raw: rawMatchDetails,
-      partyDetails,
+      [RAW]: rawMatchDetails,
+      [PARTY]: partyDetails,
     };
   }
 &nbsp;
@@ -1041,7 +1056,7 @@ export class SmiteQL extends SmiteApi {
    * history is already in redis, it will not make any redis updates. If the player's
    * account information doesn't exist, it will fill that in
    * @param {String} playerId - like 'dhko'
-   * @returns {Object} - data
+   * @returns {Array&lt;String&gt;} - list of last matchIds (upto 50)
    */
   async getMatchHistory(playerId) {
     this._assertReady();
@@ -1063,11 +1078,10 @@ export class SmiteQL extends SmiteApi {
         await this._append(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
       }
 &nbsp;
-      // Find match details for all matches and request
-      // that information in parallel
+      // Find match details for all matches information in parallel
       await Promise.allSettled(
         _.map(newMatchHistory, async (matchId) =&gt; {
-          await this.getMatchDetails(matchId, playerId);
+          return await this.getMatchDetails(matchId, playerId);
         }),
       );
     }
@@ -1086,7 +1100,8 @@ export class SmiteQL extends SmiteApi {
     const playerDetails = await super.getPlayer(playerId);
 &nbsp;
     const playerInfo = {
-      [IGN]: _.get(playerDetails, `[0].${HZ_PLAYER_NAME}`), // in game name
+      [IGN]: _.get(playerDetails, `[0][${HZ_PLAYER_NAME}]`), // in game name, like 'dhko'
+      [ACCOUNT_NUMBER]: _.get(playerDetails, `[0][${ID}]`), // associated number, like 4553282
       [DETAILS]: _.first(playerDetails),
       [MATCHES]: {},
       [HISTORY]: [],
@@ -1114,7 +1129,7 @@ export const smiteQLClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sun Apr 17 2022 16:02:04 GMT+0000 (Coordinated Universal Time)
+                at Sun Apr 17 2022 18:47:17 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>
