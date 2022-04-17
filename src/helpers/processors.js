@@ -17,7 +17,8 @@ import { transformMatchState } from './transformers';
  * @returns {Array<String>} prevMatchInfo
  */
 export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
-  const hasDiff = _.get(prevMatchInfo, `matches[${_.first(latestMatchHistory).Match}]`);
+  const firstMatchId = _.first(latestMatchHistory).Match;
+  const hasDiff = _.get(prevMatchInfo.matches, firstMatchId);
   const newMatches = [];
 
   if (hasDiff) {
@@ -28,6 +29,14 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
   }
 
   for (const match of latestMatchHistory) {
+    if (_.get(prevMatchInfo.matches, match.Match)) {
+      // if we find a match in latestMatchHistory that already exists,
+      // the rest of the matches in latestMatchHistory have already been added to redis DB
+      // we do not need to keep adding matches
+
+      break;
+    }
+
     newMatches.push(match.Match);
   }
 
