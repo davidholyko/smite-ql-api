@@ -9,19 +9,8 @@ import moment from 'moment';
 
 import CONSTANTS from '../constants';
 
-const { API, SMITE_API_KEYS } = CONSTANTS;
+const { API } = CONSTANTS;
 const { TIME_FORMAT } = API;
-
-const {
-  //
-  ENTRY_DATETIME,
-  WIN_STATUS,
-  NAME,
-  MAP_GAME,
-  MATCH,
-  MATCH_DURATION,
-  REFERENCE_NAME,
-} = SMITE_API_KEYS;
 
 /**
  *
@@ -41,22 +30,66 @@ export const toDate = (date) => {
  * @returns {Object} match with only date and victory status
  */
 export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
+  const currentPatch = patchVersion;
+  const playerItems = [
+    //
+    rawMatchDetails.Item_Active_1,
+    rawMatchDetails.Item_Active_2,
+  ];
+  const playerActives = [
+    //
+    rawMatchDetails.Item_Purch_1,
+    rawMatchDetails.Item_Purch_2,
+    rawMatchDetails.Item_Purch_3,
+    rawMatchDetails.Item_Purch_4,
+    rawMatchDetails.Item_Purch_5,
+    rawMatchDetails.Item_Purch_6,
+  ];
+
   const matchState = {
     // this date refers to a match's UTC time
-    date: toDate(rawMatchDetails[ENTRY_DATETIME]),
+    date: toDate(_.get(rawMatchDetails, 'Entry_Datetime')),
 
-    isVictory: _.startsWith(rawMatchDetails[WIN_STATUS], 'Win'),
-    isRanked: _.startsWith(rawMatchDetails[NAME], 'Ranked'),
+    // checks
+    isVictory: _.startsWith(rawMatchDetails['Win_Status'], 'Win'),
+    isRanked: _.startsWith(rawMatchDetails['name'], 'Ranked'),
+    isWatchable: _.startsWith(rawMatchDetails['hasReplay'], 'y'),
 
-    map: rawMatchDetails[MAP_GAME],
-    matchId: rawMatchDetails[MATCH],
-    duration: rawMatchDetails[MATCH_DURATION],
-    god: rawMatchDetails[REFERENCE_NAME],
+    // player match details
+    kills: _.get(rawMatchDetails, 'Kills_Single', 0),
+    deaths: _.get(rawMatchDetails, 'Deaths', 0),
+    assists: _.get(rawMatchDetails, 'Assists', 0),
+    healing: _.get(rawMatchDetails, 'Healing', 0),
+    gold: _.get(rawMatchDetails, 'Gold_Earned', 0),
+    god: _.get(rawMatchDetails, 'Reference_Name', 0),
+    role: _.get(rawMatchDetails, 'Role', 0),
+    godLevel: _.get(rawMatchDetails, 'Final_Match_Level', 'Unknown'),
+    wards: _.get(rawMatchDetails, 'Wards_Placed', 0),
+
+    // damage
+    damageDone: _.get(rawMatchDetails, 'Damage_Player', 0),
+    damageTaken: _.get(rawMatchDetails, 'Damage_Taken', 0),
+    damageMitigated: _.get(rawMatchDetails, 'Damage_Mitigated', 0),
+    damageStructures: _.get(rawMatchDetails, 'Structure_Damage', 0),
+
+    // items and actives
+    actives: playerActives,
+    items: playerItems,
+
+    // player detils
+    accountLevel: _.get(rawMatchDetails, 'Account_Level', 0),
+    masteryLevel: _.get(rawMatchDetails, 'Mastery_Level', 0),
+
+    // match details
+    map: _.get(rawMatchDetails, 'Map_Game', 'Unknown'),
+    matchId: _.get(rawMatchDetails, 'Match', 0),
+    durationInSeconds: _.get(rawMatchDetails, 'Match_Duration', 0),
+    durationInMinutes: _.get(rawMatchDetails, 'Minutes', 0),
 
     // ! There is a potential bug that if a player's data has not been updated
     // ! and a new patch has been released, previous matches can be associated
     // ! with the new patch and those item descriptions will be incorrect
-    patchVersion: patchVersion,
+    patchVersion: currentPatch,
   };
 
   return matchState;

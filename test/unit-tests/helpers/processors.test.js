@@ -63,14 +63,39 @@ describe('processors', () => {
     it('should process raw data into a SmiteQL match object', () => {
       const smiteQLMatch = processSmiteQLMatch(mockMatchDetails, 'dhko', patchVersion);
       const expectedSmiteQLMatch = {
+        accountLevel: 160,
+        actives: [
+          'Evolved Book of Thoth',
+          'Spear of Desolation',
+          'Spear of the Magus',
+          'Calamitous Rod of Tahuti',
+          'Enchanted Spear',
+          '',
+        ],
+        assists: 7,
+        damageDone: 22953,
+        damageMitigated: 5245,
+        damageStructures: 420,
+        damageTaken: 12497,
         date: '20220310043610',
-        duration: 1189,
+        deaths: 4,
+        durationInMinutes: 19,
+        durationInSeconds: 1189,
         god: 'Vulcan',
+        godLevel: 20,
+        gold: 13775,
+        healing: 0,
         isRanked: false,
         isVictory: false,
+        isWatchable: false,
+        items: ['Purification Beads', 'Aegis Amulet'],
+        kills: 3,
         map: 'Slash',
+        masteryLevel: 116,
         matchId: 1229914631,
-        patchVersion,
+        patchVersion: '10.0',
+        role: 'Unknown',
+        wards: 2,
       };
 
       expect(smiteQLMatch).toEqual(expectedSmiteQLMatch);

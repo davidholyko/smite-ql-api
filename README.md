@@ -9,32 +9,7 @@
 
 View this repo's [test coverage](https://david-ko.com/smite-ql-api/).
 
-### Integration Tests
-
-Integration Tests require a real `DEV_ID` and `AUTH_KEY` from Hirez Studios. These tests make real API calls to the Smite API.
-
-### Unit Tests
-
-Unit Tests test pure functionality and use mock data from real API requests. These tests do not require a real `DEV_ID` and `AUTH_KEY`.
-
-Tests should ideally be in the following format:
-
-```javascript
-describe('Some function', () => {
-  it('should do something', () => {
-    // 1. SETUP
-    //      setup scenario (if needed) for test case
-    //      could mean mocking functions
-    // 2. PROCESSING
-    //      invoking the function with the correct params
-    // 3. EXPECTATIONS
-    //      explicitly calling out what we expect the function to return or
-    //      perform expect any side effects to happen
-    // 4. ASSERTIONS
-    //      assert that expectations were met
-  });
-});
-```
+_See [documentation](./documentation/tests/testing-strategy.md) for more information._
 
 ## Versioning
 
@@ -85,7 +60,10 @@ nvm use
 npm ci
 
 # Start application
-npm start
+npm run start
+
+# Start a small sandbox to populate redis DB
+npm run start:sandbox
 ```
 
 ## Sandbox
@@ -112,61 +90,14 @@ This repo uses `express.js` to run a server on port `4343`.
 npm run start
 ```
 
-### Endpoints
-
-#### `ping`
-
-Returns JSON with `message`.
-
-**Example Endpoint**
+## Endpoints
 
 ```
 http://localhost:4343/ping
+http://localhost:4343/smite-ql
 ```
 
-**Output**
-
-```json
-{
-  "success": true,
-  "message": "pong"
-}
-```
-
-#### `smite-ql`
-
-Requires `path` query params to look into redis DB.
-
-**Example Endpoint**
-
-```
-http://localhost:4343/smite-ql?path=players.dhko.matches.1235652463
-```
-
-**Output**
-
-```json
-{
-  "success": true,
-  "message": "success",
-  "response": {
-    "date": "20220409025010",
-    "isVictory": false,
-    "isRanked": false,
-    "map": "Slash",
-    "matchId": 1235652463,
-    "duration": 1068,
-    "god": "Thor",
-    "patchVersion": "9.3",
-    "party": {
-      "dhko": "4553282",
-      "SaltyUrban": "710155777",
-      "soannoyed": "714682417",
-      "TripleCCC1": "7027112"
-    }
-  }
-}
-```
+_See [documentation](./documentation/server/endpoints.md) for more information._
 
 # Troubleshooting
 

@@ -24,23 +24,43 @@ describe('Transformers', () => {
 
   describe('toSmiteQLMatch', () => {
     it('should covert match object from Offical Smite API to condensed version', () => {
-      const match = {
-        ..._.first(mockMatchDetails),
-        Match_Time: '3/22/2022 12:06:35 AM',
-        Win_Status: 'Loss',
-      };
-
+      const match = _.first(mockMatchDetails);
       const transformedMatchState = toSmiteQLMatch(match, '10.0');
 
       const expectedMatch = {
+        accountLevel: 144,
+        actives: [
+          'Conduit Gem',
+          "Evolved Charon's Coin",
+          "Chronos' Pendant",
+          'Divine Ruin',
+          'Spear of Desolation',
+          'Calamitous Rod of Tahuti',
+        ],
+        assists: 9,
+        damageDone: 31059,
+        damageMitigated: 6095,
+        damageStructures: 1790,
+        damageTaken: 16629,
         date: '20220310043610',
-        isVictory: false,
-        isRanked: false,
-        map: 'Slash',
+        deaths: 5,
+        durationInMinutes: 19,
+        durationInSeconds: 1189,
         god: 'Nu Wa',
-        duration: 1189,
+        godLevel: 20,
+        gold: 15941,
+        healing: 0,
+        isRanked: false,
+        isWatchable: false,
+        isVictory: true,
+        items: ['Purification Beads', 'Aegis Amulet'],
+        kills: 11,
+        map: 'Slash',
+        masteryLevel: 111,
         matchId: 1229914631,
         patchVersion: '10.0',
+        role: 'Unknown',
+        wards: 2,
       };
 
       expect(transformedMatchState).toEqual(expectedMatch);
