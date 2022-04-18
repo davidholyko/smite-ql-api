@@ -1,4 +1,4 @@
-export const multipleMatchDetails = [
+export const match_details_1_10 = [
   {
     Account_Level: 155,
     ActiveId1: 21564,

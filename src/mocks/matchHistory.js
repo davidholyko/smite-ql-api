@@ -1,7 +1,7 @@
-import { multipleMatchHistory } from './_matchHistory/multipleMatchHistory';
-import { singleMatchHistory } from './_matchHistory/singleMatchHistory';
+import { match_history_0 } from './_matchHistory/match_history_0';
+import { match_history_1_10 } from './_matchHistory/match_history_1_10';
 
-export const mockSingleMatchHistory = singleMatchHistory;
+export const mockSingleMatchHistory = match_history_0;
 
 /**
  * Information from:
@@ -13,6 +13,6 @@ export const mockSingleMatchHistory = singleMatchHistory;
 export const mockMatchHistory = [
   // first item in match details refers to information for a player
   // to look at one match because the rest are similiar
-  ...singleMatchHistory,
-  ...multipleMatchHistory,
+  ...match_history_0,
+  ...match_history_1_10,
 ];

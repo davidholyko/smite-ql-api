@@ -7,7 +7,7 @@
  * matchHistory cannot tell whether a match is ranked or normal but
  * matchDetails can tell whether a match is ranked or normal
  */
-export const singleMatchHistory = [
+export const match_history_0 = [
   {
     ActiveId1: 21476,
     ActiveId2: 18307,

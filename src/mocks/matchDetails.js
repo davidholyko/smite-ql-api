@@ -1,7 +1,7 @@
-import { multipleMatchDetails as matchDetails } from './_matchDetails/multipleMatchDetails';
-import { singleMatchDetails as matchDetail } from './_matchDetails/singleMatchDetails';
+import { match_details_0 } from './_matchDetails/match_details_0';
+import { match_details_1_10 } from './_matchDetails/match_details_1_10';
 
-export const singleMatchDetails = matchDetail;
+export const singleMatchDetails = match_details_0;
 
 /**
  * Information from:
@@ -12,6 +12,6 @@ export const singleMatchDetails = matchDetail;
 export const mockMatchDetails = [
   // first item in match details refers to information for a player
   // to look at one match because the rest are similiar
-  ...matchDetail,
-  ...matchDetails,
+  ...match_details_0,
+  ...match_details_1_10,
 ];
