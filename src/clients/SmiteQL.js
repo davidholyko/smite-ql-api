@@ -23,6 +23,8 @@ const {
   PREVIOUS_PATCHES,
   RAW,
   PARTY,
+  ITEMS,
+  GODS,
 } = SMITE_QL_KEYS;
 
 export class SmiteQL extends SmiteApi {
@@ -35,7 +37,6 @@ export class SmiteQL extends SmiteApi {
 
     // internal properties
     this.isReady = false;
-    this.patchVersion = null;
   }
 
   // ******************************************************************** //
@@ -49,6 +50,16 @@ export class SmiteQL extends SmiteApi {
   _assertReady() {
     if (!this.isReady) {
       throw new Error(ERRORS.CLIENT_NOT_READY);
+    }
+  }
+
+  /**
+   * @param {String} patchVersion - like '9.3'
+   * @returns {void}
+   */
+  _assertPatchVersion(patchVersion) {
+    if (!patchVersion) {
+      throw new Error('Patch version has not been set.');
     }
   }
 
@@ -126,7 +137,7 @@ export class SmiteQL extends SmiteApi {
   /**
    * creates initial state for redis DB if it does not already exists. This function can
    * additionally migrate schema if needed
-   * @returns {Boolean} - whether initialState already exists
+   * @returns {Boolean} - whether initialState was created
    */
   async _createInitialState() {
     const doesRootExist = await this._exists(ROOT);
@@ -134,13 +145,13 @@ export class SmiteQL extends SmiteApi {
     if (doesRootExist) {
       // TODO: later when we have different schema versions,
       // we can update the state from here
-      return true;
+      return false;
     }
 
     const initialState = HELPERS.buildRootState();
     await this._set(ROOT, initialState);
 
-    return false;
+    return true;
   }
 
   /**
@@ -162,9 +173,20 @@ export class SmiteQL extends SmiteApi {
     // update redis and SmiteQL client
     await this._set(`${GLOBAL}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersion);
     await this._prepend(`${GLOBAL}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersion);
-    this.patchVersion = patchVersion;
 
     return patchVersion;
+  }
+
+  /**
+   * gets patch version from redis DB
+   * @returns {String} - current patch version, like '9.3'
+   */
+  async _getPatchVersion() {
+    const currentPatch = await this._get(`${GLOBAL}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+
+    this._assertPatchVersion(currentPatch);
+
+    return currentPatch;
   }
 
   /**
@@ -173,13 +195,16 @@ export class SmiteQL extends SmiteApi {
    *                    - false if ready was not already called
    */
   async ready() {
-    const { isReady } = this;
+    const readyStatus = this.isReady;
+
     this.isReady = true;
 
     await this._createInitialState();
     await this._updatePatchVersion();
+    await this.getGods();
+    await this.getItems();
 
-    return isReady;
+    return readyStatus;
   }
 
   // ******************************************************************** //
@@ -193,7 +218,7 @@ export class SmiteQL extends SmiteApi {
    * data from Smite API again.
    * @param {Number} matchId - like 1232096830
    * @param {?String} playerId - like 'dhko'
-   * @returns {Array<Object>} - data
+   * @returns {Object} - data
    */
   async getMatchDetails(matchId, playerId) {
     this._assertReady();
@@ -208,7 +233,8 @@ export class SmiteQL extends SmiteApi {
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
 
     if (playerId) {
-      const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, this.patchVersion);
+      const patchVersion = await this._getPatchVersion();
+      const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, patchVersion);
       const partyInfo = _.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});
       const winLossPath = `${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;
       const data = { ...newMatchInfo, party: partyInfo };
@@ -241,11 +267,11 @@ export class SmiteQL extends SmiteApi {
       await this.getPlayer(playerId);
     }
 
+    const patchVersion = await this._getPatchVersion();
     const playerInfo = await this._get(`${PLAYERS}.${playerId}`);
-
     const rawMatchHistory = await super.getMatchHistory(playerId);
     const prevMatchInfo = _.pick(playerInfo, [MATCHES, HISTORY, RANKED, NORMAL]);
-    const newMatchHistory = HELPERS.processMatchHistory(prevMatchInfo, rawMatchHistory, this.patchVersion);
+    const newMatchHistory = HELPERS.processMatchHistory(prevMatchInfo, rawMatchHistory, patchVersion);
 
     if (!_.isEmpty(newMatchHistory)) {
       for (const matchId of newMatchHistory) {
@@ -277,6 +303,58 @@ export class SmiteQL extends SmiteApi {
     await this._set(`${PLAYERS}.${playerId}`, playerState);
 
     return playerState;
+  }
+
+  /**
+   * gets all items for current patch and stores information in redis.
+   * @returns {Boolean} - whether items were was fetched and stored
+   */
+  async getItems() {
+    this._assertReady();
+
+    const patchVersion = await this._getPatchVersion();
+    const isPopulated = await this._exists(`${GLOBAL}.${ITEMS}.${patchVersion}`);
+
+    if (isPopulated) {
+      return false;
+    }
+
+    const items = await super.getItems();
+
+    // Find match details for all matches information in parallel
+    await Promise.allSettled(
+      _.map(items, async (item) => {
+        const key = item.DeviceName;
+        return await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}.${key}`, item);
+      }),
+    );
+  }
+
+  /**
+   * gets all gods for current patch and stores information in redis.
+   * @returns {Boolean} - whether items were was fetched and stored
+   */
+  async getGods() {
+    this._assertReady();
+
+    const patchVersion = await this._getPatchVersion();
+    const isPopulated = await this._exists(`${GLOBAL}.${GODS}.${patchVersion}`);
+
+    if (isPopulated) {
+      return false;
+    }
+
+    const gods = await super.getGods();
+
+    // Find match details for all matches information in parallel
+    await Promise.allSettled(
+      _.map(gods, async (god) => {
+        const key = god.Name;
+        return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${key}`, god);
+      }),
+    );
+
+    return true;
   }
 }
 

@@ -24,10 +24,10 @@ Ping
 KEYS *
 
 # Get JSON
-JSON.GET smite:ql
+JSON.GET smite_ql
 
 # Get matches for a player
-JSON.GET smite:ql players <playerId> matches
+JSON.GET smite_ql players <playerId> matches
 
 # Clear DB
 FLUSHALL

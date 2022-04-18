@@ -17,11 +17,11 @@ class RedisJsonMock {
   }
 
   arrAppend() {
-    //
+    // TODO: fill in
   }
 
   arrInsert() {
-    //
+    // TODO: fill in
   }
 
   set(key, path, value) {
