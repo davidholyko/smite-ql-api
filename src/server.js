@@ -11,7 +11,11 @@ const app = express();
  * @example http://localhost:4343/ping
  */
 app.get('/ping', function (_req, res) {
-  res.send({ message: 'pong' });
+  res.send({
+    // ping should always work as long as server is running
+    success: true,
+    message: 'pong',
+  });
 });
 
 /**
@@ -21,12 +25,24 @@ app.get('/smite-ql', async function (req, res) {
   const { path } = req.query;
 
   if (!path) {
-    return res.send({ message: 'query.params is required for "smite-ql" endpoint.' });
+    return res.send({
+      // if no path is sent, the entire redis DB will be the output JSON
+      // we will want to reduce its scope
+      success: false,
+      message: 'query.params is required for "/smite-ql" endpoint.',
+    });
   }
 
-  const response = await smiteQLClient._get(path);
+  const response = await smiteQLClient.get(path);
+  const success = response.error ? false : true;
+  const message = response.error ? 'failure' : 'success';
 
-  res.send(response);
+  res.send({
+    // on errors, send the entire stack trace and message
+    success,
+    message,
+    response,
+  });
 });
 
 app.listen(SERVER.PORT);

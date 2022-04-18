@@ -118,7 +118,7 @@ npm run start
 
 Returns JSON with `message`.
 
-Example
+**Example Endpoint**
 
 ```
 http://localhost:4343/ping
@@ -127,14 +127,17 @@ http://localhost:4343/ping
 **Output**
 
 ```json
-{ "message": "pong" }
+{
+  "success": true,
+  "message": "pong"
+}
 ```
 
 #### `smite-ql`
 
 Requires `path` query params to look into redis DB.
 
-Example
+**Example Endpoint**
 
 ```
 http://localhost:4343/smite-ql?path=players.dhko.matches.1235652463
@@ -144,19 +147,23 @@ http://localhost:4343/smite-ql?path=players.dhko.matches.1235652463
 
 ```json
 {
-  "date": "20220409025010",
-  "isVictory": false,
-  "isRanked": false,
-  "map": "Slash",
-  "matchId": 1235652463,
-  "duration": 1068,
-  "god": "Thor",
-  "patchVersion": "9.3",
-  "party": {
-    "dhko": "4553282",
-    "SaltyUrban": "710155777",
-    "soannoyed": "714682417",
-    "TripleCCC1": "7027112"
+  "success": true,
+  "message": "success",
+  "response": {
+    "date": "20220409025010",
+    "isVictory": false,
+    "isRanked": false,
+    "map": "Slash",
+    "matchId": 1235652463,
+    "duration": 1068,
+    "god": "Thor",
+    "patchVersion": "9.3",
+    "party": {
+      "dhko": "4553282",
+      "SaltyUrban": "710155777",
+      "soannoyed": "714682417",
+      "TripleCCC1": "7027112"
+    }
   }
 }
 ```

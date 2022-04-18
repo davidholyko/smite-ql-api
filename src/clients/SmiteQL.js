@@ -356,6 +356,22 @@ export class SmiteQL extends SmiteApi {
 
     return true;
   }
+
+  // ******************************************************************** //
+  // **********************  Public Access Methods ********************** //
+  // ******************************************************************** //
+
+  async get(path) {
+    try {
+      return await this._get(path);
+    } catch (error) {
+      return {
+        error: true,
+        message: error.message,
+        stack: error.stack,
+      };
+    }
+  }
 }
 
 export const smiteQLClient = new SmiteQL();
