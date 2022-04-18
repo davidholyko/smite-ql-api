@@ -86,7 +86,7 @@ git update-index --no-skip-worktree src/sandbox/sandbox.js
 This repo uses `express.js` to run a server on port `4343`.
 
 ```
-# start express server
+# Start express server
 npm run start
 ```
 
