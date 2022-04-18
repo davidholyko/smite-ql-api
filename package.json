@@ -16,11 +16,8 @@
     "posttest:coverage": "open -a 'Google Chrome' './coverage/index.html'",
     "test:integration": "npx jest test/integration-tests",
     "prestart:sandbox": "npm run build",
-    "start:redis": "node dist/redis/redis.js",
-    "prestart:redis": "npm run build",
     "start:sandbox": "node dist/sandbox/sandbox.js",
-    "prestart": "npm run build",
-    "start": "node dist/index.js"
+    "start": "nodemon --exec babel-node src/index.js"
   },
   "engines": {
     "node": "16.x"
@@ -38,11 +35,13 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-sort-class-members": "^1.14.1",
     "jest": "^27.5.1",
+    "nodemon": "^2.0.15",
     "semantic-release": "^17.0.0"
   },
   "dependencies": {
     "axios": "^0.26.1",
     "dotenv": "^16.0.0",
+    "express": "^4.17.3",
     "jest-coverage-badges": "^1.1.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",

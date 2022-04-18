@@ -94,3 +94,7 @@ export const SMITE_API_KEYS = {
 export const ERRORS = {
   CLIENT_NOT_READY: 'SmiteQL.redis is not ready. Call async function SmiteQL.ready()',
 };
+
+export const SERVER = {
+  PORT: 4343,
+};

@@ -103,6 +103,64 @@ git update-index --skip-worktree src/sandbox/sandbox.js
 git update-index --no-skip-worktree src/sandbox/sandbox.js
 ```
 
+## Server
+
+This repo uses `express.js` to run a server on port `4343`.
+
+```
+# start express server
+npm run start
+```
+
+### Endpoints
+
+#### `ping`
+
+Returns JSON with `message`.
+
+Example
+
+```
+http://localhost:4343/ping
+```
+
+**Output**
+
+```json
+{ "message": "pong" }
+```
+
+#### `smite-ql`
+
+Requires `path` query params to look into redis DB.
+
+Example
+
+```
+http://localhost:4343/smite-ql?path=players.dhko.matches.1235652463
+```
+
+**Output**
+
+```json
+{
+  "date": "20220409025010",
+  "isVictory": false,
+  "isRanked": false,
+  "map": "Slash",
+  "matchId": 1235652463,
+  "duration": 1068,
+  "god": "Thor",
+  "patchVersion": "9.3",
+  "party": {
+    "dhko": "4553282",
+    "SaltyUrban": "710155777",
+    "soannoyed": "714682417",
+    "TripleCCC1": "7027112"
+  }
+}
+```
+
 # Troubleshooting
 
 ### Redis is not working
