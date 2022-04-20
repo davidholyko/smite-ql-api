@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.47% </span>
+                <span class="strong">91.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>95/105</span>
+                <span class='fraction'>96/105</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.47% </span>
+                <span class="strong">91.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>95/105</span>
+                <span class='fraction'>96/105</span>
             </div>
         
             
@@ -440,7 +440,17 @@
 <a name='L375'></a><a href='#L375'>375</a>
 <a name='L376'></a><a href='#L376'>376</a>
 <a name='L377'></a><a href='#L377'>377</a>
-<a name='L378'></a><a href='#L378'>378</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -449,6 +459,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -673,13 +684,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -688,6 +707,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -843,6 +863,7 @@ const {
   RAW,
   PARTY,
   ITEMS,
+  TEAM,
   GODS,
 } = SMITE_QL_KEYS;
 &nbsp;
@@ -1050,13 +1071,21 @@ export class SmiteQL extends SmiteApi {
 &nbsp;
     const rawMatchDetails = await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
+    const teamDetails = HELPERS.processTeamDetails(rawMatchDetails);
 &nbsp;
     if (playerId) {
+      // TODO: associate a player with another player's match
+      // if already exists and skip fetching
       const patchVersion = await this._getPatchVersion();
       const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, patchVersion);
-      const partyInfo = <span class="cstat-no" title="statement not covered" >_.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});</span>
       const winLossPath = <span class="cstat-no" title="statement not covered" >`${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;</span>
-      const data = <span class="cstat-no" title="statement not covered" >{ ...newMatchInfo, party: partyInfo };</span>
+&nbsp;
+      const data = <span class="cstat-no" title="statement not covered" >HELPERS.buildPlayerMatchState({</span>
+        matchInfo: newMatchInfo,
+        playerId,
+        partyDetails,
+        teamDetails,
+      });
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, newMatchInfo.matchId);</span>
 <span class="cstat-no" title="statement not covered" >      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, data);</span>
@@ -1067,6 +1096,7 @@ export class SmiteQL extends SmiteApi {
     return {
       [RAW]: rawMatchDetails,
       [PARTY]: partyDetails,
+      [TEAM]: teamDetails,
     };
   }
 &nbsp;
@@ -1201,7 +1231,7 @@ export const smiteQLClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Wed Apr 20 2022 04:25:29 GMT+0000 (Coordinated Universal Time)
+                at Wed Apr 20 2022 05:59:55 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
