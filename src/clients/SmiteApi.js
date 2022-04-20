@@ -252,18 +252,21 @@ export class SmiteApi {
     return response;
   }
 
-  // /getgodleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{queue}
-  // Returns the current season’s leaderboard for a god/queue combination.
-  // [SmiteApi; only queues 440, 450, 451]
-
-  // /getchampionleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{championId}/{queue}
-  // Returns the current season’s leaderboard for a champion/queue combination.
-  // [PaladinsAPI; only queue 428]
+  /**
+   * /getgodleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{queue}
+   * Returns the current season’s leaderboard for a god/queue combination.
+   * [SmiteApi; only queues 440, 450, 451]
+   * @returns {void}
+   */
+  async getGodLeaderBoard() {
+    // TODO:
+    return;
+  }
 
   /**
    * /getgodaltabilities[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
    * Returns alt abilities for all gods.
-   * SmiteApi only]
+   * [SmiteApi only]
    * @public
    * @returns {Object} - data
    */
@@ -283,9 +286,16 @@ export class SmiteApi {
     return response;
   }
 
-  // /getgodrecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godid}/{languageCode}
-  // Returns the Recommended Items for a particular God.
-  // [SmiteApi only]
+  /**
+   * /getgodrecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godid}/{languageCode}
+   * Returns the Recommended Items for a particular God.
+   * [SmiteApi only]
+   * @returns {void}
+   */
+  async getGodRecommendedItems() {
+    // TODO: fill in
+    return;
+  }
 
   /**
    * /getitems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languagecode}
@@ -301,12 +311,28 @@ export class SmiteApi {
   // * relates to 'APIs - Leagues, Seasons & Rounds' section in Smite API * //
   // * ****************************************************************** * //
 
-  // get leagueleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}/{tier}/{round}
-  // Returns the top players for a particular league (as indicated by the queue/tier/round parameters).
-  // Note: the “Season” for which the Round is associated is by default the current/active Season.
+  /**
+   *
+   * get leagueleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}/{tier}/{round}
+   * Returns the top players for a particular league (as indicated by the queue/tier/round parameters).
+   * Note: the “Season” for which the Round is associated is by default the current/active Season.
+   * @returns {void}
+   */
+  async getLeagueLeaderBoard() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getleagueseasons[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}
-  // Provides a list of seasons and rounds (including the single active season) for a match queue.
+  /**
+   *
+   * /getleagueseasons[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}
+   * Provides a list of seasons and rounds (including the single active season) for a match queue
+   * @returns {void}
+   */
+  async getLeagueSeasons() {
+    // TODO: fill in
+    return;
+  }
 
   // * *************************************************** *//
   // * relates to 'APIs - Match Info' section in Smite API *//
@@ -325,64 +351,133 @@ export class SmiteApi {
     return response;
   }
 
-  // /getmatchdetailsbatch[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id,match_id,match_id,...match_id}
-  // Returns the statistics for a particular set of completed matches.
-  // NOTE:  There is a byte limit to the amount of data returned; please limit the CSV parameter to 5 to 10 matches because of this and for Hi-Rez DB Performance reasons.
+  /**
+   * /getmatchdetailsbatch[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id,match_id,match_id,...match_id}
+   * Returns the statistics for a particular set of completed matches.
+   * NOTE:  There is a byte limit to the amount of data returned; please limit the CSV parameter to 5 to 10 matches because of this and for Hi-Rez DB Performance reasons.
+   * @returns {void}
+   */
+  async getMatchDetailsBatch() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getmatchidsbyqueue[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}/
-  // {date}/{hour}
-  // Lists all Match IDs for a particular Match Queue; useful for API developers interested in constructing data by Queue.
-  // To limit the data returned, an {hour} parameter was added (valid values: 0 - 23).
-  // An {hour} parameter of -1 represents the entire day, but be warned that this may be more data than we can return for certain queues.
-  // Also, a returned “active_flag” means that there is no match information/stats for the corresponding match.
-  // Usually due to a match being in-progress, though there could be other reasons.
-  // NOTE - To avoid HTTP timeouts in the GetMatchIdsByQueue() method, you can now specify a 10-minute window within the specified {hour} field to lessen the size of data returned by appending a “,mm” value to the end of {hour}. For example, to get the match Ids for the first 10 minutes of hour 3, you would specify {hour} as “3,00”.
-  // This would only return the Ids between the time 3:00 to 3:09.
-  // Rules below:
-  // Only valid values for mm are “00”, “10”, “20”, “30”, “40”, “50”
-  // To get the entire third hour worth of Match Ids, call GetMatchIdsByQueue() 6 times, specifying the following values for {hour}: “3,00”, “3,10”, “3,20”, “3,30”, “3,40”, “3,50”.
-  // The standard, full hour format of {hour} = “hh” is still supported.
+  /**
+   * /getmatchidsbyqueue[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}/{date}/{hour}
+   * Lists all Match IDs for a particular Match Queue; useful for API developers interested in constructing data by Queue.
+   * To limit the data returned, an {hour} parameter was added (valid values: 0 - 23).
+   * An {hour} parameter of -1 represents the entire day, but be warned that this may be more data than we can return for certain queues.
+   * Also, a returned “active_flag” means that there is no match information/stats for the corresponding match.
+   * Usually due to a match being in-progress, though there could be other reasons.
+   * NOTE - To avoid HTTP timeouts in the GetMatchIdsByQueue() method, you can now specify a 10-minute window within the specified {hour} field to lessen the size of data returned by appending a “,mm” value to the end of {hour}. For example, to get the match Ids for the first 10 minutes of hour 3, you would specify {hour} as “3,00”.
+   * This would only return the Ids between the time 3:00 to 3:09.
+   * Rules below:
+   *  * Only valid values for mm are “00”, “10”, “20”, “30”, “40”, “50”
+   *  * To get the entire third hour worth of Match Ids, call GetMatchIdsByQueue() 6 times, specifying the following values for {hour}: “3,00”, “3,10”, “3,20”, “3,30”, “3,40”, “3,50”.
+   *  * The standard, full hour format of {hour} = “hh” is still supported.
+   * @returns {void}
+   */
+  async getMatchIdsByQueue() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getmatchplayerdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
-  // Returns player information for a live match.
+  /**
+   * /getmatchplayerdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
+   * Returns player information for a live match.
+   * @returns {void}
+   */
+  async getMatchPlayerDetails() {
+    // TODO: fill in
+    return;
+  }
 
-  // /gettopmatches[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
-  // Lists the 50 most watched / most recent recorded matches.
+  /**
+   * /gettopmatches[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   * Lists the 50 most watched / most recent recorded matches.
+   * @returns {void}
+   */
+  async getTopMatches() {
+    // TODO: fill in
+    return;
+  }
 
   // * ********************************************** * //
   // * relates to 'APIs - Other' section in Smite API * //
   // * ********************************************** * //
 
-  // /getesportsproleaguedetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
-  // Returns the matchup information for each matchup for the current eSports Pro League season.
-  // An important return value is “match_status” which represents a match being scheduled (1), in-progress (2), or complete (3)
+  /**
+   * /getesportsproleaguedetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   * Returns the matchup information for each matchup for the current eSports Pro League season.
+   * An important return value is “match_status” which represents a match being scheduled (1), in-progress (2), or complete (3)
+   * @returns {void}
+   */
+  async getEsportsProLeagueDetails() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getmotd[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
-  // Returns information about the 20 most recent Match-of-the-Days.
+  /**
+   * /getmotd[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   * Returns information about the 20 most recent Match-of-the-Days.
+   * @returns {void}
+   */
+  async getMOTD() {
+    // TODO: fill in
+    return;
+  }
 
   // * ****************************************************** * //
   // * relates to 'APIs - PlayerId Info' section in Smite API * //
   // * ****************************************************** * //
 
-  // /getfriends[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
-  // Returns the Smite User names of each of the player’s friends.
-  // [PC only]
+  /**
+   * /getfriends[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   * Returns the Smite User names of each of the player’s friends.
+   * [PC only]
+   * @returns {void}
+   */
+  async getFriends() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getgodranks[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
-  // Returns the Rank and Worshippers value for each God a player has played.
+  /**
+   * /getgodranks[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   * Returns the Rank and Worshippers value for each God a player has played.
+   * @returns {void}
+   */
+  async getGodRanks() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getplayerachievements[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
-  // Returns select achievement totals (Double kills, Tower Kills, First Bloods, etc) for the specified playerId.
-  // [SMITEAPI only]
+  /**
+   * /getplayerachievements[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   * Returns select achievement totals (Double kills, Tower Kills, First Bloods, etc) for the specified playerId.
+   * [SMITEAPI only]
+   * @returns {void}
+   */
+  async getPlayerAchievements() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getplayerstatus[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
-  // Returns player status as follows:
-  // 0 - Offline
-  // 1 - In Lobby  (basically anywhere except god selection or in game)
-  // 2 - god Selection (player has accepted match and is selecting god before start of game)
-  //      	3 - In Game (match has started)
-  //      	4 - Online (player is logged in, but may be blocking broadcast of player state)
-  // 	5 - Unknown (player not found)
+  /**
+   * /getplayerstatus[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   * Returns player status as follows:
+   *  * 0 - Offline
+   *  * 1 - In Lobby  (basically anywhere except god selection or in game)
+   *  * 2 - god Selection (player has accepted match and is selecting god before start of game)
+   *  *	3 - In Game (match has started)
+   *  * 4 - Online (player is logged in, but may be blocking broadcast of player state)
+   *  * 5 - Unknown (player not found)
+   * @returns {void}
+   */
+  async getPlayerStatus() {
+    // TODO: fill in
+    return;
+  }
 
   /**
    * /getmatchhistory[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
@@ -409,8 +504,15 @@ export class SmiteApi {
     return response;
   }
 
-  // /searchplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchPlayer}
-  // Returns player_id values for all names and/or gamer_tags containing the “searchPlayer” string.
+  /**
+   * /searchplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchPlayer}
+   * Returns player_id values for all names and/or gamer_tags containing the “searchPlayer” string.
+   * @returns {void}
+   */
+  async searchPlayers() {
+    // TODO: fill in
+    return;
+  }
 
   // * ************************************************************ * //
   // * relates to 'APIs - Players & PlayerIds' section in Smite API * //
@@ -428,40 +530,73 @@ export class SmiteApi {
     return response;
   }
 
-  // /getplayeridbyname[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerName}
-  // Function returns a list of Hi-Rez playerId values (expected list size = 1) for playerName provided.
-  // The playerId returned is expected to be used in various other endpoints to represent the player/individual regardless of platform.
+  /**
+   * /getplayeridbyname[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerName}
+   * Function returns a list of Hi-Rez playerId values (expected list size = 1) for playerName provided.
+   * The playerId returned is expected to be used in various other endpoints to represent the player/individual regardless of platform.
+   * @returns {void}
+   */
+  async getPlayerIdByName() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getplayeridbyportaluserid[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{portalId}/{portalUserId}
-  // Function returns a list of Hi-Rez playerId values (expected list size = 1) for {portalId}/{portalUserId} combination provided.
-  // The playerId returned is expected to be used in various other endpoints to represent the player/individual regardless of platform.
+  /**
+   * /getplayeridbyportaluserid[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{portalId}/{portalUserId}
+   * Function returns a list of Hi-Rez playerId values (expected list size = 1) for {portalId}/{portalUserId} combination provided.
+   * The playerId returned is expected to be used in various other endpoints to represent the player/individual regardless of platform.
+   * @returns {void}
+   */
+  async getPlayerIdByPortalUserId() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getplayeridsbygamertag[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{portalId}/{gamerTag}
-  // Function returns a list of Hi-Rez playerId values for {portalId}/{portalUserId} combination provided.
-  // The appropriate playerId extracted from this list by the API end user is expected to be used in various other endpoints to represent the player/individual regardless of platform.
-
-  // /getplayeridinfoforxboxandswitch[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerName}
-  // Meaningful only for the Paladins Xbox API.
-  // Paladins Xbox data and Paladins Switch data is stored in the same DB.
-  // Therefore a Paladins Gamer Tag value could be the same as a Paladins Switch Gamer Tag value.
-  // Additionally, there could be multiple identical Paladins Switch Gamer Tag values.
-  // The purpose of this method is to return all Player ID data associated with the playerName (gamer tag) parameter.
-  // The expectation is that the unique player_id returned could then be used in subsequent method calls.
-  // [PaladinsAPI only]
+  /**
+   * /getplayeridsbygamertag[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{portalId}/{gamerTag}
+   * Function returns a list of Hi-Rez playerId values for {portalId}/{portalUserId} combination provided.
+   * The appropriate playerId extracted from this list by the API end user is expected to be used in various other endpoints to represent the player/individual regardless of platform.
+   * @returns {void}
+   */
+  async getPlayerIdsByGamerTag() {
+    // TODO: fill in
+    return;
+  }
 
   // * *************************************************** * //
   // * relates to 'APIs - Team Info' section in Smite API * //
   // * ************************************************** * //
 
-  // /getteamdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
-  // Lists the number of players and other high level details for a particular clan.
+  /**
+   * /getteamdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
+   * Lists the number of players and other high level details for a particular clan.
+   * @returns {void}
+   */
+  async getTeamDetails() {
+    // TODO: fill in
+    return;
+  }
 
-  // /getteamplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
-  // Lists the players for a particular clan.
+  /**
+   * /getteamplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
+   * Lists the players for a particular clan.
+   * @returns {void}
+   */
+  async getTeamPlayers() {
+    // TODO: fill in
+    return;
+  }
 
-  // /searchteams[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchTeam}
-  // Returns high level information for Clan names containing the “searchTeam” string.
-  // [SmiteApi only]
+  /**
+   * /searchteams[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchTeam}
+   * Returns high level information for Clan names containing the “searchTeam” string.
+   * [SmiteApi only]
+   * @returns {void}
+   */
+  async searchTeams() {
+    // TODO: fill in
+    return;
+  }
 }
 
 export const smiteApiClient = new SmiteApi();
