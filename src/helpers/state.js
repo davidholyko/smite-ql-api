@@ -2,6 +2,8 @@ import _ from 'lodash';
 
 import CONSTANTS from '../constants';
 
+import { parsePlayerName } from './parsers';
+
 const { SMITE_QL_KEYS, SMITE_API_KEYS } = CONSTANTS;
 const {
   WINS,
@@ -23,12 +25,12 @@ const {
   GODS,
 } = SMITE_QL_KEYS;
 
-const {
-  //
-  HZ_PLAYER_NAME,
-  ID,
-} = SMITE_API_KEYS;
+const { ID } = SMITE_API_KEYS;
 
+/**
+ * Builds an object for initial state of redis DB
+ * @returns {Object} redis state
+ */
 export const buildRootState = () => {
   const initialState = {
     [MISC]: {
@@ -72,12 +74,18 @@ export const buildRootState = () => {
         //   'Asi': {}
         // }
       },
+      // TODO: move to MISC object
       [PATCH_VERSIONS]: {
         [CURRENT_PATCH]: null, // like '9.3'
         [PREVIOUS_PATCHES]: [], // like ['9.3', '9.2']
       },
       [GODS]: {
+        // example:
+        // key is a patch version
         //
+        // '9.3': {
+        //   'Thor': {}
+        // }
       },
     },
   };
@@ -85,11 +93,18 @@ export const buildRootState = () => {
   return initialState;
 };
 
+/**
+ * builds initial state for a player
+ * @param {Array<Object> | Object} playerDetails - an array with one item for player details
+ * @returns {Object} playerState
+ */
 export const buildPlayerState = (playerDetails) => {
+  const player = _.isArray(playerDetails) ? _.first(playerDetails) : playerDetails;
+
   const initialPlayerState = {
-    [IGN]: _.get(playerDetails, `[0][${HZ_PLAYER_NAME}]`), // in game name, like 'dhko'
-    [ACCOUNT_NUMBER]: _.get(playerDetails, `[0][${ID}]`), // associated number, like 4553282
-    [DETAILS]: _.first(playerDetails),
+    [IGN]: parsePlayerName(player), // in game name, like 'dhko'
+    [ACCOUNT_NUMBER]: player[ID], // associated number, like 4553282
+    [DETAILS]: player,
     [MATCHES]: {},
     [HISTORY]: [],
     [NORMAL]: {
@@ -105,6 +120,15 @@ export const buildPlayerState = (playerDetails) => {
   return initialPlayerState;
 };
 
+/**
+ * builds initial state for a match for a specific player
+ * @param {Object} params -
+ * @param {Object} params.matchInfo -
+ * @param {String} params.playerId -
+ * @param {Object} params.partyDetails -
+ * @param {Object} params.teamDetails -
+ * @returns {Object} playerState
+ */
 export const buildPlayerMatchState = ({ matchInfo, playerId, partyDetails, teamDetails }) => {
   const { isVictory } = matchInfo;
   const enemies = isVictory ? teamDetails.teams.losers : teamDetails.teams.winners;

@@ -152,11 +152,11 @@ export const processTeamDetails = (matchDetails) => {
     const ign = parseIgn(player, index);
 
     if (player.Win_Status === 'Winner') {
-      teams.winners[ign] = true;
+      teams.winners[ign] = player[PLAYER_ID];
     }
 
     if (player.Win_Status === 'Loser') {
-      teams.losers[ign] = true;
+      teams.losers[ign] = player[PLAYER_ID];
     }
   });
 

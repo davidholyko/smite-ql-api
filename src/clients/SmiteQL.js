@@ -301,7 +301,7 @@ export class SmiteQL extends SmiteApi {
 
   /**
    *
-   * @param {String} playerId - like 'dhko'
+   * @param {String} playerId - an ign 'dhko' or playerNumber like '4553282'
    * @returns {Object} data
    */
   async getPlayer(playerId) {

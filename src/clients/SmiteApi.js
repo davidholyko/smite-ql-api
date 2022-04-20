@@ -522,7 +522,7 @@ export class SmiteApi {
    * /getplayer[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{player}
    * Returns league and other high level data for a particular player.
    * @public
-   * @param {String} playerId - account name for player, like 'dhko'
+   * @param {String} playerId - account name for player, like 'dhko' or playerNumber like '4553282'
    * @returns {Object} - data
    */
   async getPlayer(playerId) {
