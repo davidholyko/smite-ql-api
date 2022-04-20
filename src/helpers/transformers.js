@@ -32,18 +32,18 @@ export const toDate = (date) => {
 export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
   const currentPatch = patchVersion;
   const playerItems = [
-    //
-    rawMatchDetails.Item_Active_1,
-    rawMatchDetails.Item_Active_2,
-  ];
-  const playerActives = [
-    //
+    // items
     rawMatchDetails.Item_Purch_1,
     rawMatchDetails.Item_Purch_2,
     rawMatchDetails.Item_Purch_3,
     rawMatchDetails.Item_Purch_4,
     rawMatchDetails.Item_Purch_5,
     rawMatchDetails.Item_Purch_6,
+  ];
+  const playerActives = [
+    // actives
+    rawMatchDetails.Item_Active_1,
+    rawMatchDetails.Item_Active_2,
   ];
 
   const matchState = {
@@ -73,8 +73,8 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     damageStructures: _.get(rawMatchDetails, 'Structure_Damage', 0),
 
     // items and actives
-    actives: playerActives,
-    items: playerItems,
+    godActives: playerActives,
+    godItems: playerItems,
 
     // player detils
     accountLevel: _.get(rawMatchDetails, 'Account_Level', 0),
