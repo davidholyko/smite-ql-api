@@ -22,3 +22,6 @@ notes.*
 
 # ignore redis database dump 
 dump.rdb
+
+# ignore production documentation
+documentation/production.md
