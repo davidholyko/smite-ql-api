@@ -23,6 +23,9 @@ const {
   PREVIOUS_PATCHES,
   ACCOUNT_NUMBER,
   GODS,
+  SCHEMA_VERSIONS,
+  CURRENT_SCHEMA,
+  PREVIOUS_SCEHMA,
 } = SMITE_QL_KEYS;
 
 const { ID } = SMITE_API_KEYS;
@@ -37,7 +40,14 @@ export const buildRootState = () => {
       // schemaVersion refers to version for all JSON and Array shapes
       // The shapes for objects could change over time and when those updates
       // hit production, the old redis DB info has to be updated to the latest schema
-      schema_version: '1.0.0',
+      [SCHEMA_VERSIONS]: {
+        [CURRENT_SCHEMA]: '1.0.0',
+        [PREVIOUS_SCEHMA]: [],
+      },
+      [PATCH_VERSIONS]: {
+        [CURRENT_PATCH]: null, // like '9.3'
+        [PREVIOUS_PATCHES]: [], // like ['9.3', '9.2']
+      },
     },
 
     [PLAYERS]: {
@@ -73,11 +83,6 @@ export const buildRootState = () => {
         // '9.3': {
         //   'Asi': {}
         // }
-      },
-      // TODO: move to MISC object
-      [PATCH_VERSIONS]: {
-        [CURRENT_PATCH]: null, // like '9.3'
-        [PREVIOUS_PATCHES]: [], // like ['9.3', '9.2']
       },
       [GODS]: {
         // example:

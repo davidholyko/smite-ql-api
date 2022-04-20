@@ -75,6 +75,9 @@ export const SMITE_QL_KEYS = {
   PARTY: 'party',
   GODS: 'gods',
   TEAM: 'team',
+  SCHEMA_VERSIONS: 'schema_version',
+  CURRENT_SCHEMA: 'current_schema',
+  PREVIOUS_SCEHMA: 'previous_schema',
 };
 
 export const SMITE_API_KEYS = {

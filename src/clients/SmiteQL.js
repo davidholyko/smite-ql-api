@@ -26,6 +26,7 @@ const {
   ITEMS,
   TEAM,
   GODS,
+  MISC,
 } = SMITE_QL_KEYS;
 
 export class SmiteQL extends SmiteApi {
@@ -163,7 +164,7 @@ export class SmiteQL extends SmiteApi {
    */
   async _updatePatchVersion() {
     const { version_string: patchVersion } = await this.getPatchInfo();
-    const currentPatch = await this._get(`${GLOBAL}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
 
     if (currentPatch === patchVersion) {
       // if our latest patchVersion is already upto date
@@ -172,8 +173,8 @@ export class SmiteQL extends SmiteApi {
     }
 
     // update redis and SmiteQL client
-    await this._set(`${GLOBAL}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersion);
-    await this._prepend(`${GLOBAL}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersion);
+    await this._set(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersion);
+    await this._prepend(`${MISC}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersion);
 
     return patchVersion;
   }
@@ -183,7 +184,7 @@ export class SmiteQL extends SmiteApi {
    * @returns {String} - current patch version, like '9.3'
    */
   async _getPatchVersion() {
-    const currentPatch = await this._get(`${GLOBAL}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
 
     this._assertPatchVersion(currentPatch);
 
