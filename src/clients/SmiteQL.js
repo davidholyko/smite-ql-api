@@ -24,6 +24,7 @@ const {
   RAW,
   PARTY,
   ITEMS,
+  TEAM,
   GODS,
 } = SMITE_QL_KEYS;
 
@@ -231,13 +232,21 @@ export class SmiteQL extends SmiteApi {
 
     const rawMatchDetails = await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
+    const teamDetails = HELPERS.processTeamDetails(rawMatchDetails);
 
     if (playerId) {
+      // TODO: associate a player with another player's match
+      // if already exists and skip fetching
       const patchVersion = await this._getPatchVersion();
       const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, patchVersion);
-      const partyInfo = _.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});
       const winLossPath = `${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;
-      const data = { ...newMatchInfo, party: partyInfo };
+
+      const data = HELPERS.buildPlayerMatchState({
+        matchInfo: newMatchInfo,
+        playerId,
+        partyDetails,
+        teamDetails,
+      });
 
       await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, newMatchInfo.matchId);
       await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, data);
@@ -248,6 +257,7 @@ export class SmiteQL extends SmiteApi {
     return {
       [RAW]: rawMatchDetails,
       [PARTY]: partyDetails,
+      [TEAM]: teamDetails,
     };
   }
 

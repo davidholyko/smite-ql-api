@@ -74,6 +74,7 @@ export const SMITE_QL_KEYS = {
   RAW: 'raw',
   PARTY: 'party',
   GODS: 'gods',
+  TEAM: 'team',
 };
 
 export const SMITE_API_KEYS = {

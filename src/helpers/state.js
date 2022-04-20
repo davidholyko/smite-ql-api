@@ -104,3 +104,19 @@ export const buildPlayerState = (playerDetails) => {
 
   return initialPlayerState;
 };
+
+export const buildPlayerMatchState = ({ matchInfo, playerId, partyDetails, teamDetails }) => {
+  const { isVictory } = matchInfo;
+  const enemies = isVictory ? teamDetails.teams.losers : teamDetails.teams.winners;
+  const allies = isVictory ? teamDetails.teams.winners : teamDetails.teams.losers;
+  const party = _.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});
+
+  const playerMatchState = {
+    ...matchInfo,
+    party,
+    enemies,
+    allies,
+  };
+
+  return playerMatchState;
+};
