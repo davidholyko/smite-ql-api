@@ -253,13 +253,15 @@ export class SmiteQL extends SmiteApi {
       await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, data);
     }
 
-    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, { raw: rawMatchDetails, partyDetails });
-
-    return {
+    const data = {
       [RAW]: rawMatchDetails,
       [PARTY]: partyDetails,
       [TEAM]: teamDetails,
     };
+
+    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, data);
+
+    return data;
   }
 
   /**
