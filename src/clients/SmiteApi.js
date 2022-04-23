@@ -19,6 +19,9 @@ axios.defaults.timeout = 30000;
 const { API, LANGS, METHODS } = CONSTANTS;
 const { BASE_URL, SESSION_ID, DEV_ID, AUTH_KEY, JSON } = API;
 
+/**
+ * @class
+ */
 export class SmiteApi {
   constructor({
     // options

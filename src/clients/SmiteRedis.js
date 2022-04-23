@@ -39,6 +39,10 @@ const {
   PARTY,
 } = SMITE_QL_KEYS;
 
+/**
+ * @class
+ * @extends SmiteApi
+ */
 export class SmiteRedis extends SmiteApi {
   constructor() {
     super();

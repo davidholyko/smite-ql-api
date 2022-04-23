@@ -9,6 +9,10 @@ import { SmiteRedis } from './SmiteRedis';
 const { SMITE_QL_KEYS } = CONSTANTS;
 const { WINS, LOSSES, RANKED, NORMAL, PLAYERS, MATCHES, HISTORY, GLOBAL } = SMITE_QL_KEYS;
 
+/**
+ * @class
+ * @extends SmiteRedis
+ */
 export class SmiteQL extends SmiteRedis {
   constructor() {
     super();
@@ -18,7 +22,7 @@ export class SmiteQL extends SmiteRedis {
   }
 
   // ******************************************************************** //
-  // *************************  SmiteQL Methods ************************* //
+  // ************************* SmiteQL Methods ************************** //
   // ******************************************************************** //
 
   /**
