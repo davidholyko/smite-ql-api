@@ -208,6 +208,7 @@ describe('SmiteQL', () => {
       });
 
       expect(data).toEqual({
+        schema_version: '1.0.0',
         account_number: expect.any(Number),
         ign: expect.any(String),
         details: expectedDetails,

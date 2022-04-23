@@ -3,210 +3,18 @@ import _ from 'lodash';
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
 
-import { redisClient } from './Redis';
-import { smiteApiClient, SmiteApi } from './SmiteApi';
+import { smiteApiClient } from './SmiteApi';
+import { SmiteRedis } from './SmiteRedis';
 
-const { SMITE_QL_KEYS, ERRORS } = CONSTANTS;
-const {
-  WINS,
-  LOSSES,
-  RANKED,
-  NORMAL,
-  ENTRY,
-  ROOT,
-  PLAYERS,
-  MATCHES,
-  HISTORY,
-  GLOBAL,
-  PATCH_VERSIONS,
-  CURRENT_PATCH,
-  PREVIOUS_PATCHES,
-  RAW,
-  PARTY,
-  ITEMS,
-  TEAM,
-  GODS,
-  MISC,
-} = SMITE_QL_KEYS;
+const { SMITE_QL_KEYS } = CONSTANTS;
+const { WINS, LOSSES, RANKED, NORMAL, PLAYERS, MATCHES, HISTORY, GLOBAL } = SMITE_QL_KEYS;
 
-export class SmiteQL extends SmiteApi {
+export class SmiteQL extends SmiteRedis {
   constructor() {
     super();
 
-    // clients
-    this.redis = redisClient;
-    this.smiteApi = smiteApiClient; // for sandbox purposes
-
-    // internal properties
-    this.isReady = false;
-  }
-
-  // ******************************************************************** //
-  // **************************** Assertions **************************** //
-  // ******************************************************************** //
-
-  /**
-   * throws error if SmiteQL is not ready
-   * @returns {void}
-   */
-  _assertReady() {
-    if (!this.isReady) {
-      throw new Error(ERRORS.CLIENT_NOT_READY);
-    }
-  }
-
-  /**
-   * @param {String} patchVersion - like '9.3'
-   * @returns {void}
-   */
-  _assertPatchVersion(patchVersion) {
-    if (!patchVersion) {
-      throw new Error('Patch version has not been set.');
-    }
-  }
-
-  // ******************************************************************** //
-  // **********************  Redis Internal Methods ********************* //
-  // ******************************************************************** //
-
-  /**
-   *
-   * @param {String} path - path to object in redis
-   * @param {Any} value -
-   * @returns {String} response
-   */
-  async _prepend(path, value) {
-    const index = 0;
-    const response = await this.redis.json.arrInsert(ENTRY, path, index, value);
-    return response;
-  }
-
-  /**
-   *
-   * @param {String} path - path to object in redis
-   * @param {Any} value -
-   * @returns {String} response
-   */
-  async _append(path, value) {
-    const response = await this.redis.json.arrAppend(ENTRY, path, value);
-    return response;
-  }
-
-  /**
-   *
-   * @param {String} path - path to object in redis
-   * @returns {Boolean} response - true or false
-   */
-  async _exists(path) {
-    const response = await this.redis.json.type(ENTRY, path);
-    return !!response;
-  }
-
-  /**
-   *
-   * @param {String} path - path to object in redis
-   * @returns {String} response
-   */
-  async _get(path) {
-    const data = await this.redis.json.get(ENTRY, { path });
-    return data;
-  }
-
-  /**
-   *
-   * @param {String} path - path to object
-   * @param {Object} data - data
-   * @returns {String} response
-   */
-  async _set(path, data) {
-    const output = await this.redis.json.set(ENTRY, path, data);
-    return output;
-  }
-
-  /**
-   * resets database and smite client state
-   * @returns {void}
-   */
-  async _reset() {
-    await this.redis.flushAll();
-    this.isReady = false;
-  }
-
-  // ******************************************************************** //
-  // **********************  Redis Startup Methods ********************** //
-  // ******************************************************************** //
-
-  /**
-   * creates initial state for redis DB if it does not already exists. This function can
-   * additionally migrate schema if needed
-   * @returns {Boolean} - whether initialState was created
-   */
-  async _createInitialState() {
-    const doesRootExist = await this._exists(ROOT);
-
-    if (doesRootExist) {
-      // TODO: later when we have different schema versions,
-      // we can update the state from here
-      return false;
-    }
-
-    const initialState = HELPERS.buildRootState();
-    await this._set(ROOT, initialState);
-
-    return true;
-  }
-
-  /**
-   * updates globals and redis with patchInfo passed in or
-   * retrieves latest patchInfo from Smite API to update with
-   * @param {?Object} patchInfo - optionally pass in patchInfo
-   * @returns {String} patchVersion
-   */
-  async _updatePatchVersion() {
-    const { version_string: patchVersion } = await this.getPatchInfo();
-    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
-
-    if (currentPatch === patchVersion) {
-      // if our latest patchVersion is already upto date
-      // skip any updates to redis
-      return patchVersion;
-    }
-
-    // update redis and SmiteQL client
-    await this._set(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersion);
-    await this._prepend(`${MISC}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersion);
-
-    return patchVersion;
-  }
-
-  /**
-   * gets patch version from redis DB
-   * @returns {String} - current patch version, like '9.3'
-   */
-  async _getPatchVersion() {
-    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
-
-    this._assertPatchVersion(currentPatch);
-
-    return currentPatch;
-  }
-
-  /**
-   * Sets up top level schema for redis db
-   * @returns {Boolean} - true if ready was already called
-   *                    - false if ready was not already called
-   */
-  async ready() {
-    const readyStatus = this.isReady;
-
-    this.isReady = true;
-
-    await this._createInitialState();
-    await this._updatePatchVersion();
-    await this.getGods();
-    await this.getItems();
-
-    return readyStatus;
+    // for sandbox purposes
+    this.smiteApi = smiteApiClient;
   }
 
   // ******************************************************************** //
@@ -242,7 +50,7 @@ export class SmiteQL extends SmiteApi {
       const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, patchVersion);
       const winLossPath = `${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;
 
-      const data = HELPERS.buildPlayerMatchState({
+      const playerMatchState = this.buildPlayerMatchState({
         matchInfo: newMatchInfo,
         playerId,
         partyDetails,
@@ -250,18 +58,13 @@ export class SmiteQL extends SmiteApi {
       });
 
       await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, newMatchInfo.matchId);
-      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, data);
+      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
     }
 
-    const data = {
-      [RAW]: rawMatchDetails,
-      [PARTY]: partyDetails,
-      [TEAM]: teamDetails,
-    };
+    const globalMatchState = this.buildGlobalMatchState({ rawDetails: rawMatchDetails, partyDetails, teamDetails });
+    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
 
-    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, data);
-
-    return data;
+    return globalMatchState;
   }
 
   /**
@@ -311,63 +114,11 @@ export class SmiteQL extends SmiteApi {
     this._assertReady();
 
     const playerDetails = await super.getPlayer(playerId);
-    const playerState = HELPERS.buildPlayerState(playerDetails);
+    const playerState = this.buildPlayerState(playerDetails);
 
     await this._set(`${PLAYERS}.${playerId}`, playerState);
 
     return playerState;
-  }
-
-  /**
-   * gets all items for current patch and stores information in redis.
-   * @returns {Boolean} - whether items were was fetched and stored
-   */
-  async getItems() {
-    this._assertReady();
-
-    const patchVersion = await this._getPatchVersion();
-    const isPopulated = await this._exists(`${GLOBAL}.${ITEMS}.${patchVersion}`);
-
-    if (isPopulated) {
-      return false;
-    }
-
-    const items = await super.getItems();
-
-    // Find match details for all matches information in parallel
-    await Promise.allSettled(
-      _.map(items, async (item) => {
-        const key = item.DeviceName;
-        return await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}.${key}`, item);
-      }),
-    );
-  }
-
-  /**
-   * gets all gods for current patch and stores information in redis.
-   * @returns {Boolean} - whether items were was fetched and stored
-   */
-  async getGods() {
-    this._assertReady();
-
-    const patchVersion = await this._getPatchVersion();
-    const isPopulated = await this._exists(`${GLOBAL}.${GODS}.${patchVersion}`);
-
-    if (isPopulated) {
-      return false;
-    }
-
-    const gods = await super.getGods();
-
-    // Find match details for all matches information in parallel
-    await Promise.allSettled(
-      _.map(gods, async (god) => {
-        const key = god.Name;
-        return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${key}`, god);
-      }),
-    );
-
-    return true;
   }
 
   // ******************************************************************** //

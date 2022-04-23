@@ -3,19 +3,17 @@ module.exports = function babelConfig(api) {
 
   const config = {
     presets: [
-      // present list
+      // presets list
       [
         '@babel/preset-env',
         {
-          targets: {
-            node: 16,
-            esmodules: true,
-          },
+          modules: 'auto',
         },
       ],
     ],
     plugins: [
       // plugin list
+      '@babel/plugin-transform-runtime',
     ],
   };
 
