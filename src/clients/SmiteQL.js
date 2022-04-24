@@ -7,7 +7,7 @@ import { smiteApiClient } from './SmiteApi';
 import { SmiteRedis } from './SmiteRedis';
 
 const { SMITE_QL_KEYS } = CONSTANTS;
-const { WINS, LOSSES, RANKED, NORMAL, PLAYERS, MATCHES, HISTORY, GLOBAL } = SMITE_QL_KEYS;
+const { WINS, LOSSES, RANKED, NORMAL, PLAYERS, MATCHES, HISTORY, GLOBAL, DETAILS } = SMITE_QL_KEYS;
 
 /**
  * @class
@@ -87,9 +87,9 @@ export class SmiteQL extends SmiteRedis {
   async getMatchHistory(playerId) {
     this._assertReady();
 
-    const doesAccountExist = await this._exists(`${PLAYERS}.${playerId}`);
+    const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
 
-    if (!doesAccountExist) {
+    if (!doesPlayerExist) {
       await this.getPlayer(playerId);
     }
 
@@ -123,10 +123,19 @@ export class SmiteQL extends SmiteRedis {
   async getPlayer(playerId) {
     this._assertReady();
 
+    const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
     const playerDetails = await super.getPlayer(playerId);
-    const playerState = this.buildPlayerState(playerDetails);
 
-    await this._set(`${PLAYERS}.${playerId}`, playerState);
+    if (doesPlayerExist) {
+      // update player.<playerId>.details if the redis DB already knows about it
+      await super.getPlayer(playerId);
+      await this._set(`${PLAYERS}.${playerId}.${DETAILS}`, _.first(playerDetails));
+    } else {
+      const player = this.buildPlayerState(playerDetails);
+      await this._set(`${PLAYERS}.${playerId}`, player);
+    }
+
+    const playerState = await this._get(`${PLAYERS}.${playerId}`);
 
     return playerState;
   }
