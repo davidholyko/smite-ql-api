@@ -1,5 +1,6 @@
 import { SmiteApi } from '../../../src/clients/SmiteApi';
 import { smiteQLClient, SmiteQL } from '../../../src/clients/SmiteQL';
+import { SmiteRedis } from '../../../src/clients/SmiteRedis';
 import CONSTANTS from '../../../src/constants';
 import MOCKS from '../../../src/mocks';
 import { RedisMockClient } from '../../setup/setupRedisMock';
@@ -20,6 +21,9 @@ const {
 describe('SmiteQL', () => {
   beforeEach(() => {
     smiteQLClient.redis.flushAll();
+    jest.spyOn(SmiteRedis.prototype, '_getPatchVersion').mockImplementation(() => {
+      return '9_0';
+    });
   });
 
   describe('constructor', () => {
@@ -124,22 +128,14 @@ describe('SmiteQL', () => {
       }
     });
 
-    it('should get getMatchDetails', async () => {
+    it('should get getMatchDetails object', async () => {
       const matchDetails = await smiteQLClient.getMatchDetails('12345', 'dhko');
-      const expectedRawDetails = expect.arrayContaining([
-        expect.objectContaining({
-          hz_player_name: expect.any(String),
-        }),
-      ]);
-
-      const expectedPartyDetails = expect.objectContaining({
-        partiesByPartyIds: expect.any(Object),
-        partiesByPlayerIds: expect.any(Object),
-      });
 
       const expectedMatchDetails = expect.objectContaining({
-        raw: expectedRawDetails,
-        party: expectedPartyDetails,
+        party: expect.any(Object),
+        level: expect.any(Object),
+        team: expect.any(Object),
+        patch_version: '9_0',
       });
 
       expect(matchDetails).toEqual(expectedMatchDetails);

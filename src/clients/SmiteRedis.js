@@ -35,7 +35,6 @@ const {
   SCHEMA_VERSION,
   CURRENT_SCHEMA,
   PREVIOUS_SCEHMA,
-  RAW,
   TEAM,
   PARTY,
   LEVEL,
@@ -412,10 +411,9 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params.teamDetails - team details
    * @returns {Object} data
    */
-  buildGlobalMatchState({ rawDetails, partyDetails, teamDetails, levelDetails, patchVersion }) {
+  buildGlobalMatchState({ partyDetails, teamDetails, levelDetails, patchVersion }) {
     const globalMatchState = {
       [SCHEMA_VERSION]: '1.0.0',
-      [RAW]: rawDetails,
       [PARTY]: partyDetails,
       [TEAM]: teamDetails,
       [LEVEL]: levelDetails,
