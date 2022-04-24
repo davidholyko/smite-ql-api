@@ -30,3 +30,7 @@ export const parseIgn = (player, index) => {
   const ign = !_.isEmpty(name) ? name : hiddenIGN;
   return ign;
 };
+
+export const parsePatchVersion = (version) => {
+  return version.replace('.', '_');
+};

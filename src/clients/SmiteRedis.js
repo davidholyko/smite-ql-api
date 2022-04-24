@@ -23,6 +23,7 @@ const {
   DETAILS,
   GLOBAL,
   PATCH_VERSIONS,
+  PATCH_VERSION,
   MISC,
   ITEMS,
   IGN,
@@ -177,8 +178,9 @@ export class SmiteRedis extends SmiteApi {
    * @returns {String} patchVersion
    */
   async _updatePatchVersion() {
-    const { version_string: patchVersion } = await this.getPatchInfo();
+    const { version_string } = await this.getPatchInfo();
     const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const patchVersion = HELPERS.parsePatchVersion(version_string);
 
     if (currentPatch === patchVersion) {
       // if our latest patchVersion is already upto date
@@ -220,8 +222,8 @@ export class SmiteRedis extends SmiteApi {
     }
 
     const items = await this.getItems();
+    await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}`, {});
 
-    // Find match details for all matches information in parallel
     await Promise.allSettled(
       _.map(items, async (item) => {
         const key = item.DeviceName;
@@ -238,19 +240,19 @@ export class SmiteRedis extends SmiteApi {
     this._assertReady();
 
     const patchVersion = await this._getPatchVersion();
-    const isPopulated = await this._exists(`${GLOBAL}.${GODS}.${patchVersion}`);
+    const isPopulated = await this._exists(`${GLOBAL}.${GODS}[${patchVersion}]`);
 
     if (isPopulated) {
       return false;
     }
 
     const gods = await this.getGods();
+    await this._set(`${GLOBAL}.${GODS}.${patchVersion}`, {});
 
-    // Find match details for all matches information in parallel
     await Promise.allSettled(
-      _.map(gods, async (god) => {
-        const key = god.Name;
-        return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${key}`, god);
+      _.map(gods, async (godDetails) => {
+        const god = godDetails.Name;
+        return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${god}`, godDetails);
       }),
     );
 
@@ -385,9 +387,10 @@ export class SmiteRedis extends SmiteApi {
    * @returns {Object} playerState
    */
   buildPlayerMatchState({ matchInfo, playerId, partyDetails, teamDetails }) {
-    const { isVictory } = matchInfo;
-    const enemies = isVictory ? teamDetails.teams.losers : teamDetails.teams.winners;
-    const allies = isVictory ? teamDetails.teams.winners : teamDetails.teams.losers;
+    // if you won, your enemies are the losers
+    const enemies = matchInfo.isVictory ? teamDetails.teams.losers : teamDetails.teams.winners;
+    // if you won, your allies are the winners
+    const allies = matchInfo.isVictory ? teamDetails.teams.winners : teamDetails.teams.losers;
     const party = _.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});
 
     const playerMatchState = {
@@ -409,13 +412,14 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params.teamDetails - team details
    * @returns {Object} data
    */
-  buildGlobalMatchState({ rawDetails, partyDetails, teamDetails, levelDetails }) {
+  buildGlobalMatchState({ rawDetails, partyDetails, teamDetails, levelDetails, patchVersion }) {
     const globalMatchState = {
       [SCHEMA_VERSION]: '1.0.0',
       [RAW]: rawDetails,
       [PARTY]: partyDetails,
       [TEAM]: teamDetails,
       [LEVEL]: levelDetails,
+      [PATCH_VERSION]: patchVersion,
     };
 
     return globalMatchState;

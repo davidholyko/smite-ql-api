@@ -60,6 +60,7 @@ export const SMITE_QL_KEYS = {
   HISTORY: 'history',
   DETAILS: 'details',
   GLOBAL: 'global',
+  PATCH_VERSION: 'patch_version',
   PATCH_VERSIONS: 'patch_versions',
   MISC: 'misc',
   ITEMS: 'items',

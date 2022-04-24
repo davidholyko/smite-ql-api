@@ -118,14 +118,14 @@ describe('SmiteQL', () => {
       await smiteQLClient._reset();
 
       try {
-        await smiteQLClient.getMatchDetails('12345');
+        await smiteQLClient.getMatchDetails('12345', 'dhko');
       } catch (error) {
         expect(error).toEqual(errorMsg);
       }
     });
 
     it('should get getMatchDetails', async () => {
-      const matchDetails = await smiteQLClient.getMatchDetails('12345');
+      const matchDetails = await smiteQLClient.getMatchDetails('12345', 'dhko');
       const expectedRawDetails = expect.arrayContaining([
         expect.objectContaining({
           hz_player_name: expect.any(String),
