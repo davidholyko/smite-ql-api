@@ -37,6 +37,7 @@ const {
   RAW,
   TEAM,
   PARTY,
+  LEVEL,
 } = SMITE_QL_KEYS;
 
 /**
@@ -408,12 +409,13 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params.teamDetails - team details
    * @returns {Object} data
    */
-  buildGlobalMatchState({ rawDetails, partyDetails, teamDetails }) {
+  buildGlobalMatchState({ rawDetails, partyDetails, teamDetails, levelDetails }) {
     const globalMatchState = {
       [SCHEMA_VERSION]: '1.0.0',
       [RAW]: rawDetails,
       [PARTY]: partyDetails,
       [TEAM]: teamDetails,
+      [LEVEL]: levelDetails,
     };
 
     return globalMatchState;

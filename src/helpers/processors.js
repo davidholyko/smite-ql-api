@@ -177,3 +177,30 @@ export const processTeamDetails = (matchDetails) => {
     players,
   };
 };
+
+/**
+ *
+ * @param {Array<Object>} matchDetails - matchDetails
+ * @returns {Object} - account levels and god levels
+ */
+export const processLevelDetails = (matchDetails) => {
+  const masteryLevels = {
+    // Mastery_Level
+    // player_1: 110
+  };
+  const accountLevels = {
+    // Account_Level
+    // player_1: 160
+  };
+
+  _.forEach(matchDetails, (player, index) => {
+    const ign = parseIgn(player, index);
+    masteryLevels[ign] = player['Mastery_Level'];
+    accountLevels[ign] = player['Account_Level'];
+  });
+
+  return {
+    masteryLevels,
+    accountLevels,
+  };
+};

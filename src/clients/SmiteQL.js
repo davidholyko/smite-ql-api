@@ -43,15 +43,16 @@ export class SmiteQL extends SmiteRedis {
       return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
     }
 
-    const rawMatchDetails = await super.getMatchDetails(matchId);
-    const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
-    const teamDetails = HELPERS.processTeamDetails(rawMatchDetails);
+    const rawDetails = await super.getMatchDetails(matchId);
+    const partyDetails = HELPERS.processPartyDetails(rawDetails);
+    const teamDetails = HELPERS.processTeamDetails(rawDetails);
+    const levelDetails = HELPERS.processLevelDetails(rawDetails);
 
     if (playerId) {
       // TODO: associate a player with another player's match
       // if already exists and skip fetching
       const patchVersion = await this._getPatchVersion();
-      const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, patchVersion);
+      const newMatchInfo = HELPERS.processSmiteQLMatch(rawDetails, playerId, patchVersion);
       const winLossPath = `${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;
 
       const playerMatchState = this.buildPlayerMatchState({
@@ -65,7 +66,12 @@ export class SmiteQL extends SmiteRedis {
       await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
     }
 
-    const globalMatchState = this.buildGlobalMatchState({ rawDetails: rawMatchDetails, partyDetails, teamDetails });
+    const globalMatchState = this.buildGlobalMatchState({
+      rawDetails,
+      partyDetails,
+      teamDetails,
+      levelDetails,
+    });
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
 
     return globalMatchState;

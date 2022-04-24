@@ -75,6 +75,7 @@ export const SMITE_QL_KEYS = {
   PARTY: 'party',
   GODS: 'gods',
   TEAM: 'team',
+  LEVEL: 'level',
   SCHEMA_VERSIONS: 'schema_versions',
   CURRENT_SCHEMA: 'current_schema',
   PREVIOUS_SCEHMA: 'previous_schema',
