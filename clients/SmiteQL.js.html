@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.22% </span>
+                <span class="strong">82.6% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>37/45</span>
+                <span class='fraction'>38/46</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.22% </span>
+                <span class="strong">82.6% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>37/45</span>
+                <span class='fraction'>38/46</span>
             </div>
         
             
@@ -204,7 +204,17 @@
 <a name='L139'></a><a href='#L139'>139</a>
 <a name='L140'></a><a href='#L140'>140</a>
 <a name='L141'></a><a href='#L141'>141</a>
-<a name='L142'></a><a href='#L142'>142</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -214,6 +224,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -248,6 +262,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -268,6 +283,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -356,6 +376,10 @@ import { SmiteRedis } from './SmiteRedis';
 const { SMITE_QL_KEYS } = CONSTANTS;
 const { WINS, LOSSES, RANKED, NORMAL, PLAYERS, MATCHES, HISTORY, GLOBAL } = SMITE_QL_KEYS;
 &nbsp;
+/**
+ * @class
+ * @extends SmiteRedis
+ */
 export class SmiteQL extends SmiteRedis {
   constructor() {
     super();
@@ -365,7 +389,7 @@ export class SmiteQL extends SmiteRedis {
   }
 &nbsp;
   // ******************************************************************** //
-  // *************************  SmiteQL Methods ************************* //
+  // ************************* SmiteQL Methods ************************** //
   // ******************************************************************** //
 &nbsp;
   /**
@@ -386,15 +410,16 @@ export class SmiteQL extends SmiteRedis {
 <span class="cstat-no" title="statement not covered" >      return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);</span>
     }
 &nbsp;
-    const rawMatchDetails = await super.getMatchDetails(matchId);
-    const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
-    const teamDetails = HELPERS.processTeamDetails(rawMatchDetails);
+    const rawDetails = await super.getMatchDetails(matchId);
+    const partyDetails = HELPERS.processPartyDetails(rawDetails);
+    const teamDetails = HELPERS.processTeamDetails(rawDetails);
+    const levelDetails = HELPERS.processLevelDetails(rawDetails);
 &nbsp;
     if (playerId) {
       // TODO: associate a player with another player's match
       // if already exists and skip fetching
       const patchVersion = await this._getPatchVersion();
-      const newMatchInfo = HELPERS.processSmiteQLMatch(rawMatchDetails, playerId, patchVersion);
+      const newMatchInfo = HELPERS.processSmiteQLMatch(rawDetails, playerId, patchVersion);
       const winLossPath = <span class="cstat-no" title="statement not covered" >`${newMatchInfo.isRanked ? RANKED : NORMAL}.${newMatchInfo.isVictory ? WINS : LOSSES}`;</span>
 &nbsp;
       const playerMatchState = <span class="cstat-no" title="statement not covered" >this.buildPlayerMatchState({</span>
@@ -408,7 +433,12 @@ export class SmiteQL extends SmiteRedis {
 <span class="cstat-no" title="statement not covered" >      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);</span>
     }
 &nbsp;
-    const globalMatchState = this.buildGlobalMatchState({ rawDetails: rawMatchDetails, partyDetails, teamDetails });
+    const globalMatchState = this.buildGlobalMatchState({
+      rawDetails,
+      partyDetails,
+      teamDetails,
+      levelDetails,
+    });
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
 &nbsp;
     return globalMatchState;
@@ -493,7 +523,7 @@ export const smiteQLClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sat Apr 23 2022 16:00:52 GMT+0000 (Coordinated Universal Time)
+                at Sun Apr 24 2022 02:14:40 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
