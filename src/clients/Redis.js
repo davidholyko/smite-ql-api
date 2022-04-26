@@ -1,9 +1,12 @@
 import { createClient } from 'redis';
 
 const isProd = process.env.NODE_ENV === 'production';
-const URL = isProd ? process.env.REDIS_URL : '127.0.0.1';
-const PORT = isProd ? process.env.REDIS_PORT : '6379';
-const url = `redis://${URL}:${PORT}`;
+const REDIS_HOST = isProd ? process.env.REDIS_HOST : '127.0.0.1';
+const REDIS_PORT = isProd ? process.env.REDIS_PORT : '6379';
+const REDIS_AUTH = isProd ? process.env.REDIS_AUTH : '';
+const url = `redis://${REDIS_AUTH}${REDIS_HOST}:${REDIS_PORT}`;
+
+console.info(`🌨️🌨️🌨️ Redis url: ${url} 🌨️🌨️🌨️`);
 
 const onError = (err) => {
   console.error(`Redis Client Error: ${err}`);

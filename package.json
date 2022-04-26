@@ -7,6 +7,8 @@
   "author": "David Ko",
   "license": "ISC",
   "scripts": {
+    "deploy": "gcloud app deploy",
+    "post:deploy": "gcloud app browse",
     "build": "npx babel src -d dist",
     "lint": "npx eslint --max-warnings=0",
     "test": "jest",
@@ -15,9 +17,9 @@
     "test:unit": "npx jest test/unit-tests",
     "posttest:coverage": "open -a 'Google Chrome' './coverage/index.html'",
     "test:integration": "npx jest test/integration-tests",
-    "prestart:sandbox": "npm run build",
-    "start:sandbox": "node dist/sandbox/sandbox.js",
-    "start": "nodemon --exec babel-node src/index.js"
+    "start:sandbox": "babel-node src/sandbox/sandbox.js",
+    "start": "nodemon --exec babel-node src/index.js",
+    "start:prod": "node dist/index.js"
   },
   "engines": {
     "node": "16.x"

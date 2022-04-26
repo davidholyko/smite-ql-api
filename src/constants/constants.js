@@ -103,5 +103,5 @@ export const ERRORS = {
 };
 
 export const SERVER = {
-  PORT: process.env.PORT,
+  PORT: process.env.PORT || 8080,
 };
