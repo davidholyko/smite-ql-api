@@ -8,7 +8,7 @@ const { SERVER } = CONSTANTS;
 const app = express();
 
 /**
- * @example http://localhost:4343/ping
+ * @example http://localhost:8080/ping
  */
 app.get('/ping', function (_req, res) {
   res.send({
@@ -19,7 +19,7 @@ app.get('/ping', function (_req, res) {
 });
 
 /**
- * @example http://localhost:4343/smite-ql?path=players.dhko.matches.1235652463
+ * @example http://localhost:8080/smite-ql?path=players.dhko.matches.1235652463
  */
 app.get('/smite-ql', async function (req, res) {
   const { path } = req.query;

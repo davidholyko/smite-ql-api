@@ -24,4 +24,5 @@ notes.*
 dump.rdb
 
 # ignore production documentation
-documentation/production.md
+production
+app.yaml

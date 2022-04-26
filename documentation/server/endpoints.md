@@ -7,7 +7,7 @@ Returns JSON with `message`.
 **Example Endpoint**
 
 ```
-http://localhost:4343/ping
+http://localhost:8080/ping
 ```
 
 **Output**
@@ -26,7 +26,7 @@ Requires `path` query params to look into redis DB.
 **Example Endpoint**
 
 ```
-http://localhost:4343/smite-ql?path=players.dhko.matches.1235652463
+http://localhost:8080/smite-ql?path=players.dhko.matches.1235652463
 ```
 
 **Output**

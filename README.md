@@ -83,7 +83,7 @@ git update-index --no-skip-worktree src/sandbox/sandbox.js
 
 ## Server
 
-This repo uses `express.js` to run a server on port `4343`.
+This repo uses `express.js` to run a server on port `8080`.
 
 ```
 # Start express server
@@ -93,8 +93,8 @@ npm run start
 ## Endpoints
 
 ```
-http://localhost:4343/ping
-http://localhost:4343/smite-ql
+http://localhost:8080/ping
+http://localhost:8080/smite-ql
 ```
 
 _See [documentation](./documentation/server/endpoints.md) for more information._
