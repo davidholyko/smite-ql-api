@@ -17,6 +17,7 @@ const {
   LOSSES,
   RANKED,
   NORMAL,
+  PLAYER,
   PLAYERS,
   MATCHES,
   HISTORY,
@@ -38,6 +39,7 @@ const {
   TEAM,
   PARTY,
   LEVEL,
+  RAW_MATCHES,
 } = SMITE_QL_KEYS;
 
 /**
@@ -315,14 +317,21 @@ export class SmiteRedis extends SmiteApi {
       },
 
       [GLOBAL]: {
-        [MATCHES]: {
+        [RAW_MATCHES]: {
           // example:
           // key is a matchId
           // value is data from 'getMatchDetails'
+        },
+        [MATCHES]: {
+          // example:
+          // key is a matchId
+          // value is data calculated from 'getMatchDetails'
           //
           // 1232511801: {
-          //   raw: {}, // non-mutated data from Smite API
-          //   partyDetails: {}, // party details for a match calculated by SmiteQL
+          //   party: {}, // party details for a match calculated by SmiteQL
+          //   team: {}, // team details for a match calculated by SmiteQL
+          //   level: {}, // level details for a match calculated by SmiteQL
+          //   player: {}
           // }
           //
         },
@@ -355,10 +364,11 @@ export class SmiteRedis extends SmiteApi {
    */
   buildPlayerState(playerDetails) {
     const player = _.isArray(playerDetails) ? _.first(playerDetails) : playerDetails;
+    const playerName = _.get(player, 'hz_player_name');
 
     const initialPlayerState = {
       [SCHEMA_VERSION]: '1.0.0',
-      [IGN]: parsePlayerName(player), // in game name, like 'dhko'
+      [IGN]: parsePlayerName(playerName), // in game name, like 'dhko'
       [ACCOUNT_NUMBER]: player[ID], // associated number, like 4553282
       [DETAILS]: player,
       [MATCHES]: {},
@@ -411,12 +421,13 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params.teamDetails - team details
    * @returns {Object} data
    */
-  buildGlobalMatchState({ partyDetails, teamDetails, levelDetails, patchVersion }) {
+  buildGlobalMatchState({ playerDetails, partyDetails, teamDetails, levelDetails, patchVersion }) {
     const globalMatchState = {
       [SCHEMA_VERSION]: '1.0.0',
       [PARTY]: partyDetails,
       [TEAM]: teamDetails,
       [LEVEL]: levelDetails,
+      [PLAYER]: playerDetails,
       [PATCH_VERSION]: patchVersion,
     };
 

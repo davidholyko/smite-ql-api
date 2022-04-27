@@ -6,7 +6,7 @@ const REDIS_PORT = isProd ? process.env.REDIS_PORT : '6379';
 const REDIS_AUTH = isProd ? process.env.REDIS_AUTH : '';
 const url = `redis://${REDIS_AUTH}${REDIS_HOST}:${REDIS_PORT}`;
 
-console.info(`🌨️🌨️🌨️ Redis url: ${url} 🌨️🌨️🌨️`);
+console.info(`📖📖📖 Redis url: ${url} 📖📖📖`);
 
 const onError = (err) => {
   console.error(`Redis Client Error: ${err}`);

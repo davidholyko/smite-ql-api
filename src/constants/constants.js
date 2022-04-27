@@ -77,10 +77,12 @@ export const SMITE_QL_KEYS = {
   GODS: 'gods',
   TEAM: 'team',
   LEVEL: 'level',
+  PLAYER: 'player',
   SCHEMA_VERSIONS: 'schema_versions',
   CURRENT_SCHEMA: 'current_schema',
   PREVIOUS_SCEHMA: 'previous_schema',
   SCHEMA_VERSION: 'schema_version',
+  RAW_MATCHES: 'raw_matches',
 };
 
 export const SMITE_API_KEYS = {

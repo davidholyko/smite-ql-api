@@ -6,7 +6,7 @@ import MOCKS from '../../../src/mocks';
 const {
   // processors
   processMatchHistory,
-  processSmiteQLMatch,
+  processPlayerDetails,
   processPartyDetails,
 } = PROCESSORS;
 
@@ -59,9 +59,9 @@ describe('processors', () => {
     });
   });
 
-  describe('processSmiteQLMatch', () => {
+  describe('processPlayerDetails', () => {
     it('should process raw data into a SmiteQL match object', () => {
-      const smiteQLMatch = processSmiteQLMatch(mockMatchDetails, 'dhko', patchVersion);
+      const smiteQLMatch = processPlayerDetails(mockMatchDetails, patchVersion);
       const expectedSmiteQLMatch = {
         accountLevel: 160,
         assists: 7,
@@ -98,7 +98,7 @@ describe('processors', () => {
         wards: 2,
       };
 
-      expect(smiteQLMatch).toEqual(expectedSmiteQLMatch);
+      expect(smiteQLMatch['dhko']).toEqual(expectedSmiteQLMatch);
     });
   });
 

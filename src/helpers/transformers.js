@@ -30,7 +30,6 @@ export const toDate = (date) => {
  * @returns {Object} match with only date and victory status
  */
 export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
-  const currentPatch = patchVersion;
   const playerItems = [
     // items
     rawMatchDetails.Item_Purch_1,
@@ -89,7 +88,7 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     // ! There is a potential bug that if a player's data has not been updated
     // ! and a new patch has been released, previous matches can be associated
     // ! with the new patch and those item descriptions will be incorrect
-    patchVersion: currentPatch,
+    patchVersion,
   };
 
   return matchState;

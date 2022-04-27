@@ -46,7 +46,7 @@ app.get('/smite-ql', async function (req, res) {
 });
 
 app.listen(SERVER.PORT, () => {
-  console.info(`✅ Listening on port: ${SERVER.PORT} ✅`);
+  console.info(`✅✅✅ Listening on port: ${SERVER.PORT} ✅✅✅`);
 });
 
 export { app };

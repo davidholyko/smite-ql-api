@@ -12,7 +12,7 @@ import { parseIgn } from './parsers';
 import { toSmiteQLMatch } from './transformers';
 
 const { SMITE_API_KEYS } = CONSTANTS;
-const { HZ_PLAYER_NAME, MATCH, PLAYER_ID, PARTY_ID } = SMITE_API_KEYS;
+const { MATCH, PLAYER_ID, PARTY_ID } = SMITE_API_KEYS;
 
 /**
  * Compares match history of new match history with old. If there are new matches, loads that
@@ -51,15 +51,20 @@ export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
 /**
  *
  * @param {Array<Object>} rawMatchDetails - raw matchDetails from Smite API
- * @param {String} playerId - playerId we are looking, like 'dhko'
  * @param {String} patchVersion - patchVersion at the time
- * @returns {Object} newMatchInfo
+ * @returns {Object} players
  */
-export const processSmiteQLMatch = (rawMatchDetails, playerId, patchVersion) => {
-  const match = _.find(rawMatchDetails, [HZ_PLAYER_NAME, playerId]);
-  const smiteQLMatch = toSmiteQLMatch(match, patchVersion);
+export const processPlayerDetails = (rawMatchDetails, patchVersion) => {
+  const players = {
+    // player_1: {}
+  };
 
-  return smiteQLMatch;
+  _.forEach(rawMatchDetails, (player) => {
+    const ign = parseIgn(player);
+    players[ign] = toSmiteQLMatch(player, patchVersion);
+  });
+
+  return players;
 };
 
 /**

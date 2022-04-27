@@ -7,7 +7,22 @@ import { smiteApiClient } from './SmiteApi';
 import { SmiteRedis } from './SmiteRedis';
 
 const { SMITE_QL_KEYS } = CONSTANTS;
-const { WINS, LOSSES, RANKED, NORMAL, PLAYERS, MATCHES, HISTORY, GLOBAL, DETAILS, RAW, PATCH_VERSION } = SMITE_QL_KEYS;
+const {
+  //
+  WINS,
+  LOSSES,
+  RANKED,
+  NORMAL,
+  PLAYERS,
+  MATCHES,
+  HISTORY,
+  GLOBAL,
+  DETAILS,
+  RAW,
+  PATCH_VERSION,
+  RAW_MATCHES,
+  PLAYER,
+} = SMITE_QL_KEYS;
 
 /**
  * @class
@@ -42,17 +57,28 @@ export class SmiteQL extends SmiteRedis {
     const matchState = doesGlobalMatchExist && (await this._get(`${GLOBAL}.${MATCHES}.${matchId}`));
 
     if (doesGlobalMatchExist && doesPlayerMatchExist) {
+      // if global match and player match exist, this match
+      // was previously processed
       return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
     }
 
+    if (doesGlobalMatchExist && !doesPlayerMatchExist) {
+      // if global match exists and player match doesn't exist
+      // this match was not yet processed for a player
+      const match = await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
+      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, match[PLAYER][playerId]);
+      return match;
+    }
+
+    const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
     const rawDetails = doesGlobalMatchExist ? _.get(matchState, RAW) : await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawDetails);
     const teamDetails = HELPERS.processTeamDetails(rawDetails);
     const levelDetails = HELPERS.processLevelDetails(rawDetails);
-    const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
+    const playerDetails = HELPERS.processPlayerDetails(rawDetails, patchVersion);
 
     // calculate stats from the perspective of the player
-    const matchInfo = HELPERS.processSmiteQLMatch(rawDetails, playerId, patchVersion);
+    const matchInfo = playerDetails[playerId];
     const winLossPath = `${matchInfo.isRanked ? RANKED : NORMAL}.${matchInfo.isVictory ? WINS : LOSSES}`;
 
     const matchParams = { matchInfo, playerId, partyDetails, teamDetails };
@@ -62,10 +88,11 @@ export class SmiteQL extends SmiteRedis {
     await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
 
     // calculate stats from the perspective of the match
-    const params = { rawDetails, partyDetails, teamDetails, levelDetails, patchVersion };
+    const params = { playerDetails, partyDetails, teamDetails, levelDetails, patchVersion };
     const globalMatchState = this.buildGlobalMatchState(params);
 
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
+    await this._set(`${GLOBAL}.${RAW_MATCHES}.${matchId}`, rawDetails);
 
     return globalMatchState;
   }
