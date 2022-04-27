@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.9% </span>
+                <span class="strong">93.97% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>77/82</span>
+                <span class='fraction'>78/83</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.9% </span>
+                <span class="strong">93.97% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>77/82</span>
+                <span class='fraction'>78/83</span>
             </div>
         
             
@@ -490,7 +490,18 @@
 <a name='L425'></a><a href='#L425'>425</a>
 <a name='L426'></a><a href='#L426'>426</a>
 <a name='L427'></a><a href='#L427'>427</a>
-<a name='L428'></a><a href='#L428'>428</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L428'></a><a href='#L428'>428</a>
+<a name='L429'></a><a href='#L429'>429</a>
+<a name='L430'></a><a href='#L430'>430</a>
+<a name='L431'></a><a href='#L431'>431</a>
+<a name='L432'></a><a href='#L432'>432</a>
+<a name='L433'></a><a href='#L433'>433</a>
+<a name='L434'></a><a href='#L434'>434</a>
+<a name='L435'></a><a href='#L435'>435</a>
+<a name='L436'></a><a href='#L436'>436</a>
+<a name='L437'></a><a href='#L437'>437</a>
+<a name='L438'></a><a href='#L438'>438</a>
+<a name='L439'></a><a href='#L439'>439</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -502,6 +513,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -625,8 +638,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5507x</span>
-<span class="cline-any cline-yes">5507x</span>
+<span class="cline-any cline-yes">5508x</span>
+<span class="cline-any cline-yes">5508x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -837,6 +850,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -847,6 +867,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -905,6 +926,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -936,6 +958,7 @@ const {
   LOSSES,
   RANKED,
   NORMAL,
+  PLAYER,
   PLAYERS,
   MATCHES,
   HISTORY,
@@ -957,6 +980,7 @@ const {
   TEAM,
   PARTY,
   LEVEL,
+  RAW_MATCHES,
 } = SMITE_QL_KEYS;
 &nbsp;
 /**
@@ -1234,14 +1258,21 @@ export class SmiteRedis extends SmiteApi {
       },
 &nbsp;
       [GLOBAL]: {
-        [MATCHES]: {
+        [RAW_MATCHES]: {
           // example:
           // key is a matchId
           // value is data from 'getMatchDetails'
+        },
+        [MATCHES]: {
+          // example:
+          // key is a matchId
+          // value is data calculated from 'getMatchDetails'
           //
           // 1232511801: {
-          //   raw: {}, // non-mutated data from Smite API
-          //   partyDetails: {}, // party details for a match calculated by SmiteQL
+          //   party: {}, // party details for a match calculated by SmiteQL
+          //   team: {}, // team details for a match calculated by SmiteQL
+          //   level: {}, // level details for a match calculated by SmiteQL
+          //   player: {}
           // }
           //
         },
@@ -1274,10 +1305,11 @@ export class SmiteRedis extends SmiteApi {
    */
   buildPlayerState(playerDetails) {
     const player = _.isArray(playerDetails) ? _.first(playerDetails) : <span class="branch-1 cbranch-no" title="branch not covered" >playerDetails;</span>
+    const playerName = _.get(player, 'hz_player_name');
 &nbsp;
     const initialPlayerState = {
       [SCHEMA_VERSION]: '1.0.0',
-      [IGN]: parsePlayerName(player), // in game name, like 'dhko'
+      [IGN]: parsePlayerName(playerName), // in game name, like 'dhko'
       [ACCOUNT_NUMBER]: player[ID], // associated number, like 4553282
       [DETAILS]: player,
       [MATCHES]: {},
@@ -1330,12 +1362,13 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params.teamDetails - team details
    * @returns {Object} data
    */
-  buildGlobalMatchState({ partyDetails, teamDetails, levelDetails, patchVersion }) {
+  buildGlobalMatchState({ playerDetails, partyDetails, teamDetails, levelDetails, patchVersion }) {
     const globalMatchState = {
       [SCHEMA_VERSION]: '1.0.0',
       [PARTY]: partyDetails,
       [TEAM]: teamDetails,
       [LEVEL]: levelDetails,
+      [PLAYER]: playerDetails,
       [PATCH_VERSION]: patchVersion,
     };
 &nbsp;
@@ -1351,7 +1384,7 @@ export const smiteRedisClient = new SmiteRedis();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Wed Apr 27 2022 02:46:08 GMT+0000 (Coordinated Universal Time)
+                at Wed Apr 27 2022 04:28:50 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
