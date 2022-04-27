@@ -7,7 +7,7 @@
   "author": "David Ko",
   "license": "ISC",
   "scripts": {
-    "deploy": "gcloud app deploy",
+    "deploy": "gcloud run deploy app --source .",
     "post:deploy": "gcloud app browse",
     "build": "npx babel src -d dist",
     "lint": "npx eslint --max-warnings=0",
