@@ -95,6 +95,7 @@ npm run start
 ```
 http://localhost:8080/ping
 http://localhost:8080/smite-ql
+http://localhost:8080/history
 ```
 
 _See [documentation](./documentation/server/endpoints.md) for more information._
