@@ -7,9 +7,8 @@ const { SERVER } = CONSTANTS;
 
 const app = express();
 
-// call ready to start app when server boots up
-
 (async () => {
+  // call ready to start app when server boots up
   await smiteQLClient.ready();
 })();
 
@@ -35,7 +34,30 @@ app.get('/smite-ql', async function (req, res) {
       // if no path is sent, the entire redis DB will be the output JSON
       // we will want to reduce its scope
       success: false,
-      message: 'query.params is required for "/smite-ql" endpoint.',
+      message: "query params 'path=' is required for '/smite-ql' endpoint.",
+    });
+  }
+
+  if (path === '$') {
+    return res.send({
+      // if no path is sent, the entire redis DB will be the output JSON
+      // we will want to reduce its scope
+      success: false,
+      message: "query params 'path=$' is restricted for '/smite-ql' endpoint.",
+    });
+  }
+
+  if (path === 'players') {
+    return res.send({
+      success: false,
+      message: "query params 'path=players' is restricted for '/smite-ql' endpoint.",
+    });
+  }
+
+  if (path === 'global') {
+    return res.send({
+      success: false,
+      message: "query params 'path=players' is restricted for '/smite-ql' endpoint.",
     });
   }
 
@@ -51,6 +73,9 @@ app.get('/smite-ql', async function (req, res) {
   });
 });
 
+/**
+ * @example http://localhost:8080/history?player=dhko
+ */
 app.get('/history', async function (req, res) {
   const { player } = req.query;
 
@@ -63,7 +88,8 @@ app.get('/history', async function (req, res) {
     });
   }
 
-  const response = await smiteQLClient.getMatchHistory(player);
+  await smiteQLClient.getMatchHistory(player);
+  const response = await smiteQLClient.get(`players.${player}`);
   const success = response.error ? false : true;
   const message = response.error ? 'failure' : 'success';
 
