@@ -139,6 +139,10 @@ export class SmiteRedis extends SmiteApi {
     return output;
   }
 
+  async _scanHistory(playerId, limit = 20) {
+    const output = await this._get(`${PLAYERS}.${playerId}`);
+  }
+
   /**
    * resets database and smite client state
    * @returns {void}

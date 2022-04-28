@@ -31,6 +31,15 @@ export const parseIgn = (player, index) => {
   return ign;
 };
 
+/**
+ *
+ * @param {String} version - like 9.4
+ * @returns {String} version like 9_4
+ */
 export const parsePatchVersion = (version) => {
+  if (!version) {
+    return undefined;
+  }
+
   return version.replace('.', '_');
 };
