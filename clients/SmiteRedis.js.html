@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.69% </span>
+                <span class="strong">71.17% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>79/103</span>
+                <span class='fraction'>79/111</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">46.42% </span>
+                <span class="strong">39.39% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>13/28</span>
+                <span class='fraction'>13/33</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.6% </span>
+                <span class="strong">86.36% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>19/23</span>
+                <span class='fraction'>19/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.69% </span>
+                <span class="strong">71.81% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>79/103</span>
+                <span class='fraction'>79/110</span>
             </div>
         
             
@@ -547,7 +547,23 @@
 <a name='L482'></a><a href='#L482'>482</a>
 <a name='L483'></a><a href='#L483'>483</a>
 <a name='L484'></a><a href='#L484'>484</a>
-<a name='L485'></a><a href='#L485'>485</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L485'></a><a href='#L485'>485</a>
+<a name='L486'></a><a href='#L486'>486</a>
+<a name='L487'></a><a href='#L487'>487</a>
+<a name='L488'></a><a href='#L488'>488</a>
+<a name='L489'></a><a href='#L489'>489</a>
+<a name='L490'></a><a href='#L490'>490</a>
+<a name='L491'></a><a href='#L491'>491</a>
+<a name='L492'></a><a href='#L492'>492</a>
+<a name='L493'></a><a href='#L493'>493</a>
+<a name='L494'></a><a href='#L494'>494</a>
+<a name='L495'></a><a href='#L495'>495</a>
+<a name='L496'></a><a href='#L496'>496</a>
+<a name='L497'></a><a href='#L497'>497</a>
+<a name='L498'></a><a href='#L498'>498</a>
+<a name='L499'></a><a href='#L499'>499</a>
+<a name='L500'></a><a href='#L500'>500</a>
+<a name='L501'></a><a href='#L501'>501</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -711,11 +727,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -724,7 +735,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1181,7 +1213,7 @@ export class SmiteRedis extends SmiteApi {
    * @returns {Object} output
    */
 <span class="fstat-no" title="function not covered" >  as</span>ync _scanMatchHistory(playerId, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-    const { limit = <span class="branch-0 cbranch-no" title="branch not covered" >20,</span> index } = <span class="cstat-no" title="statement not covered" >options;</span>
+    const { limit, index } = <span class="cstat-no" title="statement not covered" >options;</span>
     const output = <span class="cstat-no" title="statement not covered" >{ matches: {}, history: [] };</span>
     const INDEX_MODIFIER = <span class="cstat-no" title="statement not covered" >20;</span>
     let start = <span class="cstat-no" title="statement not covered" >null;</span>
@@ -1190,6 +1222,8 @@ export class SmiteRedis extends SmiteApi {
 <span class="cstat-no" title="statement not covered" >    if (limit &amp;&amp; index !== undefined) {</span>
 <span class="cstat-no" title="statement not covered" >      throw new Error('Options must contain one of: [index, limit] but not both');</span>
     }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    console.log('!!! limit', limit);</span>
 &nbsp;
     const playerDetails = <span class="cstat-no" title="statement not covered" >await this._get(`${PLAYERS}.${playerId}`);</span>
 &nbsp;
@@ -1204,14 +1238,28 @@ export class SmiteRedis extends SmiteApi {
       // get number of matches starting from match at start
       // to 20 more than the start
 <span class="cstat-no" title="statement not covered" >      start = index * INDEX_MODIFIER;</span>
-<span class="cstat-no" title="statement not covered" >      end = (index + 1) * INDEX_MODIFIER - 1;</span>
+<span class="cstat-no" title="statement not covered" >      end = start + 20;</span>
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    _.forEach(_.range(start, end), <span class="fstat-no" title="function not covered" >(i</span>ndex) =&gt; {</span>
-      const matchId = <span class="cstat-no" title="statement not covered" >playerDetails.history[index];</span>
+<span class="cstat-no" title="statement not covered" >    if (!limit &amp;&amp; index === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >      start = 0;</span>
+<span class="cstat-no" title="statement not covered" >      end = 20;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    console.log('!!! start,end', start, end);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    for (let matchIndex = <span class="cstat-no" title="statement not covered" >start;</span> matchIndex &lt; end; matchIndex++) {</span>
+      const matchId = <span class="cstat-no" title="statement not covered" >playerDetails.history[matchIndex];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (!matchId) {</span>
+        // if matchId doesnt exist, we have gone past the number of matches
+        // in our history. we can end early
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+&nbsp;
 <span class="cstat-no" title="statement not covered" >      output.history.push(matchId);</span>
 <span class="cstat-no" title="statement not covered" >      output.matches[matchId] = playerDetails.matches[matchId];</span>
-    });
+    }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return output;</span>
   }
@@ -1318,7 +1366,7 @@ export class SmiteRedis extends SmiteApi {
     this._assertReady();
 &nbsp;
     const patchVersion = await this._getPatchVersion();
-    const isPopulated = await this._exists(`${GLOBAL}.${GODS}[${patchVersion}]`);
+    const isPopulated = await this._exists(`${GLOBAL}.${GODS}.${patchVersion}`);
 &nbsp;
     if (isPopulated) {
       return false;
@@ -1522,7 +1570,7 @@ export const smiteRedisClient = new SmiteRedis();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Thu Apr 28 2022 03:58:15 GMT+0000 (Coordinated Universal Time)
+                at Thu Apr 28 2022 04:19:47 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
