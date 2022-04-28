@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.14% </span>
+                <span class="strong">71% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>65/94</span>
+                <span class='fraction'>71/100</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/17</span>
+                <span class='fraction'>21/21</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.14% </span>
+                <span class="strong">71% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>65/94</span>
+                <span class='fraction'>71/100</span>
             </div>
         
             
@@ -668,7 +668,18 @@
 <a name='L603'></a><a href='#L603'>603</a>
 <a name='L604'></a><a href='#L604'>604</a>
 <a name='L605'></a><a href='#L605'>605</a>
-<a name='L606'></a><a href='#L606'>606</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L606'></a><a href='#L606'>606</a>
+<a name='L607'></a><a href='#L607'>607</a>
+<a name='L608'></a><a href='#L608'>608</a>
+<a name='L609'></a><a href='#L609'>609</a>
+<a name='L610'></a><a href='#L610'>610</a>
+<a name='L611'></a><a href='#L611'>611</a>
+<a name='L612'></a><a href='#L612'>612</a>
+<a name='L613'></a><a href='#L613'>613</a>
+<a name='L614'></a><a href='#L614'>614</a>
+<a name='L615'></a><a href='#L615'>615</a>
+<a name='L616'></a><a href='#L616'>616</a>
+<a name='L617'></a><a href='#L617'>617</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -701,6 +712,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -808,7 +820,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">43x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">43x</span>
@@ -829,6 +850,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">47x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1307,6 +1329,7 @@ export class SmiteApi {
   } = {}) {
     // session_id will be set once createSession is invoked
     this.session_id = null;
+    this.session_timestamp = null;
 &nbsp;
     // these two are required to visit real SmiteApi endpoints
     this.auth_key = auth_key;
@@ -1412,6 +1435,15 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async _performRequest(method, ...args) {
+    const now = moment.utc();
+    const previousTime = this.session_timestamp ? this.session_timestamp.add('15', 'minutes') : null;
+&nbsp;
+    if (now &gt; previousTime) {
+      // if now is 15 minutes later than the last session
+      // that session has expired as we should make a new one
+      await this.createSession();
+    }
+&nbsp;
     if (_.isEmpty(this.session_id)) {
       await this.createSession();
     }
@@ -1435,6 +1467,7 @@ export class SmiteApi {
     // session id if we are making createsession request
     if (_.get(data, SESSION_ID)) {
       this.session_id = data.session_id;
+      this.session_timestamp = moment.utc();
     }
 &nbsp;
     return data;
@@ -1885,7 +1918,7 @@ export const smiteApiClient = new SmiteApi();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Thu Apr 28 2022 05:24:04 GMT+0000 (Coordinated Universal Time)
+                at Thu Apr 28 2022 21:22:14 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
