@@ -2,7 +2,7 @@
 
 ## Instructions
 
-####1. Install packages
+#### 1. Install packages
 
 ```sh
 # Install base package
@@ -56,8 +56,10 @@ DEV_ID
 
 # for semantic release
 NPM_TOKEN
-SEMANTIC_RELEASE_TOKEN
+GH_TOKEN
 ```
+
+`GH_TOKEN` and `GITHUB_TOKEN` are automatically made by the repository
 
 ### 4. Update `package.json`
 
