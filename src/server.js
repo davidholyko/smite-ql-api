@@ -1,4 +1,5 @@
 import express from 'express';
+import _ from 'lodash';
 
 import { smiteQLClient } from './clients/SmiteQL';
 import CONSTANTS from './constants';
@@ -77,14 +78,14 @@ app.get('/smite-ql', async function (req, res) {
  * @example http://localhost:8080/history?player=dhko
  */
 app.get('/history', async function (req, res) {
-  const { player, forceUpdate } = req.query;
+  const { player, forceUpdate, limit, index } = req.query;
 
   if (!player) {
     return res.send({
       // if no path is sent, the entire redis DB will be the output JSON
       // we will want to reduce its scope
       success: false,
-      message: 'query.params is required for "/smite-ql" endpoint.',
+      message: 'query.params is required for "/history" endpoint.',
     });
   }
 
@@ -92,7 +93,9 @@ app.get('/history', async function (req, res) {
     await smiteQLClient.getMatchHistory(player);
   }
 
-  const response = await smiteQLClient.getHistory(player);
+  // remove all undefined/null values from options
+  const options = _.pickBy({ limit, index }, _.identity);
+  const response = await smiteQLClient.getHistory(player, options);
   const success = response.error ? false : true;
   const message = response.error ? 'failure' : 'success';
 

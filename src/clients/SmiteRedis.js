@@ -148,7 +148,7 @@ export class SmiteRedis extends SmiteApi {
    * @returns {Object} output
    */
   async _scanMatchHistory(playerId, options = {}) {
-    const { limit = 20, index } = options;
+    const { limit, index } = options;
     const output = { matches: {}, history: [] };
     const INDEX_MODIFIER = 20;
     let start = null;
@@ -171,14 +171,26 @@ export class SmiteRedis extends SmiteApi {
       // get number of matches starting from match at start
       // to 20 more than the start
       start = index * INDEX_MODIFIER;
-      end = (index + 1) * INDEX_MODIFIER - 1;
+      end = start + 20;
     }
 
-    _.forEach(_.range(start, end), (index) => {
-      const matchId = playerDetails.history[index];
+    if (!limit && index === undefined) {
+      start = 0;
+      end = 20;
+    }
+
+    for (let matchIndex = start; matchIndex < end; matchIndex++) {
+      const matchId = playerDetails.history[matchIndex];
+
+      if (!matchId) {
+        // if matchId doesnt exist, we have gone past the number of matches
+        // in our history. we can end early
+        break;
+      }
+
       output.history.push(matchId);
       output.matches[matchId] = playerDetails.matches[matchId];
-    });
+    }
 
     return output;
   }
@@ -285,7 +297,7 @@ export class SmiteRedis extends SmiteApi {
     this._assertReady();
 
     const patchVersion = await this._getPatchVersion();
-    const isPopulated = await this._exists(`${GLOBAL}.${GODS}[${patchVersion}]`);
+    const isPopulated = await this._exists(`${GLOBAL}.${GODS}.${patchVersion}`);
 
     if (isPopulated) {
       return false;
