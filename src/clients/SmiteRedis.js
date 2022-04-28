@@ -139,8 +139,48 @@ export class SmiteRedis extends SmiteApi {
     return output;
   }
 
-  async _scanHistory(playerId, limit = 20) {
-    const output = await this._get(`${PLAYERS}.${playerId}`);
+  /**
+   *
+   * @param {String} playerId - like 'dhko' or '4553282'
+   * @param {Object} options - options
+   * @param {Object} options.index - for pagination, get items 0-19 at index 1, 20-39 at index 2, etc...
+   * @param {Object} options.limit - number of matches to scan
+   * @returns {Object} output
+   */
+  async _scanMatchHistory(playerId, options = {}) {
+    const { limit = 20, index } = options;
+    const output = { matches: {}, history: [] };
+    const INDEX_MODIFIER = 20;
+    let start = null;
+    let end = null;
+
+    if (limit && index !== undefined) {
+      throw new Error('Options must contain one of: [index, limit] but not both');
+    }
+
+    const playerDetails = await this._get(`${PLAYERS}.${playerId}`);
+
+    if (limit) {
+      // get number of matches starting from most recent
+      // upto the limit number. ie limit is 20, get 20 most recent matches
+      start = 0;
+      end = limit;
+    }
+
+    if (index !== undefined) {
+      // get number of matches starting from match at start
+      // to 20 more than the start
+      start = index * INDEX_MODIFIER;
+      end = (index + 1) * INDEX_MODIFIER - 1;
+    }
+
+    _.forEach(_.range(start, end), (index) => {
+      const matchId = playerDetails.history[index];
+      output.history.push(matchId);
+      output.matches[matchId] = playerDetails.matches[matchId];
+    });
+
+    return output;
   }
 
   /**

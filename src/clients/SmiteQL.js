@@ -167,6 +167,11 @@ export class SmiteQL extends SmiteRedis {
   // **********************  Public Access Methods ********************** //
   // ******************************************************************** //
 
+  /**
+   *
+   * @param {String} path - path to data in redis
+   * @returns {Object} output
+   */
   async get(path) {
     try {
       return await this._get(path);
@@ -175,6 +180,24 @@ export class SmiteQL extends SmiteRedis {
         error: true,
         message: error.message,
         stack: error.stack,
+      };
+    }
+  }
+
+  /**
+   *
+   * @param {String} playerId - player name or account number
+   * @param {Object} options - path to data in redis
+   * @returns {Object} output
+   */
+  async getHistory(playerId, options) {
+    try {
+      return await this._scanMatchHistory(playerId, options);
+    } catch (error) {
+      return {
+        error: true,
+        message: error.message,
+        stack: error.stack.split('\n'),
       };
     }
   }

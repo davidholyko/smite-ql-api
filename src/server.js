@@ -77,7 +77,7 @@ app.get('/smite-ql', async function (req, res) {
  * @example http://localhost:8080/history?player=dhko
  */
 app.get('/history', async function (req, res) {
-  const { player } = req.query;
+  const { player, forceUpdate } = req.query;
 
   if (!player) {
     return res.send({
@@ -88,8 +88,11 @@ app.get('/history', async function (req, res) {
     });
   }
 
-  await smiteQLClient.getMatchHistory(player);
-  const response = await smiteQLClient.get(`players.${player}`);
+  if (forceUpdate) {
+    await smiteQLClient.getMatchHistory(player);
+  }
+
+  const response = await smiteQLClient.getHistory(player);
   const success = response.error ? false : true;
   const message = response.error ? 'failure' : 'success';
 
