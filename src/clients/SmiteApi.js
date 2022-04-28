@@ -32,6 +32,7 @@ export class SmiteApi {
   } = {}) {
     // session_id will be set once createSession is invoked
     this.session_id = null;
+    this.session_timestamp = null;
 
     // these two are required to visit real SmiteApi endpoints
     this.auth_key = auth_key;
@@ -137,6 +138,15 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async _performRequest(method, ...args) {
+    const now = moment.utc();
+    const previousTime = this.session_timestamp ? this.session_timestamp.add('15', 'minutes') : null;
+
+    if (now > previousTime) {
+      // if now is 15 minutes later than the last session
+      // that session has expired as we should make a new one
+      await this.createSession();
+    }
+
     if (_.isEmpty(this.session_id)) {
       await this.createSession();
     }
@@ -160,6 +170,7 @@ export class SmiteApi {
     // session id if we are making createsession request
     if (_.get(data, SESSION_ID)) {
       this.session_id = data.session_id;
+      this.session_timestamp = moment.utc();
     }
 
     return data;
