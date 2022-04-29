@@ -8,14 +8,9 @@ const { DEV_ID, AUTH_KEY } = API;
 
 describe('SmiteApi Endpoints', () => {
   let sessionId = null;
-
-  it('should create sessionId', async () => {
-    const session = await smiteApiClient.createSession();
-    // save sessionId to reuse session in test
-    // avoids having a lot of sessions from unit tests
-    sessionId = session.session_id;
-    expect(sessionId).toEqual(expect.any(String));
-  });
+  // matchId is needed matches more than 50 games ago
+  // are not available from Smite API
+  let matchId = null;
 
   beforeEach(async () => {
     smiteApiClient.session_id = null;
@@ -23,32 +18,25 @@ describe('SmiteApi Endpoints', () => {
     smiteApiClient.auth_key = AUTH_KEY;
   });
 
+  it('should create session_id', async () => {
+    const session = await smiteApiClient.createSession();
+    // save sessionId to reuse session in test
+    // avoids having a lot of sessions from unit tests
+    sessionId = session.session_id;
+    expect(sessionId).toEqual(expect.any(String));
+  });
+
   describe('testSession', () => {
-    afterEach(() => {
-      jest.spyOn(smiteApiClient, '_performRequest').mockRestore();
+    beforeEach(() => {
+      smiteApiClient.session_id = sessionId;
     });
 
-    it('should create a new session if a session_id does not already exist', async () => {
-      smiteApiClient.session_id = null;
-      await smiteApiClient.testSession();
-      expect(smiteApiClient.session_id).not.toBe(null);
-    });
-    it('should get a successful response when pinging testsession endpoint', async () => {
-      const fn = async () => {
-        await smiteApiClient.testSession();
-      };
-
-      expect(fn).not.toThrow(undefined);
-    });
-    it('should throw error if response is not successful', async () => {
-      jest.spyOn(smiteApiClient, '_performRequest').mockImplementation(() => {
-        throw new Error('Simulated Error!');
-      });
-
+    it('should return successful response message', async () => {
       const response = await smiteApiClient.testSession();
-
-      const expectedError = new Error('Test Session Failed!');
-      expect(response).toEqual(expectedError);
+      const expectedResponse = expect.stringContaining(
+        'This was a successful test with the following parameters added',
+      );
+      expect(response).toEqual(expectedResponse);
     });
   });
 
@@ -74,6 +62,31 @@ describe('SmiteApi Endpoints', () => {
     });
   });
 
+  describe('getMatchHistory', () => {
+    beforeEach(() => {
+      smiteApiClient.session_id = sessionId;
+    });
+
+    it('should get matchHistory for an playerId', async () => {
+      const matchHistory = await smiteApiClient.getMatchHistory('dhko');
+      const matchDetails = _.first(matchHistory);
+      matchId = matchDetails.Match;
+
+      const expectedMatch = expect.objectContaining({
+        Match: expect.any(Number),
+      });
+      expect(matchDetails).toEqual(expectedMatch);
+    });
+    it('should error out if playerId doesnt exist', async () => {
+      try {
+        await smiteApiClient.getMatchHistory('_dhko');
+      } catch (error) {
+        const expectedError = new Error('Request failed with status code 400');
+        expect(error).toEqual(expectedError);
+      }
+    });
+  });
+
   describe('getMatchDetails', () => {
     beforeEach(() => {
       smiteApiClient.session_id = sessionId;
@@ -84,41 +97,16 @@ describe('SmiteApi Endpoints', () => {
       // the latest data from Smite API.
       // it should be exactly what the top match is for a given player
       // in the integrated test
-      const matchDetails = await smiteApiClient.getMatchDetails('1233987056');
+      const matchDetails = await smiteApiClient.getMatchDetails(matchId);
       const playerDetails = _.first(matchDetails);
-      expect(playerDetails).toEqual(
-        expect.objectContaining({
-          Match: expect.any(Number),
-        }),
-      );
+      const expectedPlayer = expect.objectContaining({
+        Match: expect.any(Number),
+      });
+      expect(playerDetails).toEqual(expectedPlayer);
     });
     it('should error out if matchId doesnt exist', async () => {
       try {
         await smiteApiClient.getMatchDetails('abc123');
-      } catch (error) {
-        const expectedError = new Error('Request failed with status code 400');
-        expect(error).toEqual(expectedError);
-      }
-    });
-  });
-
-  describe('getMatchHistory', () => {
-    beforeEach(() => {
-      smiteApiClient.session_id = sessionId;
-    });
-
-    it('should get matchHistory for an playerId', async () => {
-      const matchHistory = await smiteApiClient.getMatchHistory('dhko');
-      const matchDetails = _.first(matchHistory);
-      expect(matchDetails).toEqual(
-        expect.objectContaining({
-          Match: expect.any(Number),
-        }),
-      );
-    });
-    it('should error out if playerId doesnt exist', async () => {
-      try {
-        await smiteApiClient.getMatchHistory('_dhko');
       } catch (error) {
         const expectedError = new Error('Request failed with status code 400');
         expect(error).toEqual(expectedError);

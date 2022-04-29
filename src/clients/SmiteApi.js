@@ -75,6 +75,8 @@ export class SmiteApi {
    * @returns {String} - url
    */
   _composeUrl(method, signature, timestamp, ...args) {
+    this._assertEnvVariables();
+
     const session = this.session_id ? `/${this.session_id}` : '';
     let url = `${BASE_URL}/${method}${this.responseType}/${this.dev_id}/${signature}${session}/${timestamp}`;
 
@@ -139,15 +141,16 @@ export class SmiteApi {
    */
   async _performRequest(method, ...args) {
     const now = moment.utc();
-    const previousTime = this.session_timestamp ? this.session_timestamp.add('15', 'minutes') : null;
 
-    if (now > previousTime) {
-      // if now is 15 minutes later than the last session
-      // that session has expired as we should make a new one
+    if (!this.session_timestamp) {
+      // if before is null there is no session_timestamp
+      // so we need to create one
       await this.createSession();
     }
 
-    if (_.isEmpty(this.session_id)) {
+    if (now > this.session_timestamp.clone().add('15', 'minutes')) {
+      // if now is 15 minutes later than the last session
+      // that session has expired as we should make a new one
       await this.createSession();
     }
 
@@ -163,16 +166,7 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async _processRequest(url) {
-    const response = await axios({ method: 'get', url });
-    const { data } = response;
-
-    // This might not belong here. sets up
-    // session id if we are making createsession request
-    if (_.get(data, SESSION_ID)) {
-      this.session_id = data.session_id;
-      this.session_timestamp = moment.utc();
-    }
-
+    const { data } = await axios({ method: 'get', url });
     return data;
   }
 
@@ -199,23 +193,25 @@ export class SmiteApi {
    */
   async createSession() {
     const url = this._generateEndpoint(METHODS.CREATE_SESSION);
-    return await this._processRequest(url);
+    const data = await this._processRequest(url);
+
+    // This might not belong here. sets up
+    // session id if we are making createsession request
+    this.session_id = _.get(data, SESSION_ID);
+    this.session_timestamp = moment.utc();
+
+    return data;
   }
 
   /**
    * /testsession[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
    * A means of validating that a session is established.
    * @public
-   * @returns {void | Error} - error
+   * @returns {String} - response message
    */
   async testSession() {
-    this._assertEnvVariables();
-
-    try {
-      await this._performRequest(METHODS.TEST_SESSION);
-    } catch (error) {
-      return new Error('Test Session Failed!');
-    }
+    const response = await this._performRequest(METHODS.TEST_SESSION);
+    return response;
   }
 
   /**
