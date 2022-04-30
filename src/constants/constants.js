@@ -114,6 +114,7 @@ export const ERRORS = {
   CLIENT_NOT_READY: 'SmiteQL connection is not ready. Call async function SmiteQL.ready()',
   SESSION_EXPIRED: 'SmiteQL session is expired. Make a new session with SmiteApi.createSession().',
   PATCH_VERSION_NOT_SET: 'Patch version has not been set.',
+  SCAN_MATCH_HISTORY_FAILURE: 'Options must contain one of: [index, limit] but not both',
 };
 
 export const SERVER = {

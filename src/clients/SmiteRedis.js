@@ -152,51 +152,14 @@ export class SmiteRedis extends SmiteApi {
    * @returns {Object} output
    */
   async _scanMatchHistory(playerId, options = {}) {
-    const { limit, index } = options;
-    const output = { matches: {}, history: [] };
-    const INDEX_MODIFIER = 20;
-    let start = null;
-    let end = null;
-
-    if (limit && index !== undefined) {
-      throw new Error('Options must contain one of: [index, limit] but not both');
+    if (options.limit && options.index !== undefined) {
+      throw new Error(ERRORS.SCAN_MATCH_HISTORY_FAILURE);
     }
 
-    const playerDetails = await this._get(`${PLAYERS}.${playerId}`);
+    const playerInfo = await this._get(`${PLAYERS}.${playerId}`);
+    const recentHistory = HELPERS.processRecentMatchHistory(playerInfo, options);
 
-    if (limit) {
-      // get number of matches starting from most recent
-      // upto the limit number. ie limit is 20, get 20 most recent matches
-      start = 0;
-      end = limit;
-    }
-
-    if (index !== undefined) {
-      // get number of matches starting from match at start
-      // to 20 more than the start
-      start = index * INDEX_MODIFIER;
-      end = start + 20;
-    }
-
-    if (!limit && index === undefined) {
-      start = 0;
-      end = 20;
-    }
-
-    for (let matchIndex = start; matchIndex < end; matchIndex++) {
-      const matchId = playerDetails.history[matchIndex];
-
-      if (!matchId) {
-        // if matchId doesnt exist, we have gone past the number of matches
-        // in our history. we can end early
-        break;
-      }
-
-      output.history.push(matchId);
-      output.matches[matchId] = playerDetails.matches[matchId];
-    }
-
-    return output;
+    return recentHistory;
   }
 
   /**

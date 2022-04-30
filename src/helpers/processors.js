@@ -209,3 +209,53 @@ export const processLevelDetails = (matchDetails) => {
     accountLevels,
   };
 };
+
+/**
+ *
+ * @param {Object} playerInfo - Player info with { history, matches } from Redis DB
+ * @param {Object} options -
+ * @param {Number} options.limit - number of matches to return from most recent to limit
+ * @param {Number} options.index - grouping based on every 20 matches, 0 for first 20, 1 for 21-40, etc...
+ * @returns {Object} - recentMatchHistory based on limit or index
+ */
+export const processRecentMatchHistory = (playerInfo, options) => {
+  const { limit, index } = options;
+  const recentHistory = { matches: {}, history: [] };
+  const INDEX_MODIFIER = 20;
+  let start = null;
+  let end = null;
+
+  if (limit) {
+    // get number of matches starting from most recent
+    // upto the limit number. ie limit is 20, get 20 most recent matches
+    start = 0;
+    end = limit;
+  }
+
+  if (index !== undefined) {
+    // get number of matches starting from match at start
+    // to 20 more than the start
+    start = index * INDEX_MODIFIER;
+    end = start + 20;
+  }
+
+  if (!limit && index === undefined) {
+    start = 0;
+    end = 20;
+  }
+
+  for (let matchIndex = start; matchIndex < end; matchIndex++) {
+    const matchId = playerInfo.history[matchIndex];
+
+    if (!matchId) {
+      // if matchId doesnt exist, we have gone past the number of matches
+      // in our history. we can end early
+      break;
+    }
+
+    recentHistory.history.push(matchId);
+    recentHistory.matches[matchId] = playerInfo.matches[matchId];
+  }
+
+  return recentHistory;
+};
