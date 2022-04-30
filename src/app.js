@@ -1,7 +1,7 @@
 import express from 'express';
 import _ from 'lodash';
 
-import { smiteQLClient } from './clients/SmiteQL';
+import { smiteClient } from './clients/SmiteQL';
 import CONSTANTS from './constants';
 
 const { SERVER } = CONSTANTS;
@@ -58,7 +58,7 @@ export const makeApplication = () => {
       });
     }
 
-    const response = await smiteQLClient.get(path);
+    const response = await smiteClient.get(path);
     const success = response.error ? false : true;
     const message = response.error ? 'failure' : 'success';
 
@@ -86,12 +86,12 @@ export const makeApplication = () => {
     }
 
     if (forceUpdate) {
-      await smiteQLClient.getMatchHistory(player);
+      await smiteClient.getMatchHistory(player);
     }
 
     // remove all undefined/null values from options
     const options = _.pickBy({ limit, index }, _.identity);
-    const response = await smiteQLClient.getHistory(player, options);
+    const response = await smiteClient.getHistory(player, options);
     const success = response.error ? false : true;
     const message = response.error ? 'failure' : 'success';
 

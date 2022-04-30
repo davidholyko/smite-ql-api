@@ -203,4 +203,4 @@ export class SmiteQL extends SmiteRedis {
   }
 }
 
-export const smiteQLClient = new SmiteQL();
+export const smiteClient = new SmiteQL();

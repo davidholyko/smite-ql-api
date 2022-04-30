@@ -1,55 +1,72 @@
+import moment from 'moment';
+
 import { SmiteApi } from '../../../src/clients/SmiteApi';
-import { smiteQLClient, SmiteQL } from '../../../src/clients/SmiteQL';
-import { SmiteRedis } from '../../../src/clients/SmiteRedis';
+import { smiteClient, SmiteQL } from '../../../src/clients/SmiteQL';
 import CONSTANTS from '../../../src/constants';
 import MOCKS from '../../../src/mocks';
 import { RedisMockClient } from '../../setup/setupRedisMock';
 
-const { SMITE_QL_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS } = CONSTANTS;
 const { ENTRY, ROOT, PLAYERS, GLOBAL } = SMITE_QL_KEYS;
-const { CLIENT_NOT_READY } = ERRORS;
 
 const {
   // mocks are real data from Smite API
   mockMatchDetails,
   mockSingleMatchHistory,
   mockPlayer,
+  mockGods,
+  mockItems,
+  mockPatchInfo,
 } = MOCKS;
 
 // TODO: make global expect objects for each significant object
 
 describe('SmiteQL', () => {
   beforeEach(() => {
-    smiteQLClient.redis.flushAll();
-    jest.spyOn(SmiteRedis.prototype, '_getPatchVersion').mockImplementation(() => {
-      return '9_0';
+    // reset redis DB
+    smiteClient.redis.flushAll();
+
+    // apply mocks so that we do not request real Smite API
+    jest.spyOn(SmiteApi.prototype, 'getPatchInfo').mockImplementation(() => {
+      return mockPatchInfo;
     });
+    jest.spyOn(SmiteApi.prototype, 'getGods').mockImplementation(() => {
+      return mockGods;
+    });
+    jest.spyOn(SmiteApi.prototype, 'getItems').mockImplementation(() => {
+      return mockItems;
+    });
+
+    // simulate session_timestamp so smiteClient is ready
+    smiteClient.session_timestamp = moment.utc();
   });
 
   describe('constructor', () => {
-    it('should create and instance of smiteQLClient', () => {
-      expect(smiteQLClient).toBeInstanceOf(SmiteQL);
+    it('should create and instance of smiteClient', () => {
+      expect(smiteClient).toBeInstanceOf(SmiteQL);
     });
     it('should start with an instance of redis', () => {
-      expect(smiteQLClient.redis).toBeInstanceOf(RedisMockClient);
+      expect(smiteClient.redis).toBeInstanceOf(RedisMockClient);
     });
     it('should start with isReady false', () => {
-      expect(smiteQLClient.isReady).toBe(false);
+      expect(smiteClient.isReady).toBe(false);
     });
   });
 
   describe('_assertReady', () => {
     it('should throw error if client is not ready', () => {
-      smiteQLClient.isReady = false;
+      smiteClient.isReady = false;
       const fn = () => {
-        smiteQLClient._assertReady();
+        smiteClient._assertReady();
       };
       expect(fn).toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
     });
     it('should not throw error if client is ready', () => {
-      smiteQLClient.isReady = true;
+      smiteClient.isReady = true;
+      smiteClient.session_timestamp = moment.utc();
+
       const fn = () => {
-        smiteQLClient._assertReady();
+        smiteClient._assertReady();
       };
       expect(fn).not.toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
     });
@@ -57,35 +74,35 @@ describe('SmiteQL', () => {
 
   describe('_exists', () => {
     it('should return true if key exists', async () => {
-      smiteQLClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      const doesExist = await smiteQLClient._exists('foo');
+      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
+      const doesExist = await smiteClient._exists('foo');
       expect(doesExist).toEqual(true);
     });
     it('should return false if key does not exist', async () => {
-      smiteQLClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      const doesExist = await smiteQLClient._exists('bar');
+      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
+      const doesExist = await smiteClient._exists('bar');
       expect(doesExist).toEqual(false);
     });
   });
 
   describe('_get', () => {
     it('should get a value from a key from redis', async () => {
-      smiteQLClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      const data = await smiteQLClient._get('foo');
+      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
+      const data = await smiteClient._get('foo');
       expect(data).toEqual('bar');
     });
   });
 
   describe('_set', () => {
     it('should add key value pair to the root of redis', async () => {
-      await smiteQLClient._set(ROOT, { foo: 'bar' });
-      const data = smiteQLClient.redis.json.get(ENTRY, { path: 'foo' });
+      await smiteClient._set(ROOT, { foo: 'bar' });
+      const data = smiteClient.redis.json.get(ENTRY, { path: 'foo' });
       expect(data).toEqual('bar');
     });
     it('should add key value pair to redis', async () => {
-      smiteQLClient._set(ROOT, { foo: 'bar' });
-      smiteQLClient._set('foo.whatever', 'something');
-      const data = await smiteQLClient.redis.json.get(ENTRY, { path: 'foo.whatever' });
+      smiteClient._set(ROOT, { foo: 'bar' });
+      smiteClient._set('foo.whatever', 'something');
+      const data = await smiteClient.redis.json.get(ENTRY, { path: 'foo.whatever' });
       expect(data).toEqual('something');
     });
   });
@@ -93,49 +110,39 @@ describe('SmiteQL', () => {
   describe('_reset', () => {
     it('should flush all values from redis', async () => {
       let exists;
-      smiteQLClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      exists = await smiteQLClient._exists('foo');
+      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
+      exists = await smiteClient._exists('foo');
       expect(exists).toEqual(true);
-      await smiteQLClient._reset();
-      exists = await smiteQLClient._exists('foo');
+      await smiteClient._reset();
+      exists = await smiteClient._exists('foo');
       expect(exists).toEqual(false);
     });
-    it('should set isReady to false on smiteQLClient', async () => {
-      await smiteQLClient.ready();
-      expect(smiteQLClient.isReady).toEqual(true);
-      await smiteQLClient._reset();
-      expect(smiteQLClient.isReady).toEqual(false);
+    it('should set isReady to false on smiteClient', async () => {
+      await smiteClient.ready();
+      expect(smiteClient.isReady).toEqual(true);
+      await smiteClient._reset();
+      expect(smiteClient.isReady).toEqual(false);
     });
   });
 
   describe('getMatchDetails', () => {
     beforeEach(async () => {
-      await smiteQLClient.ready();
+      await smiteClient.ready();
 
       jest.spyOn(SmiteApi.prototype, 'getMatchDetails').mockImplementation(() => {
         return mockMatchDetails;
       });
     });
 
-    it('should throw an error if client is not ready', async () => {
-      const errorMsg = new Error(CLIENT_NOT_READY);
-      await smiteQLClient._reset();
-
-      try {
-        await smiteQLClient.getMatchDetails('12345', 'dhko');
-      } catch (error) {
-        expect(error).toEqual(errorMsg);
-      }
-    });
-
     it('should get getMatchDetails object', async () => {
-      const matchDetails = await smiteQLClient.getMatchDetails('12345', 'dhko');
+      const matchDetails = await smiteClient.getMatchDetails('12345', 'dhko');
 
       const expectedMatchDetails = expect.objectContaining({
-        party: expect.any(Object),
         level: expect.any(Object),
+        party: expect.any(Object),
+        player: expect.any(Object),
         team: expect.any(Object),
-        patch_version: '9_0',
+        patch_version: '9_3',
       });
 
       expect(matchDetails).toEqual(expectedMatchDetails);
@@ -144,7 +151,7 @@ describe('SmiteQL', () => {
 
   describe('getMatchHistory', () => {
     beforeEach(async () => {
-      await smiteQLClient.ready();
+      await smiteClient.ready();
 
       jest.spyOn(SmiteApi.prototype, 'getPlayer').mockImplementation(() => {
         return mockPlayer;
@@ -154,19 +161,8 @@ describe('SmiteQL', () => {
       });
     });
 
-    it('should throw an error if client is not ready', async () => {
-      const errorMsg = new Error(CLIENT_NOT_READY);
-      await smiteQLClient._reset();
-
-      try {
-        await smiteQLClient.getMatchHistory('12345');
-      } catch (error) {
-        expect(error).toEqual(errorMsg);
-      }
-    });
-
     it('should return an array of matchIds', async () => {
-      const matchHistory = await smiteQLClient.getMatchHistory('any-player');
+      const matchHistory = await smiteClient.getMatchHistory('any-player');
       const expectedMatchHistory = [expect.any(Number)];
 
       expect(matchHistory).toEqual(expectedMatchHistory);
@@ -175,26 +171,15 @@ describe('SmiteQL', () => {
 
   describe('getPlayer', () => {
     beforeEach(async () => {
-      await smiteQLClient.ready();
+      await smiteClient.ready();
 
       jest.spyOn(SmiteApi.prototype, 'getPlayer').mockImplementation(() => {
         return mockPlayer;
       });
     });
 
-    it('should throw an error if client is not ready', async () => {
-      const errorMsg = new Error(CLIENT_NOT_READY);
-      await smiteQLClient._reset();
-
-      try {
-        await smiteQLClient.getPlayer('dhko');
-      } catch (error) {
-        expect(error).toEqual(errorMsg);
-      }
-    });
-
     it('should return playerInfo initial state', async () => {
-      const data = await smiteQLClient.getPlayer('dhko');
+      const data = await smiteClient.getPlayer('dhko');
       const expectedMatches = expect.objectContaining({
         wins: [],
         losses: [],
@@ -218,27 +203,27 @@ describe('SmiteQL', () => {
 
   describe('ready', () => {
     beforeEach(async () => {
-      smiteQLClient.isReady = false;
-      await smiteQLClient.redis.flushAll();
+      smiteClient.isReady = false;
+      await smiteClient.redis.flushAll();
     });
 
-    it('should set smiteQLClient.isReady to true', async () => {
-      await smiteQLClient.ready();
-      expect(smiteQLClient.isReady).toEqual(true);
+    it('should set smiteClient.isReady to true', async () => {
+      await smiteClient.ready();
+      expect(smiteClient.isReady).toEqual(true);
     });
-    it('should return false if smiteQLClient.ready was not already called', async () => {
-      const ready = await smiteQLClient.ready();
+    it('should return false if smiteClient.ready was not already called', async () => {
+      const ready = await smiteClient.ready();
       expect(ready).toEqual(false);
     });
-    it('should return true if smiteQLClient.ready was already called', async () => {
-      await smiteQLClient.ready();
-      const ready = await smiteQLClient.ready();
+    it('should return true if smiteClient.ready was already called', async () => {
+      await smiteClient.ready();
+      const ready = await smiteClient.ready();
       expect(ready).toEqual(true);
     });
     it('should set the initial state with players and global objects', async () => {
-      await smiteQLClient.ready();
-      const doesPlayersExist = await smiteQLClient._exists(PLAYERS);
-      const doesGlobalExist = await smiteQLClient._exists(GLOBAL);
+      await smiteClient.ready();
+      const doesPlayersExist = await smiteClient._exists(PLAYERS);
+      const doesGlobalExist = await smiteClient._exists(GLOBAL);
       expect(doesPlayersExist).toEqual(true);
       expect(doesGlobalExist).toEqual(true);
     });

@@ -108,8 +108,8 @@ describe('SmiteApi Endpoints', () => {
       try {
         await smiteApiClient.getMatchDetails('abc123');
       } catch (error) {
-        const expectedError = new Error('Request failed with status code 400');
-        expect(error).toEqual(expectedError);
+        const expectedErrorMsg = '❌❌❌ Request Failed';
+        expect(error.message).toEqual(expect.stringContaining(expectedErrorMsg));
       }
     });
   });
@@ -122,11 +122,11 @@ describe('SmiteApi Endpoints', () => {
     it('should get Player details for an playerId', async () => {
       const playerDetails = await smiteApiClient.getPlayer('dhko');
       const player = _.first(playerDetails);
-      expect(player).toEqual(
-        expect.objectContaining({
-          hz_player_name: expect.any(String),
-        }),
-      );
+      const expectedPlayer = expect.objectContaining({
+        hz_player_name: expect.any(String),
+      });
+
+      expect(player).toEqual(expectedPlayer);
     });
     it('should error out if playerId doesnt exist', async () => {
       try {

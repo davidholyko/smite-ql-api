@@ -66,6 +66,10 @@ export class SmiteRedis extends SmiteApi {
    * @returns {void}
    */
   _assertReady() {
+    if (this._isSessionExpired()) {
+      this.isReady = false;
+    }
+
     if (!this.isReady) {
       throw new Error(ERRORS.CLIENT_NOT_READY);
     }
@@ -202,6 +206,7 @@ export class SmiteRedis extends SmiteApi {
   async _reset() {
     await this.redis.flushAll();
     this.isReady = false;
+    this.session_timestamp = null;
   }
 
   // ******************************************************************** //

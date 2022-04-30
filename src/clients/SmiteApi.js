@@ -182,7 +182,15 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async _processRequest(url) {
-    const { data } = await axios({ method: 'get', url });
+    let data = null;
+
+    try {
+      const response = await axios({ method: 'get', url });
+      data = response.data;
+    } catch (error) {
+      throw new Error(`❌❌❌ Request Failed for ${url} ❌❌❌`);
+    }
+
     return data;
   }
 
