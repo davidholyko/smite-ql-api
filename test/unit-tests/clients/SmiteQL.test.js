@@ -7,7 +7,7 @@ import MOCKS from '../../../src/mocks';
 import { RedisMockClient } from '../../setup/setupRedisMock';
 
 const { SMITE_QL_KEYS } = CONSTANTS;
-const { ENTRY, ROOT, PLAYERS, GLOBAL } = SMITE_QL_KEYS;
+const { PLAYERS, GLOBAL } = SMITE_QL_KEYS;
 
 const {
   // mocks are real data from Smite API
@@ -50,78 +50,6 @@ describe('SmiteQL', () => {
     });
     it('should start with isReady false', () => {
       expect(smiteClient.isReady).toBe(false);
-    });
-  });
-
-  describe('_assertReady', () => {
-    it('should throw error if client is not ready', () => {
-      smiteClient.isReady = false;
-      const fn = () => {
-        smiteClient._assertReady();
-      };
-      expect(fn).toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
-    });
-    it('should not throw error if client is ready', () => {
-      smiteClient.isReady = true;
-      smiteClient.session_timestamp = moment.utc();
-
-      const fn = () => {
-        smiteClient._assertReady();
-      };
-      expect(fn).not.toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
-    });
-  });
-
-  describe('_exists', () => {
-    it('should return true if key exists', async () => {
-      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      const doesExist = await smiteClient._exists('foo');
-      expect(doesExist).toEqual(true);
-    });
-    it('should return false if key does not exist', async () => {
-      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      const doesExist = await smiteClient._exists('bar');
-      expect(doesExist).toEqual(false);
-    });
-  });
-
-  describe('_get', () => {
-    it('should get a value from a key from redis', async () => {
-      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      const data = await smiteClient._get('foo');
-      expect(data).toEqual('bar');
-    });
-  });
-
-  describe('_set', () => {
-    it('should add key value pair to the root of redis', async () => {
-      await smiteClient._set(ROOT, { foo: 'bar' });
-      const data = smiteClient.redis.json.get(ENTRY, { path: 'foo' });
-      expect(data).toEqual('bar');
-    });
-    it('should add key value pair to redis', async () => {
-      smiteClient._set(ROOT, { foo: 'bar' });
-      smiteClient._set('foo.whatever', 'something');
-      const data = await smiteClient.redis.json.get(ENTRY, { path: 'foo.whatever' });
-      expect(data).toEqual('something');
-    });
-  });
-
-  describe('_reset', () => {
-    it('should flush all values from redis', async () => {
-      let exists;
-      smiteClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });
-      exists = await smiteClient._exists('foo');
-      expect(exists).toEqual(true);
-      await smiteClient._reset();
-      exists = await smiteClient._exists('foo');
-      expect(exists).toEqual(false);
-    });
-    it('should set isReady to false on smiteClient', async () => {
-      await smiteClient.ready();
-      expect(smiteClient.isReady).toEqual(true);
-      await smiteClient._reset();
-      expect(smiteClient.isReady).toEqual(false);
     });
   });
 

@@ -81,7 +81,7 @@ export class SmiteRedis extends SmiteApi {
    */
   _assertPatchVersion(patchVersion) {
     if (!patchVersion) {
-      throw new Error('Patch version has not been set.');
+      throw new Error(ERRORS.PATCH_VERSION_NOT_SET);
     }
   }
 
