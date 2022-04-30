@@ -1,4 +1,5 @@
-const { DEV_ID, AUTH_KEY } = process.env;
+const { DEV_ID, AUTH_KEY, NODE_ENV } = process.env;
+const isProd = NODE_ENV === 'production';
 
 export const API = {
   DEV_ID: DEV_ID,
@@ -106,4 +107,10 @@ export const ERRORS = {
 
 export const SERVER = {
   PORT: process.env.PORT || 8080,
+};
+
+export const REDIS = {
+  HOST: isProd ? process.env.REDIS_HOST : '127.0.0.1',
+  PORT: isProd ? process.env.REDIS_PORT : '6379',
+  AUTH: isProd ? process.env.REDIS_AUTH : '',
 };

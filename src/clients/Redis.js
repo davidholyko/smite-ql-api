@@ -1,10 +1,11 @@
 import { createClient } from 'redis';
 
-const isProd = process.env.NODE_ENV === 'production';
-const REDIS_HOST = isProd ? process.env.REDIS_HOST : '127.0.0.1';
-const REDIS_PORT = isProd ? process.env.REDIS_PORT : '6379';
-const REDIS_AUTH = isProd ? process.env.REDIS_AUTH : '';
-const url = `redis://${REDIS_AUTH}${REDIS_HOST}:${REDIS_PORT}`;
+import CONSTANTS from '../constants';
+
+const { REDIS } = CONSTANTS;
+const { AUTH, HOST, PORT } = REDIS;
+
+const url = `redis://${AUTH}${HOST}:${PORT}`;
 
 const onError = (err) => {
   console.error(`Redis Client Error: ${err}`);
