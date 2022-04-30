@@ -1,4 +1,13 @@
-const { DEV_ID, AUTH_KEY, NODE_ENV } = process.env;
+const {
+  //
+  DEV_ID,
+  AUTH_KEY,
+  NODE_ENV,
+  REDIS_HOST,
+  REDIS_PORT,
+  REDIS_AUTH,
+  PORT,
+} = process.env;
 const isProd = NODE_ENV === 'production';
 
 export const API = {
@@ -102,15 +111,16 @@ export const SMITE_API_KEYS = {
 };
 
 export const ERRORS = {
-  CLIENT_NOT_READY: 'SmiteQL.redis is not ready. Call async function SmiteQL.ready()',
+  CLIENT_NOT_READY: 'SmiteQL connection is not ready. Call async function SmiteQL.ready()',
+  SESSION_EXPIRED: 'SmiteQL session is expired. Make a new session with SmiteApi.createSession().',
 };
 
 export const SERVER = {
-  PORT: process.env.PORT || 8080,
+  PORT: PORT || 8080,
 };
 
 export const REDIS = {
-  HOST: isProd ? process.env.REDIS_HOST : '127.0.0.1',
-  PORT: isProd ? process.env.REDIS_PORT : '6379',
-  AUTH: isProd ? process.env.REDIS_AUTH : '',
+  HOST: isProd ? REDIS_HOST : '127.0.0.1',
+  PORT: isProd ? REDIS_PORT : '6379',
+  AUTH: isProd ? REDIS_AUTH : '',
 };

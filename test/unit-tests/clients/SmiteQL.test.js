@@ -44,14 +44,14 @@ describe('SmiteQL', () => {
       const fn = () => {
         smiteQLClient._assertReady();
       };
-      expect(fn).toThrow('SmiteQL.redis is not ready. Call async function SmiteQL.ready()');
+      expect(fn).toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
     });
-    it('should not throw erro if client is ready', () => {
+    it('should not throw error if client is ready', () => {
       smiteQLClient.isReady = true;
       const fn = () => {
         smiteQLClient._assertReady();
       };
-      expect(fn).not.toThrow('SmiteQL.redis is not ready. Call async function SmiteQL.ready()');
+      expect(fn).not.toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
     });
   });
 

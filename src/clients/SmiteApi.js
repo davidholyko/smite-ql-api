@@ -28,7 +28,7 @@ export class SmiteApi {
     auth_key = AUTH_KEY,
     dev_id = DEV_ID,
     lang = LANGS.ENGLISH,
-    responseType = JSON,
+    response_type = JSON,
   } = {}) {
     // session_id will be set once createSession is invoked
     this.session_id = null;
@@ -40,8 +40,12 @@ export class SmiteApi {
 
     // internal state for this class
     this.lang = lang;
-    this.responseType = responseType;
+    this.response_type = response_type;
   }
+
+  // * *********************************************************************************** * //
+  // * ****************************** Assertions and Checks ****************************** * //
+  // * *********************************************************************************** * //
 
   /**
    * throws error if these values do not exist in .env:
@@ -66,6 +70,26 @@ export class SmiteApi {
   }
 
   /**
+   * Check session time stamp against current time. If the session is more than
+   * 15 minutes old, a new session is required.
+   * @returns {Boolean} true if now is 15 minutes later than last session
+   */
+  _isSessionExpired() {
+    if (!this.session_timestamp) {
+      return true;
+    }
+
+    const now = moment.utc();
+    const before = this.session_timestamp.clone().add('15', 'minutes');
+
+    return now > before;
+  }
+
+  // * *********************************************************************************** * //
+  // * ****************** Smite API Endpoint Generation and Processing ******************* * //
+  // * *********************************************************************************** * //
+
+  /**
    * creates a request url
    * @private
    * @param {String} method - type of method
@@ -78,7 +102,7 @@ export class SmiteApi {
     this._assertEnvVariables();
 
     const session = this.session_id ? `/${this.session_id}` : '';
-    let url = `${BASE_URL}/${method}${this.responseType}/${this.dev_id}/${signature}${session}/${timestamp}`;
+    let url = `${BASE_URL}/${method}${this.response_type}/${this.dev_id}/${signature}${session}/${timestamp}`;
 
     _.forEach([...args], (arg) => {
       url += `/${arg}`;
@@ -140,15 +164,7 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async _performRequest(method, ...args) {
-    const now = moment.utc();
-
-    if (!this.session_timestamp) {
-      // if before is null there is no session_timestamp
-      // so we need to create one
-      await this.createSession();
-    }
-
-    if (now > this.session_timestamp.clone().add('15', 'minutes')) {
+    if (this._isSessionExpired()) {
       // if now is 15 minutes later than the last session
       // that session has expired as we should make a new one
       await this.createSession();
@@ -180,7 +196,7 @@ export class SmiteApi {
    * @returns {String} response
    */
   async ping() {
-    const url = `${BASE_URL}/${METHODS.PING}${this.responseType}`;
+    const url = `${BASE_URL}/${METHODS.PING}${this.response_type}`;
     const response = await this._processRequest(url);
     return response;
   }
