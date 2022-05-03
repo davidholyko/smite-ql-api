@@ -19,9 +19,6 @@ export const makeApplication = () => {
    * @example http://localhost:8080/ping
    */
   app.get('/ping', async function (_req, res) {
-    // ensure smiteClient is ready when receiving a request when app is sleeping
-    await smiteClient.ready();
-
     res.send({
       // ping should always work as long as server is running
       success: true,
@@ -33,9 +30,6 @@ export const makeApplication = () => {
    * @example http://localhost:8080/smite-ql?path=players.dhko.matches.1235652463
    */
   app.get('/smite-ql', async function (req, res) {
-    // ensure smiteClient is ready when receiving a request when app is sleeping
-    await smiteClient.ready();
-
     const { path } = req.query;
 
     if (!path) {
@@ -86,9 +80,6 @@ export const makeApplication = () => {
    * @example http://localhost:8080/history?player=dhko
    */
   app.get('/history', async function (req, res) {
-    // ensure smiteClient is ready when receiving a request when app is sleeping
-    await smiteClient.ready();
-
     const { player, forceUpdate, limit, index } = req.query;
 
     if (!player) {

@@ -188,7 +188,13 @@ export class SmiteApi {
       const response = await axios({ method: 'get', url });
       data = response.data;
     } catch (error) {
-      throw new Error(`❌❌❌ Request Failed for ${url} ❌❌❌`);
+      const errors = [
+        `❌❌❌ Request Failed for ${url}`,
+        `❌❌❌ Timestamp expired ${this.session_timestamp}`,
+        `❌❌❌ Timestamp current ${moment.utc()}`,
+      ].join('\n');
+
+      throw new Error(errors);
     }
 
     return data;
