@@ -125,6 +125,7 @@ describe('SmiteQL', () => {
         matches: expect.any(Object),
         ranked: expectedMatches,
         normal: expectedMatches,
+        overall: expectedMatches,
       });
     });
   });

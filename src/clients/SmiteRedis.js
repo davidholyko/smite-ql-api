@@ -40,6 +40,7 @@ const {
   PARTY,
   LEVEL,
   RAW_MATCHES,
+  OVERALL,
 } = SMITE_QL_KEYS;
 
 /**
@@ -404,6 +405,10 @@ export class SmiteRedis extends SmiteApi {
         [LOSSES]: [],
       },
       [RANKED]: {
+        [WINS]: [],
+        [LOSSES]: [],
+      },
+      [OVERALL]: {
         [WINS]: [],
         [LOSSES]: [],
       },

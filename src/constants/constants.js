@@ -93,6 +93,7 @@ export const SMITE_QL_KEYS = {
   PREVIOUS_SCEHMA: 'previous_schema',
   SCHEMA_VERSION: 'schema_version',
   RAW_MATCHES: 'raw_matches',
+  OVERALL: 'overall',
 };
 
 export const SMITE_API_KEYS = {

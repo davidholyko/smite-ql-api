@@ -11,8 +11,9 @@ import CONSTANTS from '../constants';
 import { parseIgn } from './parsers';
 import { toSmiteQLMatch } from './transformers';
 
-const { SMITE_API_KEYS } = CONSTANTS;
+const { SMITE_API_KEYS, SMITE_QL_KEYS } = CONSTANTS;
 const { MATCH, PLAYER_ID, PARTY_ID } = SMITE_API_KEYS;
+const { NORMAL, RANKED, OVERALL, WINS, LOSSES, MATCHES, HISTORY } = SMITE_QL_KEYS;
 
 /**
  * Compares match history of new match history with old. If there are new matches, loads that
@@ -220,7 +221,22 @@ export const processLevelDetails = (matchDetails) => {
  */
 export const processRecentMatchHistory = (playerInfo, options) => {
   const { limit, index } = options;
-  const recentHistory = { matches: {}, history: [] };
+  const recentHistory = {
+    [MATCHES]: {},
+    [HISTORY]: [],
+    [RANKED]: {
+      [WINS]: [],
+      [LOSSES]: [],
+    },
+    [NORMAL]: {
+      [WINS]: [],
+      [LOSSES]: [],
+    },
+    [OVERALL]: {
+      [WINS]: [],
+      [LOSSES]: [],
+    },
+  };
   const INDEX_MODIFIER = 20;
   let start = null;
   let end = null;
@@ -245,16 +261,23 @@ export const processRecentMatchHistory = (playerInfo, options) => {
   }
 
   for (let matchIndex = start; matchIndex < end; matchIndex++) {
-    const matchId = playerInfo.history[matchIndex];
+    const matchId = playerInfo[HISTORY][matchIndex];
+    const matchInfo = playerInfo[MATCHES][matchId];
 
-    if (!matchId) {
+    if (_.isEmpty(matchInfo)) {
       // if matchId doesnt exist, we have gone past the number of matches
       // in our history. we can end early
       break;
     }
 
-    recentHistory.history.push(matchId);
-    recentHistory.matches[matchId] = playerInfo.matches[matchId];
+    const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
+    const matchType = matchInfo.isRanked ? RANKED : NORMAL;
+
+    // fill in RANKED/NORMAL and OVERALL objects with win losses
+    recentHistory[MATCHES][matchId] = matchInfo;
+    recentHistory[HISTORY].push(matchId);
+    recentHistory[matchType][victoryStatus].push(matchId);
+    recentHistory[OVERALL][victoryStatus].push(matchId);
   }
 
   return recentHistory;

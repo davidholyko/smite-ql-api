@@ -8,7 +8,6 @@ import { SmiteRedis } from './SmiteRedis';
 
 const { SMITE_QL_KEYS } = CONSTANTS;
 const {
-  //
   WINS,
   LOSSES,
   RANKED,
@@ -22,6 +21,7 @@ const {
   PATCH_VERSION,
   RAW_MATCHES,
   PLAYER,
+  OVERALL,
 } = SMITE_QL_KEYS;
 
 /**
@@ -77,14 +77,18 @@ export class SmiteQL extends SmiteRedis {
     const levelDetails = HELPERS.processLevelDetails(rawDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawDetails, patchVersion);
 
+    // TODO: maybe logic for updating redisSB should be in in a smaller method
     // calculate stats from the perspective of the player
     const matchInfo = playerDetails[playerId];
-    const winLossPath = `${matchInfo.isRanked ? RANKED : NORMAL}.${matchInfo.isVictory ? WINS : LOSSES}`;
+    const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
+    const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
     const matchParams = { matchInfo, playerId, partyDetails, teamDetails };
     const playerMatchState = this.buildPlayerMatchState(matchParams);
 
-    await this._append(`${PLAYERS}.${playerId}.${winLossPath}`, matchInfo.matchId);
+    // append to RANKED/NORMAL and OVERALL
+    await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
+    await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
     await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
 
     // calculate stats from the perspective of the match
