@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import _ from 'lodash';
 
@@ -8,6 +9,11 @@ const { SERVER } = CONSTANTS;
 
 export const makeApplication = () => {
   const app = express();
+  app.use(
+    cors({
+      origin: ['https://www.smite-ql.com', 'http://localhost:3000'],
+    }),
+  );
 
   /**
    * @example http://localhost:8080/ping
