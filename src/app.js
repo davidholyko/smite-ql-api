@@ -60,7 +60,7 @@ export const makeApplication = () => {
     if (path === 'global') {
       return res.send({
         success: false,
-        message: "query params 'path=players' is restricted for '/smite-ql' endpoint.",
+        message: "query params 'path=global' is restricted for '/smite-ql' endpoint.",
       });
     }
 
@@ -94,7 +94,7 @@ export const makeApplication = () => {
       });
     }
 
-    if (forceUpdate) {
+    if (forceUpdate === 'true') {
       await smiteClient.getMatchHistory(player);
     }
 
