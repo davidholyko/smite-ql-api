@@ -15,7 +15,6 @@ export const API = {
   AUTH_KEY: AUTH_KEY,
   BASE_URL: 'https://api.smitegame.com/smiteapi.svc',
   RESPONSE_FORMAT: 'Json',
-  TIME_FORMAT: 'yyyyMMDDHHmmss',
   SESSION_ID: 'session_id',
   JSON: 'Json',
 };
@@ -126,4 +125,9 @@ export const REDIS = {
   HOST: isProd ? REDIS_HOST : '127.0.0.1',
   PORT: isProd ? REDIS_PORT : '6379',
   AUTH: isProd ? REDIS_AUTH : '',
+};
+
+export const MOMENT = {
+  HUMAN_TIME_FORMAT: 'MMMM Do YYYY, h:mm:ss a',
+  SMITE_API_FORMAT: 'yyyyMMDDHHmmss',
 };

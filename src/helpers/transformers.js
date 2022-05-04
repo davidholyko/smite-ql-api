@@ -9,8 +9,8 @@ import moment from 'moment';
 
 import CONSTANTS from '../constants';
 
-const { API } = CONSTANTS;
-const { TIME_FORMAT } = API;
+const { MOMENT } = CONSTANTS;
+const { SMITE_API_FORMAT } = MOMENT;
 
 /**
  *
@@ -19,7 +19,7 @@ const { TIME_FORMAT } = API;
  */
 export const toDate = (date) => {
   const isoDateFormat = new Date(date);
-  const newDate = moment(isoDateFormat).format(TIME_FORMAT);
+  const newDate = moment(isoDateFormat).format(SMITE_API_FORMAT);
   return newDate;
 };
 

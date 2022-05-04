@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
@@ -8,7 +9,7 @@ import { SmiteApi } from './SmiteApi';
 
 const { parsePlayerName } = HELPERS;
 
-const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS, MOMENT } = CONSTANTS;
 const { ID } = SMITE_API_KEYS;
 const {
   ROOT,
@@ -205,20 +206,27 @@ export class SmiteRedis extends SmiteApi {
    */
   async _updatePatchVersion() {
     const { version_string } = await this.getPatchInfo();
-    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchInfo = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchVersion = _.get(currentPatchInfo, 'value');
     const patchVersion = HELPERS.parsePatchVersion(version_string);
 
-    if (currentPatch === patchVersion) {
+    if (currentPatchVersion === patchVersion) {
       // if our latest patchVersion is already upto date
       // skip any updates to redis
       return patchVersion;
     }
 
-    // update redis and SmiteQL client
-    await this._set(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersion);
-    await this._prepend(`${MISC}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersion);
+    const patchVersionInfo = {
+      value: patchVersion,
+      timestamp: moment.utc(),
+      timestamp_human: moment.utc().format(MOMENT.HUMAN_TIME_FORMAT),
+    };
 
-    return patchVersion;
+    // update redis and SmiteQL client
+    await this._set(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersionInfo);
+    await this._prepend(`${MISC}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersionInfo);
+
+    return patchVersionInfo.value;
   }
 
   /**
@@ -226,11 +234,12 @@ export class SmiteRedis extends SmiteApi {
    * @returns {String} - current patch version, like '9.3'
    */
   async _getPatchVersion() {
-    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchInfo = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchVersion = _.get(currentPatchInfo, 'value');
 
-    this._assertPatchVersion(currentPatch);
+    this._assertPatchVersion(currentPatchVersion);
 
-    return currentPatch;
+    return currentPatchVersion;
   }
 
   /**
@@ -326,8 +335,10 @@ export class SmiteRedis extends SmiteApi {
           [PREVIOUS_SCEHMA]: [],
         },
         [PATCH_VERSIONS]: {
-          [CURRENT_PATCH]: null, // like '9.3'
-          [PREVIOUS_PATCHES]: [], // like ['9.3', '9.2']
+          // example: { value: '9.3', timestamp: 1322312 }
+          [CURRENT_PATCH]: null,
+          // example: [{ value: '9.3', timestamp: 1322312 }, { value: '9.2', timestamp: 1222312 }]
+          [PREVIOUS_PATCHES]: [],
         },
       },
 

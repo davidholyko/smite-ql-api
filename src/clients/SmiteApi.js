@@ -16,7 +16,7 @@ import CONSTANTS from '../constants';
 // in case Smite API is unresponsive
 axios.defaults.timeout = 30000;
 
-const { API, LANGS, METHODS } = CONSTANTS;
+const { API, LANGS, METHODS, MOMENT } = CONSTANTS;
 const { BASE_URL, SESSION_ID, DEV_ID, AUTH_KEY, JSON } = API;
 
 /**
@@ -127,7 +127,7 @@ export class SmiteApi {
    * @returns {String} timestamp
    */
   _generateTimeStamp() {
-    const timestamp = moment.utc().format(API.TIME_FORMAT);
+    const timestamp = moment.utc().format(MOMENT.SMITE_API_FORMAT);
     return timestamp;
   }
 
