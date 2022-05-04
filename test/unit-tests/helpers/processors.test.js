@@ -82,7 +82,6 @@ describe('processors', () => {
           'Spear of the Magus',
           'Calamitous Rod of Tahuti',
           'Enchanted Spear',
-          '',
         ],
         gold: 13775,
         healing: 0,

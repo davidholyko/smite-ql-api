@@ -38,12 +38,12 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     rawMatchDetails.Item_Purch_4,
     rawMatchDetails.Item_Purch_5,
     rawMatchDetails.Item_Purch_6,
-  ];
+  ].filter(_.identity);
   const playerActives = [
     // actives
     rawMatchDetails.Item_Active_1,
     rawMatchDetails.Item_Active_2,
-  ];
+  ].filter(_.identity);
 
   const matchState = {
     // this date refers to a match's UTC time
