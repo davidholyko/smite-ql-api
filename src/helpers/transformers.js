@@ -30,6 +30,11 @@ export const toDate = (date) => {
  * @returns {Object} match with only date and victory status
  */
 export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
+  const playerActives = [
+    // actives
+    rawMatchDetails.Item_Active_1,
+    rawMatchDetails.Item_Active_2,
+  ];
   const playerItems = [
     // items
     rawMatchDetails.Item_Purch_1,
@@ -38,12 +43,7 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     rawMatchDetails.Item_Purch_4,
     rawMatchDetails.Item_Purch_5,
     rawMatchDetails.Item_Purch_6,
-  ].filter(_.identity);
-  const playerActives = [
-    // actives
-    rawMatchDetails.Item_Active_1,
-    rawMatchDetails.Item_Active_2,
-  ].filter(_.identity);
+  ];
 
   const matchState = {
     // this date refers to a match's UTC time
@@ -72,8 +72,8 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     damageStructures: _.get(rawMatchDetails, 'Structure_Damage', 0),
 
     // items and actives
-    godActives: playerActives,
-    godItems: playerItems,
+    godActives: _.filter(playerActives, _.identity),
+    godItems: _.filter(playerItems, _.identity),
 
     // player detils
     accountLevel: _.get(rawMatchDetails, 'Account_Level', 0),
