@@ -252,7 +252,7 @@ export class SmiteRedis extends SmiteApi {
 
     await Promise.allSettled(
       _.map(items, async (item) => {
-        const key = item.DeviceName;
+        const key = item.DeviceName.replaceAll(' ', '_');
         return await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}.${key}`, item);
       }),
     );
@@ -277,7 +277,7 @@ export class SmiteRedis extends SmiteApi {
 
     await Promise.allSettled(
       _.map(gods, async (godDetails) => {
-        const god = godDetails.Name;
+        const god = godDetails.Name.replaceAll(' ', '_');
         return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${god}`, godDetails);
       }),
     );
