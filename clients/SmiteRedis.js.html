@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.04% </span>
+                <span class="strong">88.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>81/92</span>
+                <span class='fraction'>84/95</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.04% </span>
+                <span class="strong">88.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>81/92</span>
+                <span class='fraction'>84/95</span>
             </div>
         
             
@@ -534,7 +534,19 @@
 <a name='L469'></a><a href='#L469'>469</a>
 <a name='L470'></a><a href='#L470'>470</a>
 <a name='L471'></a><a href='#L471'>471</a>
-<a name='L472'></a><a href='#L472'>472</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L472'></a><a href='#L472'>472</a>
+<a name='L473'></a><a href='#L473'>473</a>
+<a name='L474'></a><a href='#L474'>474</a>
+<a name='L475'></a><a href='#L475'>475</a>
+<a name='L476'></a><a href='#L476'>476</a>
+<a name='L477'></a><a href='#L477'>477</a>
+<a name='L478'></a><a href='#L478'>478</a>
+<a name='L479'></a><a href='#L479'>479</a>
+<a name='L480'></a><a href='#L480'>480</a>
+<a name='L481'></a><a href='#L481'>481</a>
+<a name='L482'></a><a href='#L482'>482</a>
+<a name='L483'></a><a href='#L483'>483</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -743,6 +755,7 @@
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -750,6 +763,12 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
@@ -762,6 +781,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">31x</span>
@@ -853,6 +873,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1006,6 +1028,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import _ from 'lodash';
+import moment from 'moment';
 &nbsp;
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
@@ -1015,7 +1038,7 @@ import { SmiteApi } from './SmiteApi';
 &nbsp;
 const { parsePlayerName } = HELPERS;
 &nbsp;
-const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS, MOMENT } = CONSTANTS;
 const { ID } = SMITE_API_KEYS;
 const {
   ROOT,
@@ -1212,20 +1235,27 @@ export class SmiteRedis extends SmiteApi {
    */
   async _updatePatchVersion() {
     const { version_string } = await this.getPatchInfo();
-    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchInfo = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchVersion = _.get(currentPatchInfo, 'value');
     const patchVersion = HELPERS.parsePatchVersion(version_string);
 &nbsp;
-    if (currentPatch === patchVersion) {
+    if (currentPatchVersion === patchVersion) {
       // if our latest patchVersion is already upto date
       // skip any updates to redis
       return patchVersion;
     }
 &nbsp;
-    // update redis and SmiteQL client
-    await this._set(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersion);
-    await this._prepend(`${MISC}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersion);
+    const patchVersionInfo = {
+      value: patchVersion,
+      timestamp: moment.utc(),
+      timestamp_human: moment.utc().format(MOMENT.HUMAN_TIME_FORMAT),
+    };
 &nbsp;
-    return patchVersion;
+    // update redis and SmiteQL client
+    await this._set(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`, patchVersionInfo);
+    await this._prepend(`${MISC}.${PATCH_VERSIONS}.${PREVIOUS_PATCHES}`, patchVersionInfo);
+&nbsp;
+    return patchVersionInfo.value;
   }
 &nbsp;
   /**
@@ -1233,11 +1263,12 @@ export class SmiteRedis extends SmiteApi {
    * @returns {String} - current patch version, like '9.3'
    */
   async _getPatchVersion() {
-    const currentPatch = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchInfo = await this._get(`${MISC}.${PATCH_VERSIONS}.${CURRENT_PATCH}`);
+    const currentPatchVersion = _.get(currentPatchInfo, 'value');
 &nbsp;
-    this._assertPatchVersion(currentPatch);
+    this._assertPatchVersion(currentPatchVersion);
 &nbsp;
-    return currentPatch;
+    return currentPatchVersion;
   }
 &nbsp;
   /**
@@ -1333,8 +1364,10 @@ export class SmiteRedis extends SmiteApi {
           [PREVIOUS_SCEHMA]: [],
         },
         [PATCH_VERSIONS]: {
-          [CURRENT_PATCH]: null, // like '9.3'
-          [PREVIOUS_PATCHES]: [], // like ['9.3', '9.2']
+          // example: { value: '9.3', timestamp: 1322312 }
+          [CURRENT_PATCH]: null,
+          // example: [{ value: '9.3', timestamp: 1322312 }, { value: '9.2', timestamp: 1222312 }]
+          [PREVIOUS_PATCHES]: [],
         },
       },
 &nbsp;
@@ -1483,7 +1516,7 @@ export const smiteRedisClient = new SmiteRedis();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Wed May 04 2022 03:45:50 GMT+0000 (Coordinated Universal Time)
+                at Wed May 04 2022 21:23:46 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
