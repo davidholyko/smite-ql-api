@@ -250,9 +250,11 @@ export class SmiteRedis extends SmiteApi {
     const items = await this.getItems();
     await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}`, {});
 
-    await Promise.allSettled(
+    await Promise.all(
       _.map(items, async (item) => {
-        const key = item.DeviceName.replaceAll(' ', '_');
+        // replace spaces with '_' because redis cannot handle spaces in keys
+        // some items start with * like '*Asi'
+        const key = item.DeviceName.replaceAll(' ', '_').replaceAll('*', '');
         return await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}.${key}`, item);
       }),
     );
