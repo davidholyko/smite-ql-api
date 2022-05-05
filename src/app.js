@@ -11,7 +11,7 @@ export const makeApplication = () => {
   const app = express();
   app.use(
     cors({
-      origin: ['https://www.smite-ql.com', 'http://localhost:3000'],
+      origin: ['https://smite-ql.com', 'http://localhost:3000'],
     }),
   );
 
