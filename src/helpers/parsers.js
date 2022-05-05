@@ -25,7 +25,7 @@ export const parseIgn = (player, index) => {
   // account for when player profiles are hidden
   //   player.playerId = 0
   //   player.playerName = ''
-  const hiddenIGN = `_${player[REFERENCE_NAME]}_${index}`;
+  const hiddenIGN = `_${player[REFERENCE_NAME].replaceAll(' ', '_')}_${index}`;
   const name = parsePlayerName(player[PLAYER_NAME]);
   const ign = !_.isEmpty(name) ? name : hiddenIGN;
   return ign;

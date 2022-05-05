@@ -1,6 +1,6 @@
 import * as PARSERS from '../../../src/helpers/parsers';
 
-const { parsePlayerName } = PARSERS;
+const { parsePlayerName, parseIgn } = PARSERS;
 
 describe('Parsers', () => {
   describe('parsePlayerName', () => {
@@ -13,6 +13,28 @@ describe('Parsers', () => {
       const name = 'dhko';
       const parsedName = parsePlayerName(name);
       expect(parsedName).toEqual('dhko');
+    });
+  });
+  describe('parseIgn', () => {
+    it('should parse an ign from a player object', () => {
+      const player = {
+        Reference_Name: 'Nu Wa',
+        playerName: 'dhko',
+      };
+
+      const expectedIgn = 'dhko';
+      const ign = parseIgn(player);
+      expect(ign).toEqual(expectedIgn);
+    });
+    it('should generate a player name based on god if player is hidden', () => {
+      const player = {
+        Reference_Name: 'Nu Wa',
+        playerName: '',
+      };
+
+      const expectedIgn = '_Nu_Wa_1';
+      const ign = parseIgn(player, 1);
+      expect(ign).toEqual(expectedIgn);
     });
   });
 });
