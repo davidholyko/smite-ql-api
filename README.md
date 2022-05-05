@@ -75,10 +75,10 @@ This repo provides a sandbox file for a developer to play around with and see wh
 npm run start:sandbox
 
 # Tell git to skip noticing changes to sandbox
-git update-index --skip-worktree src/sandbox/sandbox.js
+git update-index --skip-worktree src/sandbox/*
 
 # Tell git to notice changes to sandbox
-git update-index --no-skip-worktree src/sandbox/sandbox.js
+git update-index --no-skip-worktree src/sandbox/*
 ```
 
 ## Server
