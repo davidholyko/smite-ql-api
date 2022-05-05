@@ -153,4 +153,8 @@ describe('processors', () => {
       expect(partyDetails).toEqual(expectedPartyDetails);
     });
   });
+
+  describe('processRecentMatchHistory', () => {
+    // TODO
+  })
 });
