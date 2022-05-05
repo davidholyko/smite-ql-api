@@ -72,17 +72,14 @@ export class SmiteApi {
   /**
    * Check session time stamp against current time. If the session is more than
    * 15 minutes old, a new session is required.
-   * @returns {Boolean} true if now is 15 minutes later than last session
+   * @returns {Boolean} true if now is more than 15 minutes after than the session timestamp
    */
   _isSessionExpired() {
     if (!this.session_timestamp) {
       return true;
     }
 
-    const now = moment.utc();
-    const before = this.session_timestamp.clone().add('15', 'minutes');
-
-    return now > before;
+    return moment.utc() > this.session_timestamp;
   }
 
   // * *********************************************************************************** * //
@@ -190,8 +187,8 @@ export class SmiteApi {
     } catch (error) {
       const errors = [
         `❌❌❌ Request Failed for ${url}`,
-        `❌❌❌ Timestamp expired ${this.session_timestamp}`,
-        `❌❌❌ Timestamp current ${moment.utc()}`,
+        `❌❌❌ Current   time: ${moment.utc()}`,
+        `❌❌❌ Timestamp time: ${this.session_timestamp}`,
       ].join('\n');
 
       throw new Error(errors);
@@ -228,7 +225,7 @@ export class SmiteApi {
     // This might not belong here. sets up
     // session id if we are making createsession request
     this.session_id = _.get(data, SESSION_ID);
-    this.session_timestamp = moment.utc();
+    this.session_timestamp = moment.utc().add('15', 'minutes');
 
     return data;
   }
