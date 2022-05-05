@@ -37,7 +37,6 @@ const {
   SCHEMA_VERSION,
   CURRENT_SCHEMA,
   PREVIOUS_SCEHMA,
-  TEAM,
   PARTY,
   LEVEL,
   RAW_MATCHES,
@@ -439,19 +438,18 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params.teamDetails -
    * @returns {Object} playerState
    */
-  buildPlayerMatchState({ matchInfo, playerId, partyDetails, teamDetails }) {
-    // if you won, your enemies are the losers
-    const enemies = matchInfo.isVictory ? teamDetails.teams.losers : teamDetails.teams.winners;
-    // if you won, your allies are the winners
-    const allies = matchInfo.isVictory ? teamDetails.teams.winners : teamDetails.teams.losers;
-    const party = _.get(partyDetails, `partiesByPlayerIds.${playerId}`, {});
+  buildPlayerMatchState({ matchInfo, playerId, partyDetails }) {
+    const { isVictory } = matchInfo;
+    const allies = _.get(partyDetails, `parties.${isVictory ? 'winners' : 'losers'}`, {});
+    const enemies = _.get(partyDetails, `parties.${isVictory ? 'losers' : 'winners'}`, {});
+    const party = _.get(partyDetails, `parties.players.${playerId}`, {});
 
     const playerMatchState = {
       ...matchInfo,
       [SCHEMA_VERSION]: '1.0.0',
-      party,
-      enemies,
       allies,
+      enemies,
+      party,
     };
 
     return playerMatchState;
@@ -462,14 +460,12 @@ export class SmiteRedis extends SmiteApi {
    * @param {Object} params - params
    * @param {Array<Object>} params.rawDetails - Smite API raw matchDetails array
    * @param {Object} params.partyDetails - party details
-   * @param {Object} params.teamDetails - team details
    * @returns {Object} data
    */
-  buildGlobalMatchState({ playerDetails, partyDetails, teamDetails, levelDetails, patchVersion }) {
+  buildGlobalMatchState({ playerDetails, partyDetails, levelDetails, patchVersion }) {
     const globalMatchState = {
       [SCHEMA_VERSION]: '1.0.0',
       [PARTY]: partyDetails,
-      [TEAM]: teamDetails,
       [LEVEL]: levelDetails,
       [PLAYER]: playerDetails,
       [PATCH_VERSION]: patchVersion,

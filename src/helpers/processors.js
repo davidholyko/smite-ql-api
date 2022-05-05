@@ -12,7 +12,7 @@ import { parseIgn } from './parsers';
 import { toSmiteQLMatch } from './transformers';
 
 const { SMITE_API_KEYS, SMITE_QL_KEYS } = CONSTANTS;
-const { MATCH, PLAYER_ID, PARTY_ID } = SMITE_API_KEYS;
+const { MATCH, PARTY_ID } = SMITE_API_KEYS;
 const { NORMAL, RANKED, OVERALL, WINS, LOSSES, MATCHES, HISTORY } = SMITE_QL_KEYS;
 
 /**
@@ -74,113 +74,49 @@ export const processPlayerDetails = (rawMatchDetails, patchVersion) => {
  * @returns {Object} - map of parties
  */
 export const processPartyDetails = (matchDetails) => {
-  // map of parties to partyIds
-  // example:
-  // {
-  //   <partyId>   <ign>     <playerId>
-  //   1234:     { player_1: '0123',    player_2: '0234'}
-  //   5678:     { player_3: '0567',    player_4: '0678'}
+  // player_1 is in a party of 3 [player_1, player_2, player_3] with solo queue players [player_4] and [player_5]
+  // player_6 is in a part of 5 [player_6, player_7, player_8, player_9, player_10]
+  //
+  // player_1: {
+  //   allies: [[player_1, player_2, player_3], [player_4], [player_5]],
+  //   enemies: [player_6, player_7, player_8, player_9, player_10]
   // }
-  const partiesByPartyIds = {};
-  // map of parties to playerIds
-  // example:
-  // {
-  //   <ign>       <ign>     <playerId>
-  //   player_1: { player_1: '0123',    player_2: '0234'}
-  //   player_2: { player_1: '0123',    player_2: '0234'}
-  //   player_3: { player_3: '0567',    player_3: '0678'}
-  //   player_4: { player_3: '0567',    player_4: '0678'}
-  // }
-  const partiesByPlayerIds = {};
 
-  // create partiesByPartyIds
+  const parties = {
+    byGroup: {
+      winners: {},
+      losers: {},
+    },
+    byPlayer: {},
+  };
+
   _.forEach(matchDetails, (player, index) => {
     const ign = parseIgn(player, index);
     const partyId = player[PARTY_ID];
+    const group = player['Win_Status'] === 'Winner' ? 'winners' : 'losers';
 
     // setup empty objects
-    partiesByPartyIds[partyId] = partiesByPartyIds[partyId] || {};
-    partiesByPlayerIds[ign] = partiesByPlayerIds[ign] || {};
+    parties['byGroup'][group][partyId] = {};
+    parties['byPlayer'][ign] = {};
+  });
+
+  _.forEach(matchDetails, (player, index) => {
+    const ign = parseIgn(player, index);
+    const partyId = player[PARTY_ID];
+    const god = player['Reference_Name'];
+    const group = player['Win_Status'] === 'Winner' ? 'winners' : 'losers';
 
     // apply players to their respective party
-    partiesByPartyIds[partyId][ign] = player[PLAYER_ID];
-    partiesByPlayerIds[ign] = partiesByPartyIds[partyId];
-  });
-
-  // sift parties that are of size 1 (who are solo queued)
-  _.forEach(_.keys(partiesByPartyIds), (team) => {
-    if (_.size(partiesByPartyIds[team]) <= 1) {
-      delete partiesByPartyIds[team];
-    }
-  });
-
-  // sift parties that are of size 1 (who are solo queued)
-  _.forEach(_.keys(partiesByPlayerIds), (ign) => {
-    if (_.size(partiesByPlayerIds[ign]) <= 1) {
-      delete partiesByPlayerIds[ign];
-    }
+    parties['byGroup'][group][partyId][ign] = { ign, partyId, god };
+    parties['byPlayer'][ign] = parties['byGroup'][group][partyId];
   });
 
   return {
-    partiesByPartyIds,
-    partiesByPlayerIds,
-  };
-};
-
-/**
- *
- * @param {Array<Object>} matchDetails - array of objects for each player
- * @returns {Object} object - enemies and allies
- */
-export const processTeamDetails = (matchDetails) => {
-  const teams = {
-    winners: {
-      // player_1: true
-      // player_2: true
-      // player_3: true
+    parties: {
+      winners: _.values(_.map(parties['byGroup']['winners'], (winners) => _.values(winners))),
+      losers: _.values(_.map(parties['byGroup']['losers'], (losers) => _.values(losers))),
+      players: parties['byPlayer'],
     },
-    losers: {
-      // player_4: true
-      // player_5: true
-      // player_6: true
-    },
-  };
-  const players = {
-    // player_1: { player_1, player_2, player_3}
-    // player_2: { player_1, player_2, player_3}
-    // player_3: { player_1, player_2, player_3}
-    // player_4: { player_1, player_2, player_3}
-    // player_5: { player_1, player_2, player_3}
-    // player_6: { player_1, player_2, player_3}
-  };
-
-  _.forEach(matchDetails, (player, index) => {
-    const ign = parseIgn(player, index);
-
-    if (player.Win_Status === 'Winner') {
-      teams.winners[ign] = player[PLAYER_ID];
-    }
-
-    if (player.Win_Status === 'Loser') {
-      teams.losers[ign] = player[PLAYER_ID];
-    }
-  });
-
-  _.forEach(matchDetails, (player, index) => {
-    const ign = parseIgn(player, index);
-
-    if (player.Win_Status === 'Winner') {
-      players[ign] = teams.winners;
-    }
-
-    if (player.Win_Status === 'Loser') {
-      players[ign] = teams.losers;
-    }
-  });
-
-  return {
-    teams,
-    players,
   };
 };
 

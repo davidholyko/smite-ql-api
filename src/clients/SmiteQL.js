@@ -73,7 +73,6 @@ export class SmiteQL extends SmiteRedis {
     const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
     const rawDetails = doesGlobalMatchExist ? _.get(matchState, RAW) : await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawDetails);
-    const teamDetails = HELPERS.processTeamDetails(rawDetails);
     const levelDetails = HELPERS.processLevelDetails(rawDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawDetails, patchVersion);
 
@@ -83,7 +82,7 @@ export class SmiteQL extends SmiteRedis {
     const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
     const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
-    const matchParams = { matchInfo, playerId, partyDetails, teamDetails };
+    const matchParams = { matchInfo, playerId, partyDetails };
     const playerMatchState = this.buildPlayerMatchState(matchParams);
 
     // append to RANKED/NORMAL and OVERALL
@@ -92,7 +91,7 @@ export class SmiteQL extends SmiteRedis {
     await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
 
     // calculate stats from the perspective of the match
-    const params = { playerDetails, partyDetails, teamDetails, levelDetails, patchVersion };
+    const params = { playerDetails, partyDetails, levelDetails, patchVersion };
     const globalMatchState = this.buildGlobalMatchState(params);
 
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);

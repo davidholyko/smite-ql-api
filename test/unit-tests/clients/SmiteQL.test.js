@@ -62,14 +62,13 @@ describe('SmiteQL', () => {
       });
     });
 
-    it('should get getMatchDetails object', async () => {
+    it('should get getMatchDetails object from the perspective of a player', async () => {
       const matchDetails = await smiteClient.getMatchDetails('12345', 'dhko');
 
       const expectedMatchDetails = expect.objectContaining({
         level: expect.any(Object),
         party: expect.any(Object),
         player: expect.any(Object),
-        team: expect.any(Object),
         patch_version: '9_3',
       });
 
