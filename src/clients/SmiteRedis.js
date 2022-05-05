@@ -63,20 +63,6 @@ export class SmiteRedis extends SmiteApi {
   // ******************************************************************** //
 
   /**
-   * throws error if SmiteQL is not ready
-   * @returns {void}
-   */
-  _assertReady() {
-    if (this._isSessionExpired()) {
-      this.isReady = false;
-    }
-
-    if (!this.isReady) {
-      throw new Error(ERRORS.CLIENT_NOT_READY);
-    }
-  }
-
-  /**
    * @param {String} patchVersion - like '9.3'
    * @returns {void}
    */
@@ -246,8 +232,6 @@ export class SmiteRedis extends SmiteApi {
    * @returns {Boolean} - whether items were was fetched and stored
    */
   async _getItems() {
-    this._assertReady();
-
     const patchVersion = await this._getPatchVersion();
     const isPopulated = await this._exists(`${GLOBAL}.${ITEMS}.${patchVersion}`);
 
@@ -273,8 +257,6 @@ export class SmiteRedis extends SmiteApi {
    * @returns {Boolean} - whether items were was fetched and stored
    */
   async _getGods() {
-    this._assertReady();
-
     const patchVersion = await this._getPatchVersion();
     const isPopulated = await this._exists(`${GLOBAL}.${GODS}.${patchVersion}`);
 

@@ -46,25 +46,6 @@ describe('SmiteRedis', () => {
     });
   });
 
-  describe('_assertReady', () => {
-    it('should throw error if client is not ready', () => {
-      smiteRedisClient.isReady = false;
-      const fn = () => {
-        smiteRedisClient._assertReady();
-      };
-      expect(fn).toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
-    });
-    it('should not throw error if client is ready', () => {
-      smiteRedisClient.isReady = true;
-      smiteRedisClient.session_timestamp = moment.utc();
-
-      const fn = () => {
-        smiteRedisClient._assertReady();
-      };
-      expect(fn).not.toThrow('SmiteQL connection is not ready. Call async function SmiteQL.ready()');
-    });
-  });
-
   describe('_exists', () => {
     it('should return true if key exists', async () => {
       smiteRedisClient.redis.json.set(ENTRY, ROOT, { foo: 'bar' });

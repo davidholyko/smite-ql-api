@@ -50,8 +50,6 @@ export class SmiteQL extends SmiteRedis {
    * @returns {Object} - data
    */
   async getMatchDetails(matchId, playerId) {
-    this._assertReady();
-
     const doesGlobalMatchExist = await this._exists(`${GLOBAL}.${MATCHES}.${matchId}`);
     const doesPlayerMatchExist = await this._exists(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`);
     const matchState = doesGlobalMatchExist && (await this._get(`${GLOBAL}.${MATCHES}.${matchId}`));
@@ -108,8 +106,6 @@ export class SmiteQL extends SmiteRedis {
    * @returns {Array<String>} - list of last matchIds (upto 50)
    */
   async getMatchHistory(playerId) {
-    this._assertReady();
-
     const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
 
     if (!doesPlayerExist) {
@@ -144,8 +140,6 @@ export class SmiteQL extends SmiteRedis {
    * @returns {Object} data
    */
   async getPlayer(playerId) {
-    this._assertReady();
-
     const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
     const playerDetails = await super.getPlayer(playerId);
 
