@@ -51,6 +51,10 @@ describe('SmiteApi', () => {
   });
 
   describe('_composeUrl', () => {
+    afterEach(() => {
+      jest.spyOn(smiteApiClient, '_isSessionExpired').mockRestore();
+    });
+
     it('should compose a url with method, dev_id, signature, and timestamp', () => {
       const method = 'createsession';
       const signature = '1234';
@@ -59,13 +63,26 @@ describe('SmiteApi', () => {
       const expectedUrl = 'https://api.smitegame.com/smiteapi.svc/createsessionJson/0110/1234/5678';
       expect(url).toBe(expectedUrl);
     });
-    it('should compose a url with method, signature, and timestamp and session if session_id exists', () => {
+    it('should compose a url with method, signature, and timestamp and session if session_id exists and session_timestamp has not expired', () => {
+      jest.spyOn(smiteApiClient, '_isSessionExpired').mockImplementation(() => false);
       smiteApiClient.session_id = '0000';
+
       const method = 'createsession';
       const signature = '1234';
       const timestamp = '5678';
       const url = smiteApiClient._composeUrl(method, signature, timestamp);
       const expectedUrl = 'https://api.smitegame.com/smiteapi.svc/createsessionJson/0110/1234/0000/5678';
+      expect(url).toBe(expectedUrl);
+    });
+    it('should compose a url with method, signature, and timestamp if session_timestamp has expired', () => {
+      jest.spyOn(smiteApiClient, '_isSessionExpired').mockImplementation(() => true);
+      smiteApiClient.session_id = '0000';
+
+      const method = 'createsession';
+      const signature = '1234';
+      const timestamp = '5678';
+      const url = smiteApiClient._composeUrl(method, signature, timestamp);
+      const expectedUrl = 'https://api.smitegame.com/smiteapi.svc/createsessionJson/0110/1234/5678';
       expect(url).toBe(expectedUrl);
     });
     it('should compose a url with method, dev_id, signature, and timestamp, and additional args', () => {

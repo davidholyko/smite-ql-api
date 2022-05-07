@@ -72,7 +72,7 @@ export class SmiteApi {
   /**
    * Check session time stamp against current time. If the session is more than
    * 15 minutes old, a new session is required.
-   * @returns {Boolean} true if now is more than 15 minutes after than the session timestamp
+   * @returns {Boolean} true if now is more than 15 minputes after than the session timestamp
    */
   _isSessionExpired() {
     if (!this.session_timestamp) {
@@ -98,7 +98,7 @@ export class SmiteApi {
   _composeUrl(method, signature, timestamp, ...args) {
     this._assertEnvVariables();
 
-    const session = this.session_id ? `/${this.session_id}` : '';
+    const session = this.session_id && !this._isSessionExpired() ? `/${this.session_id}` : '';
     let url = `${BASE_URL}/${method}${this.response_type}/${this.dev_id}/${signature}${session}/${timestamp}`;
 
     _.forEach([...args], (arg) => {
@@ -225,7 +225,7 @@ export class SmiteApi {
     // This might not belong here. sets up
     // session id if we are making createsession request
     this.session_id = _.get(data, SESSION_ID);
-    this.session_timestamp = moment.utc().add('15', 'minutes');
+    this.session_timestamp = moment.utc().add(15, 'minutes');
 
     return data;
   }
