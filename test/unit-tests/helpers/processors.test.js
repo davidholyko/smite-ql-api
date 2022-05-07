@@ -92,7 +92,7 @@ describe('processors', () => {
         map: 'Slash',
         masteryLevel: 116,
         matchId: 1229914631,
-        platform: 'HI_REZ',
+        platform: 'HIREZ',
         patchVersion: '10.0',
         role: 'Unknown',
         wards: 2,
@@ -120,7 +120,7 @@ describe('processors', () => {
           losers: [
             [{ ign: 'DesertGardener', partyId: 612260, god: 'Janus', platform: 'STEAM' }],
             [{ ign: '_Danzaburou_8', partyId: 672168, god: 'Danzaburou' }],
-            [{ ign: 'dhko', partyId: 732129, god: 'Vulcan', platform: 'HI_REZ' }],
+            [{ ign: 'dhko', partyId: 732129, god: 'Vulcan', platform: 'HIREZ' }],
             [{ ign: 'Mowo089', partyId: 743320, god: 'Bastet', platform: 'STEAM' }],
             [{ ign: 'declan129', partyId: 753174, god: 'Kumbhakarna', platform: 'XBOX' }],
           ],
@@ -145,7 +145,7 @@ describe('processors', () => {
               NickiMinajVËVO: { ign: 'NickiMinajVËVO', partyId: 742515, god: 'Olorun', platform: 'STEAM' },
             },
             declan129: { declan129: { ign: 'declan129', partyId: 753174, god: 'Kumbhakarna', platform: 'XBOX' } },
-            dhko: { dhko: { ign: 'dhko', partyId: 732129, god: 'Vulcan', platform: 'HI_REZ' } },
+            dhko: { dhko: { ign: 'dhko', partyId: 732129, god: 'Vulcan', platform: 'HIREZ' } },
             DesertGardener: {
               DesertGardener: { ign: 'DesertGardener', partyId: 612260, god: 'Janus', platform: 'STEAM' },
             },

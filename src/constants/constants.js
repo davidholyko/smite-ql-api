@@ -133,7 +133,7 @@ export const MOMENT = {
 };
 
 export const PORTALS = {
-  HI_REZ: 1,
+  HIREZ: 1,
   STEAM: 5,
   PS4: 9,
   XBOX: 10,
@@ -141,7 +141,7 @@ export const PORTALS = {
   DISCORD: 25,
   EPIC: 28,
   // reverse mapping
-  1: 'HI_REZ',
+  1: 'HIREZ',
   5: 'STEAM',
   9: 'PS4',
   10: 'XBOX',
