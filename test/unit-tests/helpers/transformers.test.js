@@ -58,6 +58,7 @@ describe('Transformers', () => {
         map: 'Slash',
         masteryLevel: 111,
         matchId: 1229914631,
+        platform: 'XBOX',
         patchVersion: '10.0',
         role: 'Unknown',
         wards: 2,

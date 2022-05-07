@@ -9,7 +9,7 @@ import moment from 'moment';
 
 import CONSTANTS from '../constants';
 
-const { MOMENT } = CONSTANTS;
+const { MOMENT, PORTALS } = CONSTANTS;
 const { SMITE_API_FORMAT } = MOMENT;
 
 /**
@@ -84,6 +84,9 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     matchId: _.get(rawMatchDetails, 'Match', 0),
     durationInSeconds: _.get(rawMatchDetails, 'Match_Duration', 0),
     durationInMinutes: _.get(rawMatchDetails, 'Minutes', 0),
+
+    // platform
+    platform: _.get(PORTALS, rawMatchDetails['playerPortalId']),
 
     // ! There is a potential bug that if a player's data has not been updated
     // ! and a new patch has been released, previous matches can be associated

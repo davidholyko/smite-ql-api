@@ -92,6 +92,7 @@ describe('processors', () => {
         map: 'Slash',
         masteryLevel: 116,
         matchId: 1229914631,
+        platform: 'HI_REZ',
         patchVersion: '10.0',
         role: 'Unknown',
         wards: 2,
@@ -156,5 +157,5 @@ describe('processors', () => {
 
   describe('processRecentMatchHistory', () => {
     // TODO
-  })
+  });
 });
