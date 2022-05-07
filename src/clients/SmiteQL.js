@@ -64,6 +64,7 @@ export class SmiteQL extends SmiteRedis {
       // if global match exists and player match doesn't exist
       // this match was not yet processed for a player
       const match = await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
+      const matchInfo = this.buildPlayerMatchState({ match: matchInfo, playerId, partyDetails: match.party });
       await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, match[PLAYER][playerId]);
       return match;
     }
