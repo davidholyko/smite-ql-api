@@ -6,11 +6,10 @@
  */
 
 import 'dotenv/config';
-import fs from 'fs';
 
 import _ from 'lodash';
 
-// import { smiteQLClient } from '../clients/SmiteQL';
+import { smiteClient } from '../clients/SmiteQL';
 import HELPERS from '../helpers';
 import CONSTANTS from '../constants';
 import MOCKS from '../mocks';
@@ -22,39 +21,41 @@ let res;
 export const startSandbox = async () => {
   console.info('Sandbox started!');
 
-  res = await smiteQLClient.ping();
-  // res = await smiteQLClient.getDataUsed();
-  // res = await smiteQLClient.getPatchInfo();
-  // res = await smiteQLClient.getItems();
-  // res = await smiteQLClient.getGods();
+  res = await smiteClient.ping();
+  // res = await smiteClient.getDataUsed();
+  // res = await smiteClient.getPatchInfo();
+  // res = await smiteClient.getItems();
+  // res = await smiteClient.getGods();
 
-  // res = await smiteQLClient.getPlayer('dhko');
-  // res = await smiteQLClient.getMatchHistory('dhko');
-  // res = await smiteQLClient.getMatchHistory('Marshellow');
-  // res = await smiteQLClient.getMatchHistory('CrackshotCletus');
-  // res = await smiteQLClient.getMatchDetails('1237226753');
+  // res = await smiteClient.getPlayer('Dreamkill4life');
+  // res = await smiteClient.getMatchHistory('dhko');
+  // res = await smiteClient.getMatchHistory('Marshellow');
+  // res = await smiteClient.getMatchHistory('CrackshotCletus');
+  // res = await smiteClient.getMatchDetails('1237226753');
 
-  // res = await smiteQLClient.smiteApi.getPlayer('12282812');
-  res = await smiteQLClient.smiteApi.testSession('12282812');
-  // res = await smiteQLClient.smiteApi.getMatchDetails('1229914631');
-  // res = await smiteQLClient.smiteApi.getMatchDetails('1237199832');
+  // res = await smiteClient.smiteApi.getPlayer('12282812');
+  // res = await smiteClient.smiteApi.testSession('12282812');
+  res = await smiteClient.smiteApi.getPlayer('[YieId]Dreamkill4life'); // this player is an xbox player
+  res = await smiteClient.smiteApi.getPlayer(704870226);
+  // res = await smiteClient.smiteApi.getMatchDetails('1229914631');
+  // res = await smiteClient.smiteApi.getMatchDetails('1237199832');
 
-  // res = await smiteQLClient._scanMatchHistory('dhko', { index: 0 });
+  // res = await smiteClient._scanMatchHistory('dhko', { index: 0 });
 
-  // res = await smiteQLClient._get('$');
-  // res = await smiteQLClient._get('players.dhko');
-  // res = await smiteQLClient._get('players.Sailum');
-  // res = await smiteQLClient._get('players.TripleCCC1.matches');
-  // res = await smiteQLClient._get('global.matches');
-  // res = await smiteQLClient._get('players');
-  // res = await smiteQLClient._get('global.patch_versions');
+  // res = await smiteClient._get('$');
+  // res = await smiteClient._get('players.dhko');
+  // res = await smiteClient._get('players.Sailum');
+  // res = await smiteClient._get('players.TripleCCC1.matches');
+  // res = await smiteClient._get('global.matches');
+  // res = await smiteClient._get('players');
+  // res = await smiteClient._get('global.patch_versions');
 
   // writeToFile('gods.js', res);
 
   console.log(res);
 
-  // await smiteQLClient._reset();
-  await smiteQLClient.redis.quit();
+  // await smiteClient._reset();
+  await smiteClient.redis.quit();
 };
 
 function runLogic() {
@@ -62,5 +63,5 @@ function runLogic() {
   console.log(JSON.stringify(output, null, 2));
 }
 
-// startSandbox();
-runLogic();
+startSandbox();
+// runLogic();

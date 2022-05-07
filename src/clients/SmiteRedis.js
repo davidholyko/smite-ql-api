@@ -385,7 +385,9 @@ export class SmiteRedis extends SmiteApi {
    */
   buildPlayerState(playerDetails) {
     const player = _.isArray(playerDetails) ? _.first(playerDetails) : playerDetails;
-    const playerName = _.get(player, 'hz_player_name');
+    // hz_player_name exists for PC players
+    // hz_gamer_tag exists for console players
+    const playerName = _.get(player, 'hz_player_name') || _.get(player, 'hz_gamer_tag');
 
     const initialPlayerState = {
       [SCHEMA_VERSION]: '1.0.0',

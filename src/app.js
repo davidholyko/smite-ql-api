@@ -92,7 +92,20 @@ export const makeApplication = () => {
     }
 
     if (forceUpdate === 'true') {
-      await smiteClient.getMatchHistory(player);
+      try {
+        await smiteClient.getMatchHistory(player);
+      } catch (error) {
+        return res.send({
+          // on errors, send the entire stack trace and message
+          success: false,
+          message: `Player: ${player} does not exist.`,
+          response: {
+            error: true,
+            message: error.message,
+            stack: error.stack.split('\n'),
+          },
+        });
+      }
     }
 
     // remove all undefined/null values from options

@@ -95,6 +95,8 @@ export class SmiteQL extends SmiteRedis {
     await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
     await this._set(`${GLOBAL}.${RAW_MATCHES}.${matchId}`, rawDetails);
 
+    console.info(`🏤🏤🏤 Successfully set matchInfo for matchId: ${matchId} 🏤🏤🏤`);
+
     return globalMatchState;
   }
 

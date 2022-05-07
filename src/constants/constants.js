@@ -131,3 +131,21 @@ export const MOMENT = {
   HUMAN_TIME_FORMAT: 'MMMM Do YYYY, h:mm:ss a',
   SMITE_API_FORMAT: 'yyyyMMDDHHmmss',
 };
+
+export const PORTALS = {
+  HI_REZ: 1,
+  STEAM: 5,
+  PS4: 9,
+  XBOX: 10,
+  SWITCH: 22,
+  DISCORD: 25,
+  EPIC: 28,
+  // reverse mapping
+  1: 'HI_REZ',
+  5: 'STEAM',
+  9: 'PS4',
+  10: 'XBOX',
+  22: 'SWITCH',
+  25: 'DISCORD',
+  28: 'EPIC',
+};
