@@ -119,8 +119,17 @@ describe('SmiteApi Endpoints', () => {
       smiteApiClient.session_id = sessionId;
     });
 
-    it('should get Player details for an playerId', async () => {
+    it('should get player details for an playerId', async () => {
       const playerDetails = await smiteApiClient.getPlayer('dhko');
+      const player = _.first(playerDetails);
+      const expectedPlayer = expect.objectContaining({
+        hz_player_name: expect.any(String),
+      });
+
+      expect(player).toEqual(expectedPlayer);
+    });
+    it('should get player details for a playerId with a special character', async () => {
+      const playerDetails = await smiteApiClient.getPlayer('Malcastór');
       const player = _.first(playerDetails);
       const expectedPlayer = expect.objectContaining({
         hz_player_name: expect.any(String),

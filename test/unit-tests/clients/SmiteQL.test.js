@@ -91,7 +91,7 @@ describe('SmiteQL', () => {
       });
     });
 
-    it.only('should return an array of matchIds', async () => {
+    it('should return an array of matchIds', async () => {
       const matchHistory = await smiteClient.getMatchHistory('any-player');
       const expectedMatchHistory = [expect.any(Number)];
 

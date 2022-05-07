@@ -563,7 +563,7 @@ export class SmiteApi {
    * @returns {Object} - data
    */
   async getPlayer(playerId) {
-    const response = await this._performRequest(METHODS.GET_PLAYER, playerId);
+    const response = await this._performRequest(METHODS.GET_PLAYER, encodeURI(playerId));
     return response;
   }
 
