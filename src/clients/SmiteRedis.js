@@ -267,7 +267,7 @@ export class SmiteRedis extends SmiteApi {
     const gods = await this.getGods();
     await this._set(`${GLOBAL}.${GODS}.${patchVersion}`, {});
 
-    await Promise.allSettled(
+    await Promise.all(
       _.map(gods, async (godDetails) => {
         const god = godDetails.Name.replaceAll(' ', '_');
         return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${god}`, godDetails);

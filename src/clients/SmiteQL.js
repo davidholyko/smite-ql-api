@@ -126,7 +126,7 @@ export class SmiteQL extends SmiteRedis {
       }
 
       // Find match details for all matches information in parallel
-      await Promise.allSettled(
+      await Promise.all(
         _.map(newMatchHistory, async (matchId) => {
           return await this.getMatchDetails(matchId, playerId);
         }),

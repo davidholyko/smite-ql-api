@@ -11,7 +11,7 @@ import CONSTANTS from '../constants';
 import { parseIgn } from './parsers';
 import { toSmiteQLMatch } from './transformers';
 
-const { SMITE_API_KEYS, SMITE_QL_KEYS } = CONSTANTS;
+const { SMITE_API_KEYS, SMITE_QL_KEYS, PORTALS } = CONSTANTS;
 const { MATCH, PARTY_ID } = SMITE_API_KEYS;
 const { NORMAL, RANKED, OVERALL, WINS, LOSSES, MATCHES, HISTORY } = SMITE_QL_KEYS;
 
@@ -107,7 +107,12 @@ export const processPartyDetails = (matchDetails) => {
     const group = player['Win_Status'] === 'Winner' ? 'winners' : 'losers';
 
     // apply players to their respective party
-    parties['byGroup'][group][partyId][ign] = { ign, partyId, god };
+    parties['byGroup'][group][partyId][ign] = {
+      ign,
+      partyId,
+      god,
+      platform: PORTALS[player.playerPortalId],
+    };
     parties['byPlayer'][ign] = parties['byGroup'][group][partyId];
   });
 

@@ -86,9 +86,12 @@ describe('SmiteQL', () => {
       jest.spyOn(SmiteApi.prototype, 'getMatchHistory').mockImplementation(() => {
         return mockSingleMatchHistory;
       });
+      jest.spyOn(smiteClient, 'getMatchDetails').mockImplementation(async () => {
+        return true;
+      });
     });
 
-    it('should return an array of matchIds', async () => {
+    it.only('should return an array of matchIds', async () => {
       const matchHistory = await smiteClient.getMatchHistory('any-player');
       const expectedMatchHistory = [expect.any(Number)];
 
