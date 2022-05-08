@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">79.68% </span>
+                <span class="strong">77.94% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>51/64</span>
+                <span class='fraction'>53/68</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">53.84% </span>
+                <span class="strong">58.82% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/26</span>
+                <span class='fraction'>20/34</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">79.68% </span>
+                <span class="strong">77.94% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>51/64</span>
+                <span class='fraction'>53/68</span>
             </div>
         
             
@@ -269,7 +269,19 @@
 <a name='L204'></a><a href='#L204'>204</a>
 <a name='L205'></a><a href='#L205'>205</a>
 <a name='L206'></a><a href='#L206'>206</a>
-<a name='L207'></a><a href='#L207'>207</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -393,10 +405,22 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -598,11 +622,23 @@ export class SmiteQL extends SmiteRedis {
     const prevMatchInfo = _.pick(playerInfo, [MATCHES, HISTORY, RANKED, NORMAL]);
     const newMatchHistory = HELPERS.processMatchHistory(prevMatchInfo, rawMatchHistory, patchVersion);
 &nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (!_.isEmpty(newMatchHistory)) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!_.isEmpty(newMatchHistory) &amp;&amp; _.isEmpty(playerInfo.history)) {
+      // if player info has no history (this is the first time we are retreiving their info)
+      // append each new match
       for (const matchId of newMatchHistory) {
         await this._append(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
       }
+    }
 &nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!_.isEmpty(newMatchHistory) &amp;&amp; !_.isEmpty(playerInfo.history)) {
+      // if player info history already exists, prepend the match
+      // so that most recent match is at the start
+<span class="cstat-no" title="statement not covered" >      for (const matchId of newMatchHistory) {</span>
+<span class="cstat-no" title="statement not covered" >        await this._prepend(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);</span>
+      }
+    }
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!_.isEmpty(newMatchHistory)) {
       // Find match details for all matches information in parallel
       await Promise.all(
         _.map(newMatchHistory, async (matchId) =&gt; {
@@ -688,7 +724,7 @@ export const smiteClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sat May 07 2022 22:36:29 GMT+0000 (Coordinated Universal Time)
+                at Sun May 08 2022 00:58:54 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
