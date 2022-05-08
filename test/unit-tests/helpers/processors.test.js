@@ -90,6 +90,7 @@ describe('processors', () => {
         isWatchable: false,
         kills: 3,
         map: 'Slash',
+        mapName: 'Slash',
         masteryLevel: 116,
         matchId: 1229914631,
         platform: 'HIREZ',

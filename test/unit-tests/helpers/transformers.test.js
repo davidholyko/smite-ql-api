@@ -56,6 +56,7 @@ describe('Transformers', () => {
         isVictory: true,
         kills: 11,
         map: 'Slash',
+        mapName: 'Slash',
         masteryLevel: 111,
         matchId: 1229914631,
         platform: 'XBOX',
