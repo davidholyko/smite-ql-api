@@ -154,6 +154,8 @@ export class SmiteQL extends SmiteRedis {
       );
     }
 
+    console.info(`🔥🔥🔥 Completed processing matches for ${playerId} 🔥🔥🔥`);
+
     return newMatches;
   }
 
