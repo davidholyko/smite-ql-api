@@ -6,6 +6,19 @@ const { SMITE_API_KEYS } = CONSTANTS;
 const { REFERENCE_NAME, PLAYER_NAME } = SMITE_API_KEYS;
 
 /**
+ * Replaces all spaces with '_'
+ * @param {String} string - like 'Ranked Conquest' or '*Asi'
+ * @param {Boolean} isLowerCase -
+ * @returns {String} string like 'ranked_conquest' or 'Asi'
+ */
+export const normalize = (string, isLowerCase = true) => {
+  string = string.replaceAll(' ', '_');
+  string = string.replaceAll('*', '');
+  isLowerCase && (string = string.toLowerCase());
+  return string;
+};
+
+/**
  * rips out clan tags from a players name
  * @param {String} playerName - like dhko or [USA]dhko where [USA] is the clan tag
  * @returns {String} name
@@ -25,7 +38,7 @@ export const parseIgn = (player, index) => {
   // account for when player profiles are hidden
   //   player.playerId = 0
   //   player.playerName = ''
-  const hiddenIGN = `_${player[REFERENCE_NAME].replaceAll(' ', '_')}_${index}`;
+  const hiddenIGN = `_${normalize(player[REFERENCE_NAME], false)}_${index}`;
   const name = parsePlayerName(player[PLAYER_NAME]);
   const ign = !_.isEmpty(name) ? name : hiddenIGN;
   return ign;

@@ -7,7 +7,7 @@ import HELPERS from '../helpers';
 import { redisClient } from './Redis';
 import { SmiteApi } from './SmiteApi';
 
-const { parsePlayerName } = HELPERS;
+const { parsePlayerName, normalize } = HELPERS;
 
 const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS, MOMENT } = CONSTANTS;
 const { ID } = SMITE_API_KEYS;
@@ -227,7 +227,7 @@ export class SmiteRedis extends SmiteApi {
       _.map(items, async (item) => {
         // replace spaces with '_' because redis cannot handle spaces in keys
         // some items start with * like '*Asi'
-        const key = item.DeviceName.replaceAll(' ', '_').replaceAll('*', '');
+        const key = normalize(item.DeviceName, false);
         return await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}.${key}`, item);
       }),
     );
@@ -250,7 +250,7 @@ export class SmiteRedis extends SmiteApi {
 
     await Promise.all(
       _.map(gods, async (godDetails) => {
-        const god = godDetails.Name.replaceAll(' ', '_');
+        const god = normalize(godDetails.Name, false);
         return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${god}`, godDetails);
       }),
     );

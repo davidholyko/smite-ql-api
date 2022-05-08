@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import CONSTANTS from '../constants';
 
-import { parseIgn } from './parsers';
+import { parseIgn, normalize } from './parsers';
 import { toSmiteQLMatch } from './transformers';
 
 const { SMITE_API_KEYS, SMITE_QL_KEYS, PORTALS } = CONSTANTS;
@@ -221,9 +221,9 @@ export const processRecentMatchHistory = (playerInfo, options) => {
     const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
     const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
-    if (map && matchInfo.map.toLowerCase() === map.toLowerCase()) {
-      // if we specify a map to filter by, only add the
-      // matchs with the specified map
+    if (map && normalize(matchInfo.map) === normalize(map)) {
+      // if we specify a map to filter by,
+      // only add the matchs with the specified map
       recentHistory[MATCHES][matchId] = matchInfo;
       recentHistory[HISTORY].push(matchId);
       recentHistory[matchType][victoryStatus].push(matchId);
@@ -231,7 +231,8 @@ export const processRecentMatchHistory = (playerInfo, options) => {
     }
 
     if (!map) {
-      // if we don't specify a map to filter by, add all the matches
+      // if we don't specify a map to filter by,
+      // add all the matches
       recentHistory[MATCHES][matchId] = matchInfo;
       recentHistory[HISTORY].push(matchId);
       recentHistory[matchType][victoryStatus].push(matchId);
