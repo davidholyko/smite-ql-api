@@ -121,11 +121,23 @@ export class SmiteQL extends SmiteRedis {
     const prevMatchInfo = _.pick(playerInfo, [MATCHES, HISTORY, RANKED, NORMAL]);
     const newMatchHistory = HELPERS.processMatchHistory(prevMatchInfo, rawMatchHistory, patchVersion);
 
-    if (!_.isEmpty(newMatchHistory)) {
+    if (!_.isEmpty(newMatchHistory) && _.isEmpty(playerInfo.history)) {
+      // if player info has no history (this is the first time we are retreiving their info)
+      // append each new match
       for (const matchId of newMatchHistory) {
         await this._append(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
       }
+    }
 
+    if (!_.isEmpty(newMatchHistory) && !_.isEmpty(playerInfo.history)) {
+      // if player info history already exists, prepend the match
+      // so that most recent match is at the start
+      for (const matchId of newMatchHistory) {
+        await this._prepend(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
+      }
+    }
+
+    if (!_.isEmpty(newMatchHistory)) {
       // Find match details for all matches information in parallel
       await Promise.all(
         _.map(newMatchHistory, async (matchId) => {
