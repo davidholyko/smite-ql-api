@@ -165,10 +165,13 @@ export const processLevelDetails = (matchDetails) => {
  * @param {Object} options -
  * @param {Number} options.limit - number of matches to return from most recent to limit
  * @param {Number} options.index - grouping based on every 20 matches, 0 for first 20, 1 for 21-40, etc...
+ * @param {Number} options.map - one of [Conquest, Ranked Conquest, etc...]
  * @returns {Object} - recentMatchHistory based on limit or index
  */
 export const processRecentMatchHistory = (playerInfo, options) => {
-  const { limit, index } = options;
+  let [start, end] = [null, null];
+  const INDEX_MODIFIER = 20;
+  const { limit, index, map } = options;
   const recentHistory = {
     [MATCHES]: {},
     [HISTORY]: [],
@@ -185,9 +188,6 @@ export const processRecentMatchHistory = (playerInfo, options) => {
       [LOSSES]: [],
     },
   };
-  const INDEX_MODIFIER = 20;
-  let start = null;
-  let end = null;
 
   if (limit) {
     // get number of matches starting from most recent
@@ -221,11 +221,22 @@ export const processRecentMatchHistory = (playerInfo, options) => {
     const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
     const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
-    // fill in RANKED/NORMAL and OVERALL objects with win losses
-    recentHistory[MATCHES][matchId] = matchInfo;
-    recentHistory[HISTORY].push(matchId);
-    recentHistory[matchType][victoryStatus].push(matchId);
-    recentHistory[OVERALL][victoryStatus].push(matchId);
+    if (map && matchInfo.map.toLowerCase() === map.toLowerCase()) {
+      // if we specify a map to filter by, only add the
+      // matchs with the specified map
+      recentHistory[MATCHES][matchId] = matchInfo;
+      recentHistory[HISTORY].push(matchId);
+      recentHistory[matchType][victoryStatus].push(matchId);
+      recentHistory[OVERALL][victoryStatus].push(matchId);
+    }
+
+    if (!map) {
+      // if we don't specify a map to filter by, add all the matches
+      recentHistory[MATCHES][matchId] = matchInfo;
+      recentHistory[HISTORY].push(matchId);
+      recentHistory[matchType][victoryStatus].push(matchId);
+      recentHistory[OVERALL][victoryStatus].push(matchId);
+    }
   }
 
   return recentHistory;

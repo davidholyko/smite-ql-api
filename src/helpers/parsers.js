@@ -43,3 +43,46 @@ export const parsePatchVersion = (version) => {
 
   return version.replace('.', '_');
 };
+
+/**
+ *
+ * @param {String} mapValue - raw value of map like 'Joust Queued (3v3)
+ * @returns {String} map
+ */
+export const parseMapValue = (mapValue) => {
+  let map = null;
+
+  switch (true) {
+    case mapValue.includes('Ranked') && mapValue.includes('1v1'):
+      map = 'Ranked Duel';
+      break;
+    case mapValue.includes('Ranked') && mapValue.includes('Conquest'):
+      map = 'Ranked Conquest';
+      break;
+    case mapValue.includes('Ranked') && mapValue.includes('Joust'):
+      map = 'Ranked Joust';
+      break;
+    case mapValue.includes('Conquest'):
+      map = 'Conquest';
+      break;
+    case mapValue.includes('Arena'):
+      map = 'Arena';
+      break;
+    case mapValue.includes('Joust'):
+      map = 'Joust';
+      break;
+    case mapValue.includes('Assault'):
+      map = 'Assault';
+      break;
+    case mapValue.includes('Slash'):
+      map = 'Slash';
+      break;
+    case mapValue.includes('Siege'):
+      map = 'Siege';
+      break;
+    default:
+      break;
+  }
+
+  return map;
+};

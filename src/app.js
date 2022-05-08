@@ -80,7 +80,7 @@ export const makeApplication = () => {
    * @example http://localhost:8080/history?player=dhko
    */
   app.get('/history', async function (req, res) {
-    const { player, forceUpdate, limit, index } = req.query;
+    const { player, forceUpdate, limit, index, map = '' } = req.query;
 
     if (!player) {
       return res.send({
@@ -109,7 +109,7 @@ export const makeApplication = () => {
     }
 
     // remove all undefined/null values from options
-    const options = _.pickBy({ limit, index }, _.identity);
+    const options = _.pickBy({ limit, index, map }, _.identity);
     const response = await smiteClient.getHistory(player, options);
     const success = response.error ? false : true;
     const message = response.error ? 'failure' : 'success';

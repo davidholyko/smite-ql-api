@@ -8,6 +8,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import CONSTANTS from '../constants';
+import HELPERS from '../helpers';
 
 const { MOMENT, PORTALS } = CONSTANTS;
 const { SMITE_API_FORMAT } = MOMENT;
@@ -45,40 +46,8 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     rawMatchDetails.Item_Purch_6,
   ];
 
-  const map = _.get(rawMatchDetails, 'Map_Game', 'Unknown');
-  let mapName = null;
-
-  switch (true) {
-    case map.includes('Ranked') && map.includes('1v1'):
-      mapName = 'Ranked Duel';
-      break;
-    case map.includes('Ranked') && map.includes('Conquest'):
-      mapName = 'Ranked Conquest';
-      break;
-    case map.includes('Ranked') && map.includes('Joust'):
-      mapName = 'Ranked Joust';
-      break;
-    case map.includes('Conquest'):
-      mapName = 'Conquest';
-      break;
-    case map.includes('Arena'):
-      mapName = 'Arena';
-      break;
-    case map.includes('Joust'):
-      mapName = 'Joust';
-      break;
-    case map.includes('Assault'):
-      mapName = 'Assault';
-      break;
-    case map.includes('Slash'):
-      mapName = 'Slash';
-      break;
-    case map.includes('Siege'):
-      mapName = 'Siege';
-      break;
-    default:
-      break;
-  }
+  const mapValue = _.get(rawMatchDetails, 'Map_Game', 'Unknown');
+  const map = HELPERS.parseMapValue(mapValue);
 
   const matchState = {
     // this date refers to a match's UTC time
@@ -115,8 +84,8 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     masteryLevel: _.get(rawMatchDetails, 'Mastery_Level', 0),
 
     // match details
+    mapValue,
     map,
-    mapName,
     matchId: _.get(rawMatchDetails, 'Match', 0),
     durationInSeconds: _.get(rawMatchDetails, 'Match_Duration', 0),
     durationInMinutes: _.get(rawMatchDetails, 'Minutes', 0),
