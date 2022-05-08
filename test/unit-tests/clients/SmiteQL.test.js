@@ -108,7 +108,7 @@ describe('SmiteQL', () => {
       });
     });
 
-    it('should return playerInfo initial state', async () => {
+    it('should return playerState initial state', async () => {
       const data = await smiteClient.getPlayer('dhko');
       const expectedMatches = expect.objectContaining({
         wins: [],

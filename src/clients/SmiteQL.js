@@ -6,7 +6,7 @@ import HELPERS from '../helpers';
 import { smiteApiClient } from './SmiteApi';
 import { SmiteRedis } from './SmiteRedis';
 
-const { SMITE_QL_KEYS } = CONSTANTS;
+const { SMITE_QL_KEYS, ERRORS } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -17,10 +17,8 @@ const {
   HISTORY,
   GLOBAL,
   DETAILS,
-  RAW,
   PATCH_VERSION,
   RAW_MATCHES,
-  PLAYER,
   OVERALL,
 } = SMITE_QL_KEYS;
 
@@ -41,6 +39,25 @@ export class SmiteQL extends SmiteRedis {
   // ******************************************************************** //
 
   /**
+   *
+   * @param {String} playerId - like 'dhko' or '4553282'
+   * @param {Object} options - options
+   * @param {Object} options.index - for pagination, get items 0-19 at index 1, 20-39 at index 2, etc...
+   * @param {Object} options.limit - number of matches to scan
+   * @returns {Object} output
+   */
+  async _scanMatchHistory(playerId, options = {}) {
+    if (options.limit && options.index !== undefined) {
+      throw new Error(ERRORS.SCAN_MATCH_HISTORY_FAILURE);
+    }
+
+    const playerState = await this._get(`${PLAYERS}.${playerId}`);
+    const recentHistory = HELPERS.processRecentMatchHistory(playerState, options);
+
+    return recentHistory;
+  }
+
+  /**
    * get's a match's detais. details include raw data from Smite API.
    * partyDetails refer to processed data that split out who is in which party
    * for each player. If the match already exists in redis, we do not have to fetch
@@ -52,7 +69,8 @@ export class SmiteQL extends SmiteRedis {
   async getMatchDetails(matchId, playerId) {
     const doesGlobalMatchExist = await this._exists(`${GLOBAL}.${MATCHES}.${matchId}`);
     const doesPlayerMatchExist = await this._exists(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`);
-    const matchState = doesGlobalMatchExist && (await this._get(`${GLOBAL}.${MATCHES}.${matchId}`));
+    const matchState = doesGlobalMatchExist && (await this._get(`${GLOBAL}.${RAW_MATCHES}.${matchId}`));
+    const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
 
     if (doesGlobalMatchExist && doesPlayerMatchExist) {
       // if global match and player match exist, this match
@@ -60,20 +78,10 @@ export class SmiteQL extends SmiteRedis {
       return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
     }
 
-    if (doesGlobalMatchExist && !doesPlayerMatchExist) {
-      // if global match exists and player match doesn't exist
-      // this match was not yet processed for a player
-      const match = await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
-      const matchInfo = this.buildPlayerMatchState({ match: matchInfo, playerId, partyDetails: match.party });
-      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, match[PLAYER][playerId]);
-      return match;
-    }
-
-    const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
-    const rawDetails = doesGlobalMatchExist ? _.get(matchState, RAW) : await super.getMatchDetails(matchId);
-    const partyDetails = HELPERS.processPartyDetails(rawDetails);
-    const levelDetails = HELPERS.processLevelDetails(rawDetails);
-    const playerDetails = HELPERS.processPlayerDetails(rawDetails, patchVersion);
+    const rawMatchDetails = doesGlobalMatchExist ? matchState : await super.getMatchDetails(matchId);
+    const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
+    const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
+    const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 
     // TODO: maybe logic for updating redisSB should be in in a smaller method
     // calculate stats from the perspective of the player
@@ -81,24 +89,25 @@ export class SmiteQL extends SmiteRedis {
     const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
     const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
-    const matchParams = { matchInfo, playerId, partyDetails };
-    const playerMatchState = this.buildPlayerMatchState(matchParams);
+    const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
 
     // append to RANKED/NORMAL and OVERALL
     await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
     await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
     await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
 
-    // calculate stats from the perspective of the match
-    const params = { playerDetails, partyDetails, levelDetails, patchVersion };
-    const globalMatchState = this.buildGlobalMatchState(params);
+    if (!doesGlobalMatchExist) {
+      // calculate stats from the perspective of the match
+      const params = { playerDetails, partyDetails, levelDetails, patchVersion };
+      const globalMatchState = this.buildGlobalMatchState(params);
 
-    await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
-    await this._set(`${GLOBAL}.${RAW_MATCHES}.${matchId}`, rawDetails);
+      await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
+      await this._set(`${GLOBAL}.${RAW_MATCHES}.${matchId}`, rawMatchDetails);
 
-    console.info(`🏤🏤🏤 Successfully set matchInfo for matchId: ${matchId} 🏤🏤🏤`);
+      console.info(`🏤🏤🏤 Successfully set matchInfo for matchId: ${matchId} 🏤🏤🏤`);
 
-    return globalMatchState;
+      return globalMatchState;
+    }
   }
 
   /**
@@ -115,38 +124,37 @@ export class SmiteQL extends SmiteRedis {
       await this.getPlayer(playerId);
     }
 
-    const patchVersion = await this._getPatchVersion();
-    const playerInfo = await this._get(`${PLAYERS}.${playerId}`);
+    const playerState = await this._get(`${PLAYERS}.${playerId}`);
     const rawMatchHistory = await super.getMatchHistory(playerId);
-    const prevMatchInfo = _.pick(playerInfo, [MATCHES, HISTORY, RANKED, NORMAL]);
-    const newMatchHistory = HELPERS.processMatchHistory(prevMatchInfo, rawMatchHistory, patchVersion);
+    const prevMatches = _.pick(playerState, [MATCHES, HISTORY]);
+    const newMatches = HELPERS.processMatchHistory(prevMatches, rawMatchHistory);
 
-    if (!_.isEmpty(newMatchHistory) && _.isEmpty(playerInfo.history)) {
+    if (!_.isEmpty(newMatches) && _.isEmpty(playerState.history)) {
       // if player info has no history (this is the first time we are retreiving their info)
       // append each new match
-      for (const matchId of newMatchHistory) {
+      for (const matchId of newMatches) {
         await this._append(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
       }
     }
 
-    if (!_.isEmpty(newMatchHistory) && !_.isEmpty(playerInfo.history)) {
+    if (!_.isEmpty(newMatches) && !_.isEmpty(playerState.history)) {
       // if player info history already exists, prepend the match
       // so that most recent match is at the start
-      for (const matchId of newMatchHistory) {
+      for (const matchId of newMatches) {
         await this._prepend(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
       }
     }
 
-    if (!_.isEmpty(newMatchHistory)) {
+    if (!_.isEmpty(newMatches)) {
       // Find match details for all matches information in parallel
       await Promise.all(
-        _.map(newMatchHistory, async (matchId) => {
+        _.map(newMatches, async (matchId) => {
           return await this.getMatchDetails(matchId, playerId);
         }),
       );
     }
 
-    return newMatchHistory;
+    return newMatches;
   }
 
   /**

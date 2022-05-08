@@ -131,25 +131,6 @@ export class SmiteRedis extends SmiteApi {
   }
 
   /**
-   *
-   * @param {String} playerId - like 'dhko' or '4553282'
-   * @param {Object} options - options
-   * @param {Object} options.index - for pagination, get items 0-19 at index 1, 20-39 at index 2, etc...
-   * @param {Object} options.limit - number of matches to scan
-   * @returns {Object} output
-   */
-  async _scanMatchHistory(playerId, options = {}) {
-    if (options.limit && options.index !== undefined) {
-      throw new Error(ERRORS.SCAN_MATCH_HISTORY_FAILURE);
-    }
-
-    const playerInfo = await this._get(`${PLAYERS}.${playerId}`);
-    const recentHistory = HELPERS.processRecentMatchHistory(playerInfo, options);
-
-    return recentHistory;
-  }
-
-  /**
    * resets database and smite client state
    * @returns {void}
    */

@@ -18,26 +18,26 @@ const { NORMAL, RANKED, OVERALL, WINS, LOSSES, MATCHES, HISTORY } = SMITE_QL_KEY
 /**
  * Compares match history of new match history with old. If there are new matches, loads that
  * into an object to update redis DB with.
- * @param {Object} prevMatchInfo - object with matches, history
- * @param {Object} latestMatchHistory - object with matches and history. History is in order of most recent games at beginning
- * @returns {Array<String>} prevMatchInfo
+ * @param {Object} prevMatches - object with matches, history
+ * @param {Object} latestMatches - object with matches and history. History is in order of most recent games at beginning
+ * @returns {Array<String>} prevMatches
  */
-export const processMatchHistory = (prevMatchInfo, latestMatchHistory) => {
-  const firstMatchId = _.get(latestMatchHistory, `[0][${MATCH}]`);
-  const hasDiff = _.get(prevMatchInfo.matches, firstMatchId);
+export const processMatchHistory = (prevMatches, latestMatches) => {
+  const firstMatchId = _.get(latestMatches, `[0][${MATCH}]`);
+  const hasDiff = _.get(prevMatches.matches, firstMatchId);
   const newMatches = [];
 
   if (hasDiff) {
-    // if the first match in the latestMatchHistory already exists
+    // if the first match in the latestMatches already exists
     // in the previous match info, the rest of the matches
     // will also exist.
     return [];
   }
 
-  for (const match of latestMatchHistory) {
-    if (_.get(prevMatchInfo.matches, match[MATCH])) {
-      // if we find a match in latestMatchHistory that already exists,
-      // the rest of the matches in latestMatchHistory have already been
+  for (const match of latestMatches) {
+    if (_.get(prevMatches.matches, match[MATCH])) {
+      // if we find a match in latestMatches that already exists,
+      // the rest of the matches in latestMatches have already been
       // added to redis DB. we do not need to keep adding matches
 
       break;
