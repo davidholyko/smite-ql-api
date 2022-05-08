@@ -217,7 +217,10 @@ export class SmiteQL extends SmiteRedis {
 
       return {
         ...history,
-        player: player.details,
+        player: {
+          ...player.details,
+          ign: player.ign,
+        },
       };
     } catch (error) {
       return {
