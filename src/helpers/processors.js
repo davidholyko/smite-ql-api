@@ -23,9 +23,16 @@ const { NORMAL, RANKED, OVERALL, WINS, LOSSES, MATCHES, HISTORY } = SMITE_QL_KEY
  * @returns {Array<String>} prevMatches
  */
 export const processMatchHistory = (prevMatches, latestMatches) => {
+  // if an account hasn't play in a long time, they have no available match history
+  // and the matchId will be 0 with a return message saying no match history
+  const returnMessage = _.get(latestMatches, '[0].ret_msg') || '';
   const firstMatchId = _.get(latestMatches, `[0][${MATCH}]`);
   const hasDiff = _.get(prevMatches.matches, firstMatchId);
   const newMatches = [];
+
+  if (returnMessage.startsWith('No Match History')) {
+    return [];
+  }
 
   if (hasDiff) {
     // if the first match in the latestMatches already exists

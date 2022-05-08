@@ -524,7 +524,7 @@ export class SmiteApi {
    * @returns {Array<Object>} - data of last 50 matches
    */
   async getMatchHistory(playerId) {
-    const response = await this._performRequest(METHODS.GET_MATCH_HISTORY, playerId);
+    const response = await this._performRequest(METHODS.GET_MATCH_HISTORY, encodeURI(playerId));
     return response;
   }
 

@@ -212,7 +212,13 @@ export class SmiteQL extends SmiteRedis {
    */
   async getHistory(playerId, options) {
     try {
-      return await this._scanMatchHistory(playerId, options);
+      const history = await this._scanMatchHistory(playerId, options);
+      const player = await this.getPlayer(playerId);
+
+      return {
+        ...history,
+        player: player.details,
+      };
     } catch (error) {
       return {
         error: true,
