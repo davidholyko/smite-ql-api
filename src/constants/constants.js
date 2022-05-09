@@ -129,7 +129,7 @@ export const REDIS = {
 
 export const MOMENT = {
   HUMAN_TIME_FORMAT: 'MMMM Do YYYY, h:mm:ss a',
-  SMITE_API_FORMAT: 'yyyyMMDDHHmmss',
+  SMITE_API_FORMAT: 'YYYYMMDDHHmmss',
 };
 
 export const PORTALS = {
