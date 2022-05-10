@@ -123,6 +123,6 @@ export const makeApplication = () => {
   });
 
   app.listen(SERVER.PORT, () => {
-    console.info(`✅✅✅ Listening on port: ${SERVER.PORT} ✅✅✅`);
+    console.info(`✅✅✅ APP_3: Listening on port: ${SERVER.PORT} ✅✅✅`);
   });
 };

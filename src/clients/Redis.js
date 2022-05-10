@@ -16,7 +16,7 @@ redisClient.on('error', onError);
 
 (async () => {
   await redisClient.connect();
-  console.info(`📖📖📖 Redis is connected at ${url} 📖📖📖`);
+  console.info(`📖📖📖 APP_1: Redis is connected at ${url} 📖📖📖`);
 })();
 
 export { redisClient };

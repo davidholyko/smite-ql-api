@@ -78,6 +78,8 @@ export class SmiteQL extends SmiteRedis {
       return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
     }
 
+    console.info(`🏘️🏘️🏘️ GMD_1: Retrieving matchDetails for matchId: ${matchId} 🏘️🏘️🏘️`);
+
     const rawMatchDetails = doesGlobalMatchExist ? matchState : await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
     const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
@@ -104,7 +106,7 @@ export class SmiteQL extends SmiteRedis {
       await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
       await this._set(`${GLOBAL}.${RAW_MATCHES}.${matchId}`, rawMatchDetails);
 
-      console.info(`🏤🏤🏤 Successfully set matchInfo for matchId: ${matchId} 🏤🏤🏤`);
+      console.info(`🏤🏤🏤 GMD_2: Storing matchDetails for matchId: ${matchId} 🏤🏤🏤`);
 
       return globalMatchState;
     }
@@ -124,14 +126,14 @@ export class SmiteQL extends SmiteRedis {
       await this.getPlayer(playerId);
     }
 
-    console.info(`🥇🥇🥇 Starting processing matches for ${playerId} 🥇🥇🥇`);
+    console.info(`🥇🥇🥇 GMH_1: Starting processing matches for ${playerId} 🥇🥇🥇`);
 
     const playerState = await this._get(`${PLAYERS}.${playerId}`);
     const rawMatchHistory = await super.getMatchHistory(playerId);
     const prevMatches = _.pick(playerState, [MATCHES, HISTORY]);
     const newMatches = HELPERS.processMatchHistory(prevMatches, rawMatchHistory);
 
-    console.info(`🥈🥈🥈 Found ${newMatches.length} matches for ${playerId} 🥈🥈🥈`);
+    console.info(`🥈🥈🥈 GMH_1: Found ${newMatches.length} matches for ${playerId} 🥈🥈🥈`);
 
     if (!_.isEmpty(newMatches) && _.isEmpty(playerState.history)) {
       // if player info has no history (this is the first time we are retreiving their info)
@@ -158,7 +160,7 @@ export class SmiteQL extends SmiteRedis {
       );
     }
 
-    console.info(`🥉🥉🥉 Completed processing matches for ${playerId} 🥉🥉🥉`);
+    console.info(`🥉🥉🥉 GMH_1: Completed processing matches for ${playerId} 🥉🥉🥉`);
 
     return newMatches;
   }

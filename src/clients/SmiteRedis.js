@@ -273,7 +273,7 @@ export class SmiteRedis extends SmiteApi {
     await this._getGods();
     await this._getItems();
 
-    console.info('🚀🚀🚀 SmiteRedis is ready 🚀🚀🚀');
+    console.info('🚀🚀🚀 APP_2: SmiteRedis is ready 🚀🚀🚀');
 
     return readyStatus;
   }

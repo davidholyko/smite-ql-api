@@ -18,12 +18,21 @@ describe('SmiteApi Endpoints', () => {
     smiteApiClient.auth_key = AUTH_KEY;
   });
 
-  it('should create session_id', async () => {
-    const session = await smiteApiClient.createSession();
-    // save sessionId to reuse session in test
-    // avoids having a lot of sessions from unit tests
-    sessionId = session.session_id;
-    expect(sessionId).toEqual(expect.any(String));
+  describe('ping', () => {
+    it('should get ping Smite API', async () => {
+      const response = await smiteApiClient.ping();
+      expect(response).toEqual(expect.stringContaining('Ping successful.'));
+    });
+  });
+
+  describe('createSession', () => {
+    it('should create session_id', async () => {
+      const session = await smiteApiClient.createSession();
+      // save sessionId to reuse session in test
+      // avoids having a lot of sessions from unit tests
+      sessionId = session.session_id;
+      expect(sessionId).toEqual(expect.any(String));
+    });
   });
 
   describe('testSession', () => {
@@ -144,17 +153,6 @@ describe('SmiteApi Endpoints', () => {
         const expectedError = new Error('Request failed with status code 400');
         expect(error).toEqual(expectedError);
       }
-    });
-  });
-
-  describe('ping', () => {
-    beforeEach(() => {
-      smiteApiClient.session_id = sessionId;
-    });
-
-    it('should get ping Smite API', async () => {
-      const response = await smiteApiClient.ping();
-      expect(response).toEqual(expect.stringContaining('Ping successful.'));
     });
   });
 });

@@ -4,6 +4,8 @@
  * https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM
  */
 
+import https from 'https';
+
 import axios from 'axios';
 import _ from 'lodash';
 import md5 from 'md5';
@@ -12,9 +14,11 @@ import utf8 from 'utf8';
 
 import CONSTANTS from '../constants';
 
-// extend axios timeout on real Smite API requests
-// in case Smite API is unresponsive
-axios.defaults.timeout = 30000;
+const instance = axios.create({
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
+});
 
 const { API, LANGS, METHODS, MOMENT } = CONSTANTS;
 const { BASE_URL, SESSION_ID, DEV_ID, AUTH_KEY, JSON } = API;
@@ -182,10 +186,12 @@ export class SmiteApi {
     let data = null;
 
     try {
-      const response = await axios({ method: 'get', url });
+      const response = await instance({ method: 'get', url });
       data = response.data;
     } catch (error) {
       const errors = [
+        `-----------------------------------------------`,
+        error,
         `❌❌❌ Request Failed for ${url}`,
         `❌❌❌ Current   time: ${moment.utc()}`,
         `❌❌❌ Timestamp time: ${this.session_timestamp}`,
