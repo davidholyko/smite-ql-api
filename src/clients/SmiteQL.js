@@ -78,7 +78,7 @@ export class SmiteQL extends SmiteRedis {
       return await this._get(`${GLOBAL}.${MATCHES}.${matchId}`);
     }
 
-    console.info(`🏘️🏘️🏘️ GMD_1: Retrieving matchDetails for matchId: ${matchId} 🏘️🏘️🏘️`);
+    console.info(`🏢🏢🏢 GMD_1: Retrieving matchDetails for matchId: ${matchId} 🏢🏢🏢`);
 
     const rawMatchDetails = doesGlobalMatchExist ? matchState : await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
@@ -133,7 +133,7 @@ export class SmiteQL extends SmiteRedis {
     const prevMatches = _.pick(playerState, [MATCHES, HISTORY]);
     const newMatches = HELPERS.processMatchHistory(prevMatches, rawMatchHistory);
 
-    console.info(`🥈🥈🥈 GMH_1: Found ${newMatches.length} matches for ${playerId} 🥈🥈🥈`);
+    console.info(`🥈🥈🥈 GMH_2: Found ${newMatches.length} matches for ${playerId} 🥈🥈🥈`);
 
     if (!_.isEmpty(newMatches) && _.isEmpty(playerState.history)) {
       // if player info has no history (this is the first time we are retreiving their info)
@@ -160,7 +160,7 @@ export class SmiteQL extends SmiteRedis {
       );
     }
 
-    console.info(`🥉🥉🥉 GMH_1: Completed processing matches for ${playerId} 🥉🥉🥉`);
+    console.info(`🥉🥉🥉 GMH_3: Completed processing matches for ${playerId} 🥉🥉🥉`);
 
     return newMatches;
   }
