@@ -80,9 +80,11 @@ export const makeApplication = () => {
    * @example http://localhost:8080/history?player=dhko
    */
   app.get('/history', async function (req, res) {
-    const { player, forceUpdate, limit, index, map = '' } = req.query;
+    const { forceUpdate, limit, index, map = '' } = req.query;
 
-    if (!player) {
+    const player = decodeURI(req.query.player);
+
+    if (!req.query.player) {
       return res.send({
         // if no path is sent, the entire redis DB will be the output JSON
         // we will want to reduce its scope
