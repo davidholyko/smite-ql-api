@@ -27,14 +27,14 @@ export const processMatchHistory = (prevMatches, latestMatches) => {
   // and the matchId will be 0 with a return message saying no match history
   const returnMessage = _.get(latestMatches, '[0].ret_msg') || '';
   const firstMatchId = _.get(latestMatches, `[0][${MATCH}]`);
-  const hasDiff = _.get(prevMatches.matches, firstMatchId);
+  const doesFirstMatchExist = _.get(prevMatches.matches, firstMatchId);
   const newMatches = [];
 
   if (returnMessage.startsWith('No Match History')) {
     return [];
   }
 
-  if (hasDiff) {
+  if (doesFirstMatchExist) {
     // if the first match in the latestMatches already exists
     // in the previous match info, the rest of the matches
     // will also exist.
@@ -50,7 +50,7 @@ export const processMatchHistory = (prevMatches, latestMatches) => {
       break;
     }
 
-    newMatches.push(match[MATCH]);
+    newMatches.unshift(match[MATCH]);
   }
 
   return newMatches;

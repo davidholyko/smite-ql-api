@@ -135,15 +135,7 @@ export class SmiteQL extends SmiteRedis {
 
     console.info(`🥈🥈🥈 GMH_2: Found ${newMatches.length} matches for ${playerId} 🥈🥈🥈`);
 
-    if (!_.isEmpty(newMatches) && _.isEmpty(playerState.history)) {
-      // if player info has no history (this is the first time we are retreiving their info)
-      // append each new match
-      for (const matchId of newMatches) {
-        await this._append(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
-      }
-    }
-
-    if (!_.isEmpty(newMatches) && !_.isEmpty(playerState.history)) {
+    if (!_.isEmpty(newMatches)) {
       // if player info history already exists, prepend the match
       // so that most recent match is at the start
       for (const matchId of newMatches) {
