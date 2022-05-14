@@ -123,15 +123,10 @@ export class SmiteQL extends SmiteRedis {
    * @returns {Array<String>} - list of last matchIds (upto 50)
    */
   async getMatchHistory(playerId, options) {
-    const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
+    console.info(`🥇🥇🥇 GMH_1: Starting match history process for ${playerId} 🥇🥇🥇`);
 
-    if (!doesPlayerExist) {
-      await this.getPlayer(playerId, _.get(options, 'platform'));
-    }
+    const playerState = await this.getPlayer(playerId, _.get(options, 'platform'));
 
-    console.info(`🥇🥇🥇 GMH_1: Starting processing matches for ${playerId} 🥇🥇🥇`);
-
-    const playerState = await this._get(`${PLAYERS}.${playerId}`);
     // find a player's match history by their account number, like '31231241'
     // because a player's ign might not be consistent for console players
     // or players with special characters
@@ -139,7 +134,7 @@ export class SmiteQL extends SmiteRedis {
     const prevMatches = _.pick(playerState, [MATCHES, HISTORY]);
     const newMatches = HELPERS.processMatchHistory(prevMatches, rawMatchHistory);
 
-    console.info(`🥈🥈🥈 GMH_2: Found ${newMatches.length} matches for ${playerId} 🥈🥈🥈`);
+    console.info(`🥈🥈🥈 GMH_2: Found ${newMatches.length} new matches for ${playerId} 🥈🥈🥈`);
 
     if (!_.isEmpty(newMatches)) {
       // if player info history already exists, prepend the match
@@ -178,11 +173,12 @@ export class SmiteQL extends SmiteRedis {
     }
 
     if (doesPlayerExist) {
+      // TODO should update everything except matches and history
       // update player.<playerId>.details if the redis DB already knows about it
       await this._set(`${PLAYERS}.${playerId}.${DETAILS}`, _.first(playerDetails));
     } else {
-      const player = this.buildPlayerState(playerDetails);
-      await this._set(`${PLAYERS}.${playerId}`, player);
+      const newPlayerState = this.buildPlayerState(playerDetails);
+      await this._set(`${PLAYERS}.${playerId}`, newPlayerState);
     }
 
     const playerState = await this._get(`${PLAYERS}.${playerId}`);
@@ -220,7 +216,7 @@ export class SmiteQL extends SmiteRedis {
   async getHistory(playerId, options) {
     try {
       const history = await this._scanMatchHistory(playerId, options);
-      const player = await this.getPlayer(playerId, options.portalId);
+      const player = await this.getPlayer(playerId, _.get(options, 'platform'));
 
       return {
         ...history,
