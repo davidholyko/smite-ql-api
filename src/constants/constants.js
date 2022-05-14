@@ -33,6 +33,8 @@ export const METHODS = {
   GET_GODS: 'getgods',
   GET_GOD_ALT_ABILTIES: 'getgodaltabilities',
   GET_GOD_SKINS: 'getgodskins',
+  GET_PLAYERID_BY_NAME: 'getplayeridbyname',
+  GET_PLAYERIDS_BY_GAMER_TAG: 'getplayeridsbygamertag',
 };
 
 export const QUEUE_IDS = {
@@ -133,13 +135,13 @@ export const MOMENT = {
 };
 
 export const PORTALS = {
-  HIREZ: 1,
-  STEAM: 5,
-  PS4: 9,
-  XBOX: 10,
-  SWITCH: 22,
-  DISCORD: 25,
-  EPIC: 28,
+  HIREZ: '1',
+  STEAM: '5',
+  PS4: '9',
+  XBOX: '10',
+  SWITCH: '22',
+  DISCORD: '25',
+  EPIC: '28',
   // reverse mapping
   1: 'HIREZ',
   5: 'STEAM',

@@ -161,12 +161,19 @@ export class SmiteQL extends SmiteRedis {
   /**
    *
    * @param {String} playerId - an ign 'dhko' or playerNumber like '4553282'
-   * @param {String} platform - defaults to undefined, values can be a number (see constants.js)
+   * @param {String} platform - like 'XBOX' or 'PS4'.
    * @returns {Object} data
    */
   async getPlayer(playerId, platform) {
     const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
-    const playerDetails = await super.getPlayer(playerId, platform);
+    let playerAccountId;
+
+    if (_.includes(['XBOX', 'PS4', 'SWITCH'], platform)) {
+      const playerByGameTag = await this.getPlayerIdsByGamerTag(playerId, platform);
+      playerAccountId = _.get(playerByGameTag, '[0].player_id');
+    }
+
+    const playerDetails = await super.getPlayer(playerAccountId || playerId);
 
     if (_.isEmpty(playerDetails)) {
       throw new Error(`Player: ${playerId} does not exist.`);

@@ -221,6 +221,7 @@ export class SmiteApi {
 
   /**
    * /createsession[ResponseFormat]/{developerId}/{signature}/{timestamp}
+   *
    * A required step to Authenticate the developerId/signature for further API use.
    * @public
    * @returns {void}
@@ -239,6 +240,7 @@ export class SmiteApi {
 
   /**
    * /testsession[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * A means of validating that a session is established.
    * @public
    * @returns {String} - response message
@@ -250,6 +252,7 @@ export class SmiteApi {
 
   /**
    * /getdataused[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Returns API Developer daily usage limits and the current status against those limits.
    * @returns {Array<Object>} - data
    */
@@ -260,6 +263,7 @@ export class SmiteApi {
 
   /**
    * /gethirezserverstatus[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Function returns UP/DOWN status for the primary game/platform environments.
    * Data is cached once a minute.
    * @public
@@ -272,6 +276,7 @@ export class SmiteApi {
 
   /**
    * /getpatchinfo[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Function returns information about current deployed patch. Currently, this information only includes patch version.
    * @public
    * @returns {Object} - data
@@ -287,6 +292,7 @@ export class SmiteApi {
 
   /**
    * /getgods[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languageCode}
+   *
    * Returns all Gods and their various attributes.
    * @public
    * @returns {Object} - data
@@ -298,6 +304,7 @@ export class SmiteApi {
 
   /**
    * /getgodleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{queue}
+   *
    * Returns the current season’s leaderboard for a god/queue combination.
    * [SmiteApi; only queues 440, 450, 451]
    * @returns {void}
@@ -309,6 +316,7 @@ export class SmiteApi {
 
   /**
    * /getgodaltabilities[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Returns alt abilities for all gods.
    * [SmiteApi only]
    * @public
@@ -321,6 +329,7 @@ export class SmiteApi {
 
   /**
    * /getgodskins[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godId}/{languageCode}
+   *
    * Returns all available skins for a particular God.
    * @public
    * @returns {Object} - data
@@ -332,6 +341,7 @@ export class SmiteApi {
 
   /**
    * /getgodrecommendeditems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{godid}/{languageCode}
+   *
    * Returns the Recommended Items for a particular God.
    * [SmiteApi only]
    * @returns {void}
@@ -343,6 +353,7 @@ export class SmiteApi {
 
   /**
    * /getitems[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{languagecode}
+   *
    * Returns all Items and their various attributes on the current patch
    * @returns {Array<Object>} - data
    */
@@ -358,6 +369,7 @@ export class SmiteApi {
   /**
    *
    * get leagueleaderboard[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}/{tier}/{round}
+   *
    * Returns the top players for a particular league (as indicated by the queue/tier/round parameters).
    * Note: the “Season” for which the Round is associated is by default the current/active Season.
    * @returns {void}
@@ -370,6 +382,7 @@ export class SmiteApi {
   /**
    *
    * /getleagueseasons[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}
+   *
    * Provides a list of seasons and rounds (including the single active season) for a match queue
    * @returns {void}
    */
@@ -384,6 +397,7 @@ export class SmiteApi {
 
   /**
    * /getmatchdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
+   *
    * Returns the statistics for a particular completed match.
    * * if a match if very old (more than ~50 games ago), the match might not actually be available in the Smite API anymore
    * @public
@@ -397,6 +411,7 @@ export class SmiteApi {
 
   /**
    * /getmatchdetailsbatch[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id,match_id,match_id,...match_id}
+   *
    * Returns the statistics for a particular set of completed matches.
    * NOTE:  There is a byte limit to the amount of data returned; please limit the CSV parameter to 5 to 10 matches because of this and for Hi-Rez DB Performance reasons.
    * @returns {void}
@@ -408,6 +423,7 @@ export class SmiteApi {
 
   /**
    * /getmatchidsbyqueue[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{queue}/{date}/{hour}
+   *
    * Lists all Match IDs for a particular Match Queue; useful for API developers interested in constructing data by Queue.
    * To limit the data returned, an {hour} parameter was added (valid values: 0 - 23).
    * An {hour} parameter of -1 represents the entire day, but be warned that this may be more data than we can return for certain queues.
@@ -428,6 +444,7 @@ export class SmiteApi {
 
   /**
    * /getmatchplayerdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{match_id}
+   *
    * Returns player information for a live match.
    * @returns {void}
    */
@@ -438,6 +455,7 @@ export class SmiteApi {
 
   /**
    * /gettopmatches[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Lists the 50 most watched / most recent recorded matches.
    * @returns {void}
    */
@@ -452,6 +470,7 @@ export class SmiteApi {
 
   /**
    * /getesportsproleaguedetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Returns the matchup information for each matchup for the current eSports Pro League season.
    * An important return value is “match_status” which represents a match being scheduled (1), in-progress (2), or complete (3)
    * @returns {void}
@@ -463,6 +482,7 @@ export class SmiteApi {
 
   /**
    * /getmotd[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}
+   *
    * Returns information about the 20 most recent Match-of-the-Days.
    * @returns {void}
    */
@@ -477,6 +497,7 @@ export class SmiteApi {
 
   /**
    * /getfriends[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   *
    * Returns the Smite User names of each of the player’s friends.
    * [PC only]
    * @returns {void}
@@ -488,6 +509,7 @@ export class SmiteApi {
 
   /**
    * /getgodranks[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   *
    * Returns the Rank and Worshippers value for each God a player has played.
    * @returns {void}
    */
@@ -498,8 +520,8 @@ export class SmiteApi {
 
   /**
    * /getplayerachievements[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   *
    * Returns select achievement totals (Double kills, Tower Kills, First Bloods, etc) for the specified playerId.
-   * [SMITEAPI only]
    * @returns {void}
    */
   async getPlayerAchievements() {
@@ -509,6 +531,7 @@ export class SmiteApi {
 
   /**
    * /getplayerstatus[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   *
    * Returns player status as follows:
    *  * 0 - Offline
    *  * 1 - In Lobby  (basically anywhere except god selection or in game)
@@ -525,6 +548,7 @@ export class SmiteApi {
 
   /**
    * /getmatchhistory[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}
+   *
    * Gets recent matches and high level match statistics for a particular player
    * @public
    * @param {String} playerId - account name for player, like 'dhko'
@@ -537,6 +561,7 @@ export class SmiteApi {
 
   /**
    * /getqueuestats[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerId}/{queue}
+   *
    * Returns match summary statistics for a (player, queue) combination grouped by gods played.
    * @public
    * @param {String} playerId - account name for player, like 'dhko'
@@ -564,10 +589,11 @@ export class SmiteApi {
 
   /**
    * /getplayer[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{player}/{portalId}
+   *
    * Returns league and other high level data for a particular player.
    * @public
    * @param {String} playerId - account name for player, like 'dhko' or playerNumber like '4553282'
-   * @param {String} platform - defaults to undefined, values can be a number or string (see constants.js)
+   * @param {String} platform - like 'XBOX' or 'PS4'
    * @returns {Object} - data
    */
   async getPlayer(playerId, platform) {
@@ -580,17 +606,21 @@ export class SmiteApi {
 
   /**
    * /getplayeridbyname[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{playerName}
+   *
    * Function returns a list of Hi-Rez playerId values (expected list size = 1) for playerName provided.
    * The playerId returned is expected to be used in various other endpoints to represent the player/individual regardless of platform.
-   * @returns {void}
+   * @public
+   * @param {String} playerId - account name for player, like 'dhko' or playerNumber like '4553282'
+   * @returns {Object} - data
    */
-  async getPlayerIdByName() {
-    // TODO: fill in
-    return;
+  async getPlayerIdByName(playerId) {
+    const response = await this._performRequest(METHODS.GET_PLAYERID_BY_NAME, playerId);
+    return response;
   }
 
   /**
    * /getplayeridbyportaluserid[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{portalId}/{portalUserId}
+   *
    * Function returns a list of Hi-Rez playerId values (expected list size = 1) for {portalId}/{portalUserId} combination provided.
    * The playerId returned is expected to be used in various other endpoints to represent the player/individual regardless of platform.
    * @returns {void}
@@ -602,13 +632,19 @@ export class SmiteApi {
 
   /**
    * /getplayeridsbygamertag[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{portalId}/{gamerTag}
+   *
    * Function returns a list of Hi-Rez playerId values for {portalId}/{portalUserId} combination provided.
    * The appropriate playerId extracted from this list by the API end user is expected to be used in various other endpoints to represent the player/individual regardless of platform.
-   * @returns {void}
+   * @public
+   * @param {String} playerId - account name for player, like 'dhko' or playerNumber like '4553282'
+   * @param {String} platform - like 'XBOX' or 'PS4'
+   * @returns {Array<Object>} - data { player_id, portal, portal_id, privacy_flag, ret_msg }
    */
-  async getPlayerIdsByGamerTag() {
-    // TODO: fill in
-    return;
+  async getPlayerIdsByGamerTag(playerId, platform) {
+    const portalId = HELPERS.parsePortalId(platform);
+    const response = await this._performRequest(METHODS.GET_PLAYERIDS_BY_GAMER_TAG, portalId, playerId);
+
+    return response;
   }
 
   // * *************************************************** * //
@@ -617,6 +653,7 @@ export class SmiteApi {
 
   /**
    * /getteamdetails[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
+   *
    * Lists the number of players and other high level details for a particular clan.
    * @returns {void}
    */
@@ -627,6 +664,7 @@ export class SmiteApi {
 
   /**
    * /getteamplayers[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{clanid}
+   *
    * Lists the players for a particular clan.
    * @returns {void}
    */
@@ -637,6 +675,7 @@ export class SmiteApi {
 
   /**
    * /searchteams[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{searchTeam}
+   *
    * Returns high level information for Clan names containing the “searchTeam” string.
    * [SmiteApi only]
    * @returns {void}

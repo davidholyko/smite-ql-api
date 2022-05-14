@@ -114,10 +114,5 @@ export const parsePortalId = (platform) => {
     return platform;
   }
 
-  if (['HIREZ', 'STEAM', 'DISCORD', 'EPIC'].includes(platform)) {
-    // PC platforms don't require a portalId to get a player's info
-    return undefined;
-  }
-
   return PORTALS[platform];
 };
