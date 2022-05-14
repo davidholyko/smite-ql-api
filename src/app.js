@@ -37,7 +37,7 @@ export const makeApplication = () => {
         // if no path is sent, the entire redis DB will be the output JSON
         // we will want to reduce its scope
         success: false,
-        message: "query params 'path=' is required for '/smite-ql' endpoint.",
+        message: "query.params.path is required for '/smite-ql' endpoint.",
       });
     }
 
@@ -46,21 +46,21 @@ export const makeApplication = () => {
         // if no path is sent, the entire redis DB will be the output JSON
         // we will want to reduce its scope
         success: false,
-        message: "query params 'path=$' is restricted for '/smite-ql' endpoint.",
+        message: "path=$ is restricted for '/smite-ql' endpoint.",
       });
     }
 
     if (path === 'players') {
       return res.send({
         success: false,
-        message: "query params 'path=players' is restricted for '/smite-ql' endpoint.",
+        message: "path=players is restricted for '/smite-ql' endpoint.",
       });
     }
 
     if (path === 'global') {
       return res.send({
         success: false,
-        message: "query params 'path=global' is restricted for '/smite-ql' endpoint.",
+        message: "path=global is restricted for '/smite-ql' endpoint.",
       });
     }
 
@@ -80,8 +80,9 @@ export const makeApplication = () => {
    * @example http://localhost:8080/history?player=dhko
    */
   app.get('/history', async function (req, res) {
-    const { forceUpdate, limit, index, map = '' } = req.query;
-
+    const { forceUpdate, limit, index, platform, map = '' } = req.query;
+    // remove all undefined/null values from options
+    const options = _.pickBy({ limit, index, map, platform }, _.identity);
     const player = decodeURI(req.query.player);
 
     if (!req.query.player) {
@@ -89,13 +90,13 @@ export const makeApplication = () => {
         // if no path is sent, the entire redis DB will be the output JSON
         // we will want to reduce its scope
         success: false,
-        message: 'query.params is required for "/history" endpoint.',
+        message: "query.params.player is required for '/history' endpoint.",
       });
     }
 
     if (forceUpdate === 'true') {
       try {
-        await smiteClient.getMatchHistory(player);
+        await smiteClient.getMatchHistory(player, options);
       } catch (error) {
         return res.send({
           // on errors, send the entire stack trace and message
@@ -110,8 +111,6 @@ export const makeApplication = () => {
       }
     }
 
-    // remove all undefined/null values from options
-    const options = _.pickBy({ limit, index, map }, _.identity);
     const response = await smiteClient.getHistory(player, options);
     const success = response.error ? false : true;
     const message = response.error ? 'failure' : 'success';

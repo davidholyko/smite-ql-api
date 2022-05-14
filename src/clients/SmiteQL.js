@@ -20,6 +20,7 @@ const {
   PATCH_VERSION,
   RAW_MATCHES,
   OVERALL,
+  ACCOUNT_NUMBER,
 } = SMITE_QL_KEYS;
 
 /**
@@ -117,19 +118,24 @@ export class SmiteQL extends SmiteRedis {
    * history is already in redis, it will not make any redis updates. If the player's
    * account information doesn't exist, it will fill that in
    * @param {String} playerId - like 'dhko'
+   * @param {Object} options - optional args
+   * @param {Object} options.platform - values can be a number (1) or string ('HIREZ')
    * @returns {Array<String>} - list of last matchIds (upto 50)
    */
-  async getMatchHistory(playerId) {
+  async getMatchHistory(playerId, options) {
     const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
 
     if (!doesPlayerExist) {
-      await this.getPlayer(playerId);
+      await this.getPlayer(playerId, _.get(options, 'platform'));
     }
 
     console.info(`🥇🥇🥇 GMH_1: Starting processing matches for ${playerId} 🥇🥇🥇`);
 
     const playerState = await this._get(`${PLAYERS}.${playerId}`);
-    const rawMatchHistory = await super.getMatchHistory(playerId);
+    // find a player's match history by their account number, like '31231241'
+    // because a player's ign might not be consistent for console players
+    // or players with special characters
+    const rawMatchHistory = await super.getMatchHistory(playerState[ACCOUNT_NUMBER]);
     const prevMatches = _.pick(playerState, [MATCHES, HISTORY]);
     const newMatches = HELPERS.processMatchHistory(prevMatches, rawMatchHistory);
 
@@ -160,11 +166,12 @@ export class SmiteQL extends SmiteRedis {
   /**
    *
    * @param {String} playerId - an ign 'dhko' or playerNumber like '4553282'
+   * @param {String} platform - defaults to undefined, values can be a number (see constants.js)
    * @returns {Object} data
    */
-  async getPlayer(playerId) {
+  async getPlayer(playerId, platform) {
     const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
-    const playerDetails = await super.getPlayer(playerId);
+    const playerDetails = await super.getPlayer(playerId, platform);
 
     if (_.isEmpty(playerDetails)) {
       throw new Error(`Player: ${playerId} does not exist.`);
@@ -213,7 +220,7 @@ export class SmiteQL extends SmiteRedis {
   async getHistory(playerId, options) {
     try {
       const history = await this._scanMatchHistory(playerId, options);
-      const player = await this.getPlayer(playerId);
+      const player = await this.getPlayer(playerId, options.portalId);
 
       return {
         ...history,

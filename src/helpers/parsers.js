@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import CONSTANTS from '../constants';
 
-const { SMITE_API_KEYS } = CONSTANTS;
+const { SMITE_API_KEYS, PORTALS } = CONSTANTS;
 const { REFERENCE_NAME, PLAYER_NAME } = SMITE_API_KEYS;
 
 /**
@@ -98,4 +98,21 @@ export const parseMapValue = (mapValue) => {
   }
 
   return map;
+};
+
+/**
+ *
+ * @param {String} platform - like 'HIREZ'
+ * @returns {Number} portalId
+ */
+export const parsePortalId = (platform) => {
+  if (!platform) {
+    return undefined;
+  }
+
+  if (_.isNumber(platform)) {
+    return platform;
+  }
+
+  return PORTALS[platform];
 };

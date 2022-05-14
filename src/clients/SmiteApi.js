@@ -13,6 +13,7 @@ import moment from 'moment';
 import utf8 from 'utf8';
 
 import CONSTANTS from '../constants';
+import HELPERS from '../helpers';
 
 const instance = axios.create({
   httpsAgent: new https.Agent({
@@ -543,7 +544,7 @@ export class SmiteApi {
    * @returns {Array<Object>} - data
    */
   async getQueueStats(playerId, queueId) {
-    const response = await this._performRequest(METHODS.GET_QUEUE_STATS, playerId, queueId);
+    const response = await this._performRequest(METHODS.GET_QUEUE_STATS, encodeURI(playerId), queueId);
     return response;
   }
 
@@ -562,14 +563,18 @@ export class SmiteApi {
   // * ************************************************************ * //
 
   /**
-   * /getplayer[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{player}
+   * /getplayer[ResponseFormat]/{developerId}/{signature}/{session}/{timestamp}/{player}/{portalId}
    * Returns league and other high level data for a particular player.
    * @public
    * @param {String} playerId - account name for player, like 'dhko' or playerNumber like '4553282'
+   * @param {String} platform - defaults to undefined, values can be a number or string (see constants.js)
    * @returns {Object} - data
    */
-  async getPlayer(playerId) {
-    const response = await this._performRequest(METHODS.GET_PLAYER, encodeURI(playerId));
+  async getPlayer(playerId, platform) {
+    const portalId = HELPERS.parsePortalId(platform);
+    // optionally apply portalId if passed in
+    const args = _.pickBy({ playerId: encodeURI(playerId), portalId }, _.identity);
+    const response = await this._performRequest(METHODS.GET_PLAYER, ..._.values(args));
     return response;
   }
 
