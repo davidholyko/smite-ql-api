@@ -92,6 +92,7 @@ describe('processors', () => {
         map: 'Slash',
         mapValue: 'Slash',
         masteryLevel: 116,
+        matchType: 'Normal: Slash',
         matchId: 1229914631,
         platform: 'HIREZ',
         patchVersion: '10.0',
@@ -161,6 +162,6 @@ describe('processors', () => {
   });
 
   describe('processRecentMatchHistory', () => {
-    // TODO
+    // TODO: fill in
   });
 });

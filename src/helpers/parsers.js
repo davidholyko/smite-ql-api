@@ -59,7 +59,7 @@ export const parsePatchVersion = (version) => {
 
 /**
  *
- * @param {String} mapValue - raw value of map like 'Joust Queued (3v3)
+ * @param {String} mapValue - raw value of map like 'Joust Queued (3v3)'
  * @returns {String} map
  */
 export const parseMapValue = (mapValue) => {

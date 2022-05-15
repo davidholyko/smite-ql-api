@@ -310,7 +310,7 @@ export class SmiteApi {
    * @returns {void}
    */
   async getGodLeaderBoard() {
-    // TODO:
+    // TODO: fill in
     return;
   }
 

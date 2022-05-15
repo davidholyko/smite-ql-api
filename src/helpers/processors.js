@@ -67,8 +67,8 @@ export const processPlayerDetails = (rawMatchDetails, patchVersion) => {
     // player_1: {}
   };
 
-  _.forEach(rawMatchDetails, (player) => {
-    const ign = parseIgn(player);
+  _.forEach(rawMatchDetails, (player, index) => {
+    const ign = parseIgn(player, index);
     players[ign] = toSmiteQLMatch(player, patchVersion);
   });
 

@@ -86,6 +86,7 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     // match details
     mapValue,
     map,
+    matchType: _.get(rawMatchDetails, 'name', 'Unknown'),
     matchId: _.get(rawMatchDetails, 'Match', 0),
     durationInSeconds: _.get(rawMatchDetails, 'Match_Duration', 0),
     durationInMinutes: _.get(rawMatchDetails, 'Minutes', 0),

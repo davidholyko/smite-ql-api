@@ -86,7 +86,7 @@ export class SmiteQL extends SmiteRedis {
     const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 
-    // TODO: maybe logic for updating redisSB should be in in a smaller method
+    // TODO: maybe logic for updating redisDB should be in in a smaller method
     // calculate stats from the perspective of the player
     const matchInfo = playerDetails[playerId];
     const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
@@ -180,7 +180,6 @@ export class SmiteQL extends SmiteRedis {
     }
 
     if (doesPlayerExist) {
-      // TODO should update everything except matches and history
       // update player.<playerId>.details if the redis DB already knows about it
       await this._set(`${PLAYERS}.${playerId}.${DETAILS}`, _.first(playerDetails));
     } else {

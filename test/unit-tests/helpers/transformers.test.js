@@ -58,6 +58,7 @@ describe('Transformers', () => {
         map: 'Slash',
         mapValue: 'Slash',
         masteryLevel: 111,
+        matchType: 'Normal: Slash',
         matchId: 1229914631,
         platform: 'XBOX',
         patchVersion: '10.0',
