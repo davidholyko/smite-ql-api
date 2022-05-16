@@ -40,16 +40,22 @@ export class SmiteQL extends SmiteRedis {
   // ******************************************************************** //
 
   async _updatePlayerMatch(playerId, matchId, playerDetails, partyDetails) {
-    const matchInfo = playerDetails[playerId];
-    const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
-    const matchType = matchInfo.isRanked ? RANKED : NORMAL;
+    try {
+      const matchInfo = playerDetails[playerId];
+      const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
+      const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
-    const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
+      const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
 
-    // append to RANKED/NORMAL and OVERALL
-    await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
-    await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
-    await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
+      // append to RANKED/NORMAL and OVERALL
+      await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
+      await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
+      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
+
+      console.info(`UPM_1: 🌀🌀🌀 Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
+    } catch (error) {
+      console.error(`❌❌❌ Match generation for '${matchId}' as player '${playerId}' ❌❌❌`);
+    }
   }
 
   // ******************************************************************** //
@@ -271,6 +277,26 @@ export class SmiteQL extends SmiteRedis {
         const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 
         await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
+      }),
+    );
+
+    return {
+      status: 'completed',
+    };
+  }
+
+  /**
+   * Method to regenerate all match state data from redisDB
+   * Not accessible through API endpoint
+   *
+   * @returns {Object} output
+   */
+  async regenerateAllMatches() {
+    const playerIds = await this._keys(`${PLAYERS}`);
+
+    await Promise.all(
+      _.map(playerIds, async (playerId) => {
+        await this.regenerateMatches(playerId);
       }),
     );
 

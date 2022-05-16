@@ -18,7 +18,6 @@ const {
   LOSSES,
   RANKED,
   NORMAL,
-  PLAYER,
   PLAYERS,
   MATCHES,
   HISTORY,
@@ -112,7 +111,7 @@ export class SmiteRedis extends SmiteApi {
   /**
    *
    * @param {String} path - path to object in redis
-   * @returns {String} response
+   * @returns {Any} object
    */
   async _get(path) {
     const data = await this.redis.json.get(ENTRY, { path });
@@ -131,6 +130,26 @@ export class SmiteRedis extends SmiteApi {
   }
 
   /**
+   *
+   * @param {String} path - path to object
+   * @returns {String} response
+   */
+  async _del(path) {
+    const output = await this.redis.json.del(ENTRY, path);
+    return output;
+  }
+
+  /**
+   *
+   * @param {String} path - path to object
+   * @returns {Array<String>} array of keys from object
+   */
+  async _keys(path) {
+    const output = await this.redis.json.objKeys(ENTRY, path);
+    return output;
+  }
+
+  /**
    * resets database and smite client state
    * @returns {void}
    */
@@ -138,11 +157,6 @@ export class SmiteRedis extends SmiteApi {
     await this.redis.flushAll();
     this.isReady = false;
     this.session_timestamp = null;
-  }
-
-  async _del(path) {
-    const output = await this.redis.json.del(ENTRY, path);
-    return output;
   }
 
   // ******************************************************************** //
@@ -428,7 +442,8 @@ export class SmiteRedis extends SmiteApi {
   /**
    *
    * @param {Object} params - params
-   * @param {Array<Object>} params.rawDetails - Smite API raw matchDetails array
+   * @param {Object} params.playerDetails - player details
+   * @param {Object} params.levelDetails - level details
    * @param {Object} params.partyDetails - party details
    * @returns {Object} data
    */
@@ -437,7 +452,7 @@ export class SmiteRedis extends SmiteApi {
       [SCHEMA_VERSION]: '1.0.0',
       [PARTY]: partyDetails,
       [LEVEL]: levelDetails,
-      [PLAYER]: playerDetails,
+      [PLAYERS]: playerDetails,
       [PATCH_VERSION]: patchVersion,
     };
 

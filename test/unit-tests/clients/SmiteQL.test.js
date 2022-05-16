@@ -68,7 +68,7 @@ describe('SmiteQL', () => {
       const expectedMatchDetails = expect.objectContaining({
         level: expect.any(Object),
         party: expect.any(Object),
-        player: expect.any(Object),
+        players: expect.any(Object),
         patch_version: '9_3',
       });
 

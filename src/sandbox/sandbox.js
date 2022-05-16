@@ -28,15 +28,18 @@ export const startSandbox = async () => {
   // res = await smiteClient.getGods();
 
   // res = await smiteClient.getPlayer('Dreamkill4life');
-  // res = await smiteClient.getMatchHistory('dhko');
-  // res = await smiteClient.getMatchHistory('Marshellow');
+  // res = await smiteClient.getMatchHistory('Noødle');
   // res = await smiteClient.getMatchHistory('CrackshotCletus');
+  // res = await smiteClient.getMatchHistory('CozierSet2', { platform: 'XBOX' });
+  // res = await smiteClient.getMatchHistory('Habibinator777', { platform: 'PS4' });
   // res = await smiteClient.getMatchDetails('1237226753');
 
   // res = await smiteClient.smiteApi.getPlayer('12282812');
   // res = await smiteClient.smiteApi.testSession('12282812');
-  res = await smiteClient.smiteApi.getPlayer('[YieId]Dreamkill4life'); // this player is an xbox player
-  res = await smiteClient.smiteApi.getPlayer(704870226);
+  // res = await smiteClient.smiteApi.getPlayerIdByName('Habibinator777');
+  // res = await smiteClient.smiteApi.getPlayer('503268682');
+  // res = await smiteClient.smiteApi.getMatchHistory('709450203');
+
   // res = await smiteClient.smiteApi.getMatchDetails('1229914631');
   // res = await smiteClient.smiteApi.getMatchDetails('1237199832');
 
@@ -54,7 +57,6 @@ export const startSandbox = async () => {
 
   console.log(res);
 
-  // await smiteClient._reset();
   await smiteClient.redis.quit();
 };
 

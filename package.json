@@ -21,7 +21,8 @@
     "test:integration": "npx jest test/integration-tests",
     "start:sandbox": "babel-node src/sandbox/sandbox.js",
     "start": "nodemon --exec babel-node src/index.js",
-    "start:prod": "node dist/index.js"
+    "start:prod": "node dist/index.js",
+    "regen": "babel-node src/sandbox/regen.js"
   },
   "engines": {
     "node": "16.x"
