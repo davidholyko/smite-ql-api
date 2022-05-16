@@ -6,5 +6,6 @@ import { smiteClient } from './clients/SmiteQL';
   // on production, the application will sleep when not in use
   // and SmiteQL needs to be ready before handling requests
   await smiteClient.ready();
+  await smiteClient.regenerateAllMatches();
   makeApplication();
 })();
