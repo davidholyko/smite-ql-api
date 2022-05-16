@@ -36,6 +36,23 @@ export class SmiteQL extends SmiteRedis {
   }
 
   // ******************************************************************** //
+  // ********************* SmiteQL Internal Methods ********************* //
+  // ******************************************************************** //
+
+  async _updatePlayerMatch(playerId, matchId, playerDetails, partyDetails) {
+    const matchInfo = playerDetails[playerId];
+    const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
+    const matchType = matchInfo.isRanked ? RANKED : NORMAL;
+
+    const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
+
+    // append to RANKED/NORMAL and OVERALL
+    await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
+    await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
+    await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
+  }
+
+  // ******************************************************************** //
   // ************************* SmiteQL Methods ************************** //
   // ******************************************************************** //
 
@@ -86,18 +103,8 @@ export class SmiteQL extends SmiteRedis {
     const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 
-    // TODO: maybe logic for updating redisDB should be in in a smaller method
-    // calculate stats from the perspective of the player
-    const matchInfo = playerDetails[playerId];
-    const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
-    const matchType = matchInfo.isRanked ? RANKED : NORMAL;
-
-    const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
-
-    // append to RANKED/NORMAL and OVERALL
-    await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
-    await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
-    await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
+    // updates player.match with the match state object
+    await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
 
     if (!doesGlobalMatchExist) {
       // calculate stats from the perspective of the match
@@ -238,6 +245,38 @@ export class SmiteQL extends SmiteRedis {
         stack: error.stack.split('\n'),
       };
     }
+  }
+
+  /**
+   *
+   * @param {String} playerId - player name
+   * @returns {Object} output
+   */
+  async regenerateMatches(playerId) {
+    // delete all the matches and reset arrays
+    await this._set(`${PLAYERS}.${playerId}.${MATCHES}`, {});
+    await this._set(`${PLAYERS}.${playerId}.${OVERALL}`, { [WINS]: [], [LOSSES]: [] });
+    await this._set(`${PLAYERS}.${playerId}.${NORMAL}`, { [WINS]: [], [LOSSES]: [] });
+    await this._set(`${PLAYERS}.${playerId}.${RANKED}`, { [WINS]: [], [LOSSES]: [] });
+
+    const playerState = await this._get(`${PLAYERS}.${playerId}`);
+    const history = _.get(playerState, HISTORY);
+
+    await Promise.all(
+      _.map(history, async (matchId) => {
+        const rawMatchDetails = await this._get(`${GLOBAL}.${RAW_MATCHES}.${matchId}`);
+        const patchVersion = await this._getPatchVersion();
+
+        const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
+        const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
+
+        await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
+      }),
+    );
+
+    return {
+      status: 'completed',
+    };
   }
 }
 

@@ -140,6 +140,11 @@ export class SmiteRedis extends SmiteApi {
     this.session_timestamp = null;
   }
 
+  async _del(path) {
+    const output = await this.redis.json.del(ENTRY, path);
+    return output;
+  }
+
   // ******************************************************************** //
   // **********************  Redis Startup Methods ********************** //
   // ******************************************************************** //
