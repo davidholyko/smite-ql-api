@@ -222,7 +222,7 @@ export const processRecentMatchHistory = (playerInfo, options) => {
     const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
     const matchType = matchInfo.isRanked ? RANKED : NORMAL;
 
-    if (map && normalize(matchInfo.map) === normalize(map)) {
+    if (map && normalize(matchInfo.matchType) === map) {
       // if we specify a map to filter by,
       // only add the matchs with the specified map
       recentHistory[MATCHES][matchId] = matchInfo;

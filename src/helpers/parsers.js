@@ -16,6 +16,7 @@ const { REFERENCE_NAME, PLAYER_NAME } = SMITE_API_KEYS;
 export const normalize = (string, { isLowerCase = true, encase = false } = {}) => {
   string = string.replaceAll(' ', '_');
   string = string.replaceAll('*', '');
+  string = string.replaceAll(':', '');
 
   if (isLowerCase) {
     string = string.toLowerCase();
