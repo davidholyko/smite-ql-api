@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60.43% </span>
+                <span class="strong">58.51% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>55/91</span>
+                <span class='fraction'>55/94</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">48.48% </span>
+                <span class="strong">48.38% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>16/33</span>
+                <span class='fraction'>15/31</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60.43% </span>
+                <span class="strong">58.51% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>55/91</span>
+                <span class='fraction'>55/94</span>
             </div>
         
             
@@ -372,7 +372,14 @@
 <a name='L307'></a><a href='#L307'>307</a>
 <a name='L308'></a><a href='#L308'>308</a>
 <a name='L309'></a><a href='#L309'>309</a>
-<a name='L310'></a><a href='#L310'>310</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -418,15 +425,21 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -530,8 +543,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -656,6 +667,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -670,6 +683,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -724,20 +738,26 @@ export class SmiteQL extends SmiteRedis {
 &nbsp;
   async _updatePlayerMatch(playerId, matchId, playerDetails, partyDetails) {
     try {
-      const matchInfo = playerDetails[playerId];
+      const normalizedPlayerId = HELPERS.normalize(playerId, { isLowerCase: true, encase: true });
+      const matchInfo = playerDetails[normalizedPlayerId];
       const victoryStatus = matchInfo.isVictory ? <span class="branch-0 cbranch-no" title="branch not covered" >WINS </span>: LOSSES;
-      const matchType = matchInfo.isRanked ? <span class="branch-0 cbranch-no" title="branch not covered" >RANKED </span>: NORMAL;
+      const matchQuality = matchInfo.isRanked ? <span class="branch-0 cbranch-no" title="branch not covered" >RANKED </span>: NORMAL;
 &nbsp;
       const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
 &nbsp;
       // append to RANKED/NORMAL and OVERALL
-      await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
-      await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
-      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
+      await this._appendPlayer(playerId, `${matchQuality}.${victoryStatus}`, matchInfo.matchId);
+      await this._appendPlayer(playerId, `${OVERALL}.${victoryStatus}`, matchInfo.matchId);
+      await this._setPlayer(playerId, `${MATCHES}.${matchId}`, playerMatchState);
 &nbsp;
       console.info(`UPM_1: 🌀🌀🌀 Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error(`❌❌❌ Match generation for '${matchId}' as player '${playerId}' ❌❌❌`);</span>
+      const errors = <span class="cstat-no" title="statement not covered" >[</span>
+        `❌❌❌ Failed match generation for ${matchId} as player ${playerId} ❌❌❌`,
+        error.message.split('\n'),
+      ].join('\n');
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      console.error(errors);</span>
     }
   }
 &nbsp;
@@ -758,7 +778,7 @@ export class SmiteQL extends SmiteRedis {
 <span class="cstat-no" title="statement not covered" >      throw new Error(ERRORS.SCAN_MATCH_HISTORY_FAILURE);</span>
     }
 &nbsp;
-    const playerState = <span class="cstat-no" title="statement not covered" >await this._get(`${PLAYERS}.${playerId}`);</span>
+    const playerState = <span class="cstat-no" title="statement not covered" >await this._getPlayer(playerId);</span>
     const recentHistory = <span class="cstat-no" title="statement not covered" >HELPERS.processRecentMatchHistory(playerState, options);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return recentHistory;</span>
@@ -775,7 +795,7 @@ export class SmiteQL extends SmiteRedis {
    */
   async getMatchDetails(matchId, playerId) {
     const doesGlobalMatchExist = await this._exists(`${GLOBAL}.${MATCHES}.${matchId}`);
-    const doesPlayerMatchExist = await this._exists(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`);
+    const doesPlayerMatchExist = await this._existsPlayer(playerId, `${MATCHES}.${matchId}`);
     const matchState = doesGlobalMatchExist &amp;&amp; (<span class="branch-1 cbranch-no" title="branch not covered" >await this._get(`${GLOBAL}.${RAW_MATCHES}.${matchId}`))</span>;
     const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
 &nbsp;
@@ -836,11 +856,9 @@ export class SmiteQL extends SmiteRedis {
       // if player info history already exists, prepend the match
       // so that most recent match is at the start
       for (const matchId of newMatches) {
-        await this._prepend(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
+        await this._prependPlayer(playerId, `${HISTORY}`, matchId);
       }
-    }
 &nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (!_.isEmpty(newMatches)) {
       // Find match details for all matches information in parallel
       await Promise.all(
         _.map(newMatches, async (matchId) =&gt; {
@@ -861,7 +879,7 @@ export class SmiteQL extends SmiteRedis {
    * @returns {Object} data
    */
   async getPlayer(playerId, platform) {
-    const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
+    const doesPlayerExist = await this._existsPlayer(playerId);
     let playerAccountId;
 &nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (_.includes(['XBOX', 'PS4', 'SWITCH'], platform)) {
@@ -877,13 +895,13 @@ export class SmiteQL extends SmiteRedis {
 &nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (doesPlayerExist) {
       // update player.&lt;playerId&gt;.details if the redis DB already knows about it
-<span class="cstat-no" title="statement not covered" >      await this._set(`${PLAYERS}.${playerId}.${DETAILS}`, _.first(playerDetails));</span>
+<span class="cstat-no" title="statement not covered" >      await this._setPlayer(playerId, `${DETAILS}`, _.first(playerDetails));</span>
     } else {
       const newPlayerState = this.buildPlayerState(playerDetails);
-      await this._set(`${PLAYERS}.${playerId}`, newPlayerState);
+      await this._setPlayer(playerId, '', newPlayerState);
     }
 &nbsp;
-    const playerState = await this._get(`${PLAYERS}.${playerId}`);
+    const playerState = await this._getPlayer(playerId);
 &nbsp;
     return playerState;
   }
@@ -930,7 +948,7 @@ export class SmiteQL extends SmiteRedis {
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      return {</span>
         error: true,
-        message: error.message,
+        message: `Player history not found for ${playerId}`,
         stack: error.stack.split('\n'),
       };
     }
@@ -943,12 +961,12 @@ export class SmiteQL extends SmiteRedis {
    */
 <span class="fstat-no" title="function not covered" >  as</span>ync regenerateMatches(playerId) {
     // delete all the matches and reset arrays
-<span class="cstat-no" title="statement not covered" >    await this._set(`${PLAYERS}.${playerId}.${MATCHES}`, {});</span>
-<span class="cstat-no" title="statement not covered" >    await this._set(`${PLAYERS}.${playerId}.${OVERALL}`, { [WINS]: [], [LOSSES]: [] });</span>
-<span class="cstat-no" title="statement not covered" >    await this._set(`${PLAYERS}.${playerId}.${NORMAL}`, { [WINS]: [], [LOSSES]: [] });</span>
-<span class="cstat-no" title="statement not covered" >    await this._set(`${PLAYERS}.${playerId}.${RANKED}`, { [WINS]: [], [LOSSES]: [] });</span>
+<span class="cstat-no" title="statement not covered" >    await this._setPlayer(playerId, `${MATCHES}`, {});</span>
+<span class="cstat-no" title="statement not covered" >    await this._setPlayer(playerId, `${OVERALL}`, { [WINS]: [], [LOSSES]: [] });</span>
+<span class="cstat-no" title="statement not covered" >    await this._setPlayer(playerId, `${NORMAL}`, { [WINS]: [], [LOSSES]: [] });</span>
+<span class="cstat-no" title="statement not covered" >    await this._setPlayer(playerId, `${RANKED}`, { [WINS]: [], [LOSSES]: [] });</span>
 &nbsp;
-    const playerState = <span class="cstat-no" title="statement not covered" >await this._get(`${PLAYERS}.${playerId}`);</span>
+    const playerState = <span class="cstat-no" title="statement not covered" >await this._getPlayer(playerId);</span>
     const history = <span class="cstat-no" title="statement not covered" >_.get(playerState, HISTORY);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    await Promise.all(</span>
@@ -962,6 +980,8 @@ export class SmiteQL extends SmiteRedis {
 <span class="cstat-no" title="statement not covered" >        await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);</span>
       }),
     );
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    console.info(`UPM_2: 🧶🧶🧶 Updated ${history.length} matches for ${playerId} 🧶🧶🧶`);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return {</span>
       status: 'completed',
@@ -979,7 +999,8 @@ export class SmiteQL extends SmiteRedis {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    await Promise.all(</span>
       _.map(playerIds, <span class="fstat-no" title="function not covered" >as</span>ync (playerId) =&gt; {
-<span class="cstat-no" title="statement not covered" >        await this.regenerateMatches(playerId);</span>
+        const unnormalizedPlayerId = <span class="cstat-no" title="statement not covered" >_.first(playerId.match(/[^_]*[^_]/));</span>
+<span class="cstat-no" title="statement not covered" >        await this.regenerateMatches(unnormalizedPlayerId);</span>
       }),
     );
 &nbsp;
@@ -997,7 +1018,7 @@ export const smiteClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Mon May 16 2022 21:51:59 GMT+0000 (Coordinated Universal Time)
+                at Tue May 17 2022 07:26:15 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
