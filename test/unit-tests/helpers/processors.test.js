@@ -85,6 +85,8 @@ describe('processors', () => {
         ],
         gold: 13775,
         healing: 0,
+        ign: '__dhko__',
+        isCustom: false,
         isRanked: false,
         isVictory: false,
         isWatchable: false,
@@ -96,11 +98,12 @@ describe('processors', () => {
         matchId: 1229914631,
         platform: 'HIREZ',
         patchVersion: '10.0',
+        rawIgn: 'dhko',
         role: 'Unknown',
         wards: 2,
       };
 
-      expect(smiteQLMatch['dhko']).toEqual(expectedSmiteQLMatch);
+      expect(smiteQLMatch['__dhko__']).toEqual(expectedSmiteQLMatch);
     });
   });
 
@@ -110,50 +113,142 @@ describe('processors', () => {
 
       const expectedPartyDetails = {
         parties: {
-          winners: [
-            [
-              { ign: 'Kira474', partyId: 735488, god: 'Mulan', platform: 'PS4' },
-              { ign: 'MexicanMagikarp', partyId: 735488, god: 'Shiva', platform: 'PS4' },
-              { ign: 'Shinra_Tensei97', partyId: 735488, god: 'Odin', platform: 'PS4' },
-            ],
-            [{ ign: 'NickiMinajVËVO', partyId: 742515, god: 'Olorun', platform: 'STEAM' }],
-            [{ ign: 'dalvon21', partyId: 753091, god: 'Nu Wa', platform: 'XBOX' }],
-          ],
           losers: [
-            [{ ign: 'DesertGardener', partyId: 612260, god: 'Janus', platform: 'STEAM' }],
-            [{ ign: '_Danzaburou_8', partyId: 672168, god: 'Danzaburou' }],
-            [{ ign: 'dhko', partyId: 732129, god: 'Vulcan', platform: 'HIREZ' }],
-            [{ ign: 'Mowo089', partyId: 743320, god: 'Bastet', platform: 'STEAM' }],
-            [{ ign: 'declan129', partyId: 753174, god: 'Kumbhakarna', platform: 'XBOX' }],
+            [{ god: 'Janus', ign: '__desertgardener__', partyId: 612260, platform: 'STEAM', rawIgn: 'DesertGardener' }],
+            [
+              {
+                god: 'Danzaburou',
+                ign: '_Danzaburou_8',
+                partyId: 672168,
+                platform: undefined,
+                rawIgn: '_Danzaburou_8',
+              },
+            ],
+            [{ god: 'Vulcan', ign: '__dhko__', partyId: 732129, platform: 'HIREZ', rawIgn: 'dhko' }],
+            [{ god: 'Bastet', ign: '__mowo089__', partyId: 743320, platform: 'STEAM', rawIgn: 'Mowo089' }],
+            [{ god: 'Kumbhakarna', ign: '__declan129__', partyId: 753174, platform: 'XBOX', rawIgn: 'declan129' }],
           ],
           players: {
-            dalvon21: { dalvon21: { ign: 'dalvon21', partyId: 753091, god: 'Nu Wa', platform: 'XBOX' } },
-            Kira474: {
-              Kira474: { ign: 'Kira474', partyId: 735488, god: 'Mulan', platform: 'PS4' },
-              MexicanMagikarp: { ign: 'MexicanMagikarp', partyId: 735488, god: 'Shiva', platform: 'PS4' },
-              Shinra_Tensei97: { ign: 'Shinra_Tensei97', partyId: 735488, god: 'Odin', platform: 'PS4' },
+            _Danzaburou_8: {
+              _Danzaburou_8: {
+                god: 'Danzaburou',
+                ign: '_Danzaburou_8',
+                partyId: 672168,
+                platform: undefined,
+                rawIgn: '_Danzaburou_8',
+              },
             },
-            MexicanMagikarp: {
-              Kira474: { ign: 'Kira474', partyId: 735488, god: 'Mulan', platform: 'PS4' },
-              MexicanMagikarp: { ign: 'MexicanMagikarp', partyId: 735488, god: 'Shiva', platform: 'PS4' },
-              Shinra_Tensei97: { ign: 'Shinra_Tensei97', partyId: 735488, god: 'Odin', platform: 'PS4' },
+            __dalvon21__: {
+              __dalvon21__: {
+                god: 'Nu Wa',
+                ign: '__dalvon21__',
+                partyId: 753091,
+                platform: 'XBOX',
+                rawIgn: 'dalvon21',
+              },
             },
-            Shinra_Tensei97: {
-              Kira474: { ign: 'Kira474', partyId: 735488, god: 'Mulan', platform: 'PS4' },
-              MexicanMagikarp: { ign: 'MexicanMagikarp', partyId: 735488, god: 'Shiva', platform: 'PS4' },
-              Shinra_Tensei97: { ign: 'Shinra_Tensei97', partyId: 735488, god: 'Odin', platform: 'PS4' },
+            __declan129__: {
+              __declan129__: {
+                god: 'Kumbhakarna',
+                ign: '__declan129__',
+                partyId: 753174,
+                platform: 'XBOX',
+                rawIgn: 'declan129',
+              },
             },
-            NickiMinajVËVO: {
-              NickiMinajVËVO: { ign: 'NickiMinajVËVO', partyId: 742515, god: 'Olorun', platform: 'STEAM' },
+            __desertgardener__: {
+              __desertgardener__: {
+                god: 'Janus',
+                ign: '__desertgardener__',
+                partyId: 612260,
+                platform: 'STEAM',
+                rawIgn: 'DesertGardener',
+              },
             },
-            declan129: { declan129: { ign: 'declan129', partyId: 753174, god: 'Kumbhakarna', platform: 'XBOX' } },
-            dhko: { dhko: { ign: 'dhko', partyId: 732129, god: 'Vulcan', platform: 'HIREZ' } },
-            DesertGardener: {
-              DesertGardener: { ign: 'DesertGardener', partyId: 612260, god: 'Janus', platform: 'STEAM' },
+            __dhko__: {
+              __dhko__: { god: 'Vulcan', ign: '__dhko__', partyId: 732129, platform: 'HIREZ', rawIgn: 'dhko' },
             },
-            _Danzaburou_8: { _Danzaburou_8: { ign: '_Danzaburou_8', partyId: 672168, god: 'Danzaburou' } },
-            Mowo089: { Mowo089: { ign: 'Mowo089', partyId: 743320, god: 'Bastet', platform: 'STEAM' } },
+            __kira474__: {
+              __kira474__: { god: 'Mulan', ign: '__kira474__', partyId: 735488, platform: 'PS4', rawIgn: 'Kira474' },
+              __mexicanmagikarp__: {
+                god: 'Shiva',
+                ign: '__mexicanmagikarp__',
+                partyId: 735488,
+                platform: 'PS4',
+                rawIgn: 'MexicanMagikarp',
+              },
+              __shinra_tensei97__: {
+                god: 'Odin',
+                ign: '__shinra_tensei97__',
+                partyId: 735488,
+                platform: 'PS4',
+                rawIgn: 'Shinra_Tensei97',
+              },
+            },
+            __mexicanmagikarp__: {
+              __kira474__: { god: 'Mulan', ign: '__kira474__', partyId: 735488, platform: 'PS4', rawIgn: 'Kira474' },
+              __mexicanmagikarp__: {
+                god: 'Shiva',
+                ign: '__mexicanmagikarp__',
+                partyId: 735488,
+                platform: 'PS4',
+                rawIgn: 'MexicanMagikarp',
+              },
+              __shinra_tensei97__: {
+                god: 'Odin',
+                ign: '__shinra_tensei97__',
+                partyId: 735488,
+                platform: 'PS4',
+                rawIgn: 'Shinra_Tensei97',
+              },
+            },
+            __mowo089__: {
+              __mowo089__: { god: 'Bastet', ign: '__mowo089__', partyId: 743320, platform: 'STEAM', rawIgn: 'Mowo089' },
+            },
+            __nickiminajvëvo__: {
+              __nickiminajvëvo__: {
+                god: 'Olorun',
+                ign: '__nickiminajvëvo__',
+                partyId: 742515,
+                platform: 'STEAM',
+                rawIgn: 'NickiMinajVËVO',
+              },
+            },
+            __shinra_tensei97__: {
+              __kira474__: { god: 'Mulan', ign: '__kira474__', partyId: 735488, platform: 'PS4', rawIgn: 'Kira474' },
+              __mexicanmagikarp__: {
+                god: 'Shiva',
+                ign: '__mexicanmagikarp__',
+                partyId: 735488,
+                platform: 'PS4',
+                rawIgn: 'MexicanMagikarp',
+              },
+              __shinra_tensei97__: {
+                god: 'Odin',
+                ign: '__shinra_tensei97__',
+                partyId: 735488,
+                platform: 'PS4',
+                rawIgn: 'Shinra_Tensei97',
+              },
+            },
           },
+          winners: [
+            [
+              { god: 'Mulan', ign: '__kira474__', partyId: 735488, platform: 'PS4', rawIgn: 'Kira474' },
+              { god: 'Shiva', ign: '__mexicanmagikarp__', partyId: 735488, platform: 'PS4', rawIgn: 'MexicanMagikarp' },
+              { god: 'Odin', ign: '__shinra_tensei97__', partyId: 735488, platform: 'PS4', rawIgn: 'Shinra_Tensei97' },
+            ],
+            [
+              {
+                god: 'Olorun',
+                ign: '__nickiminajvëvo__',
+                partyId: 742515,
+                platform: 'STEAM',
+                rawIgn: 'NickiMinajVËVO',
+              },
+            ],
+            [{ god: 'Nu Wa', ign: '__dalvon21__', partyId: 753091, platform: 'XBOX', rawIgn: 'dalvon21' }],
+          ],
         },
       };
 

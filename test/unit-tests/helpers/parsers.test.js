@@ -22,7 +22,7 @@ describe('Parsers', () => {
         playerName: 'dhko',
       };
 
-      const expectedIgn = 'dhko';
+      const expectedIgn = { ign: '__dhko__', rawIgn: 'dhko' };
       const ign = parseIgn(player);
       expect(ign).toEqual(expectedIgn);
     });
@@ -32,7 +32,7 @@ describe('Parsers', () => {
         playerName: '',
       };
 
-      const expectedIgn = '_Nu_Wa_1';
+      const expectedIgn = { ign: '_Nu_Wa_1', rawIgn: '_Nu_Wa_1' };
       const ign = parseIgn(player, 1);
       expect(ign).toEqual(expectedIgn);
     });

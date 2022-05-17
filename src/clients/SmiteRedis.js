@@ -7,8 +7,6 @@ import HELPERS from '../helpers';
 import { redisClient } from './Redis';
 import { SmiteApi } from './SmiteApi';
 
-const { parsePlayerName, normalize } = HELPERS;
-
 const { SMITE_QL_KEYS, SMITE_API_KEYS, ERRORS, MOMENT } = CONSTANTS;
 const { ID } = SMITE_API_KEYS;
 const {
@@ -90,7 +88,7 @@ export class SmiteRedis extends SmiteApi {
   /**
    *
    * @param {String} path - path to object in redis
-   * @param {Any} value -
+   * @param {Any} value - value
    * @returns {String} response
    */
   async _append(path, value) {
@@ -157,6 +155,70 @@ export class SmiteRedis extends SmiteApi {
     await this.redis.flushAll();
     this.isReady = false;
     this.session_timestamp = null;
+  }
+
+  // ******************************************************************** //
+  // ************  Redis Internal Methods (Player Namespace) ************ //
+  // ******************************************************************** //
+
+  /**
+   * @param {String} playerId - like 'dhko'
+   * @param {String} path - path to object in redis
+   * @param {Any} value - value
+   * @returns {Any} object
+   */
+  async _prependPlayer(playerId, path, value) {
+    const index = 0;
+    const newPath = HELPERS.toPlayerPath(playerId, path);
+    const response = await this.redis.json.arrInsert(ENTRY, newPath, index, value);
+    return response;
+  }
+
+  /**
+   * @param {String} playerId - like 'dhko'
+   * @param {String} path - path to object in redis
+   * @param {Any} value - value
+   * @returns {Any} object
+   */
+  async _appendPlayer(playerId, path, value) {
+    const newPath = HELPERS.toPlayerPath(playerId, path);
+    const response = await this.redis.json.arrAppend(ENTRY, newPath, value);
+    return response;
+  }
+
+  /**
+   *
+   * @param {String} playerId - like 'dhko'
+   * @param {String} path - path to object in redis
+   * @returns {Boolean} response - true or false
+   */
+  async _existsPlayer(playerId, path) {
+    const newPath = HELPERS.toPlayerPath(playerId, path);
+    const response = await this.redis.json.type(ENTRY, newPath);
+    return !!response;
+  }
+
+  /**
+   * @param {String} playerId - like 'dhko'
+   * @param {String} path - path to object in redis
+   * @returns {Any} object
+   */
+  async _getPlayer(playerId, path) {
+    const newPath = HELPERS.toPlayerPath(playerId, path);
+    const data = await this.redis.json.get(ENTRY, { path: newPath });
+    return data;
+  }
+
+  /**
+   * @param {String} playerId - like 'dhko'
+   * @param {String} path - path to object in redis
+   *  @param {Object} data - data
+   * @returns {Any} object
+   */
+  async _setPlayer(playerId, path, data) {
+    const newPath = HELPERS.toPlayerPath(playerId, path);
+    const output = await this.redis.json.set(ENTRY, newPath, data);
+    return output;
   }
 
   // ******************************************************************** //
@@ -246,7 +308,7 @@ export class SmiteRedis extends SmiteApi {
       _.map(items, async (item) => {
         // replace spaces with '_' because redis cannot handle spaces in keys
         // some items start with * like '*Asi'
-        const key = normalize(item.DeviceName, false);
+        const key = HELPERS.normalize(item.DeviceName, { isLowerCase: false });
         return await this._set(`${GLOBAL}.${ITEMS}.${patchVersion}.${key}`, item);
       }),
     );
@@ -269,7 +331,7 @@ export class SmiteRedis extends SmiteApi {
 
     await Promise.all(
       _.map(gods, async (godDetails) => {
-        const god = normalize(godDetails.Name, false);
+        const god = HELPERS.normalize(godDetails.Name, { isLowerCase: false });
         return await this._set(`${GLOBAL}.${GODS}.${patchVersion}.${god}`, godDetails);
       }),
     );
@@ -316,9 +378,13 @@ export class SmiteRedis extends SmiteApi {
           [PREVIOUS_SCEHMA]: [],
         },
         [PATCH_VERSIONS]: {
-          // example: { value: '9.3', timestamp: 1322312 }
+          // example: { value: '9_3', timestamp: 1322312 }
           [CURRENT_PATCH]: null,
-          // example: [{ value: '9.3', timestamp: 1322312 }, { value: '9.2', timestamp: 1222312 }]
+          // example:
+          // [
+          //   { value: '9_3', timestamp: 1322312 },
+          //   { value: '9_2', timestamp: 1222312 }
+          // ]
           [PREVIOUS_PATCHES]: [],
         },
       },
@@ -328,7 +394,7 @@ export class SmiteRedis extends SmiteApi {
         // key is a player's ign name
         // value is an object with
         //
-        // dhko: {
+        // __dhko__: {
         //   info: {}, // player info from 'getPlayer'
         //   matches: {}, // map of matchIds
         //   history: [], // list of match details for a player
@@ -391,7 +457,7 @@ export class SmiteRedis extends SmiteApi {
 
     const initialPlayerState = {
       [SCHEMA_VERSION]: '1.0.0',
-      [IGN]: parsePlayerName(playerName), // in game name, like 'dhko'
+      [IGN]: HELPERS.parsePlayerName(playerName), // in game name, like 'dhko'
       [ACCOUNT_NUMBER]: player[ID], // associated number, like 4553282
       [DETAILS]: player,
       [MATCHES]: {},

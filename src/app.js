@@ -88,7 +88,7 @@ export const makeApplication = () => {
     const { forceUpdate, limit, index, platform, map = '' } = req.query;
     // remove all undefined/null values from options
     const options = _.pickBy({ limit, index, map, platform }, _.identity);
-    const player = decodeURI(req.query.player);
+    const playerId = decodeURI(req.query.player);
 
     if (!req.query.player) {
       return res.send({
@@ -101,12 +101,12 @@ export const makeApplication = () => {
 
     if (forceUpdate === 'true') {
       try {
-        await smiteClient.getMatchHistory(player, options);
+        await smiteClient.getMatchHistory(playerId, options);
       } catch (error) {
         return res.send({
           // on errors, send the entire stack trace and message
           success: false,
-          message: `Player: ${player} does not exist.`,
+          message: `Player: ${playerId} does not exist.`,
           response: {
             error: true,
             message: error.message,
@@ -116,7 +116,7 @@ export const makeApplication = () => {
       }
     }
 
-    const response = await smiteClient.getHistory(player, options);
+    const response = await smiteClient.getHistory(playerId, options);
     const success = response.error ? false : true;
     const message = response.error ? 'failure' : 'success';
 

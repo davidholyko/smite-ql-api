@@ -68,7 +68,7 @@ export const processPlayerDetails = (rawMatchDetails, patchVersion) => {
   };
 
   _.forEach(rawMatchDetails, (player, index) => {
-    const ign = parseIgn(player, index);
+    const { ign } = parseIgn(player, index);
     players[ign] = toSmiteQLMatch(player, patchVersion);
   });
 
@@ -98,7 +98,7 @@ export const processPartyDetails = (matchDetails) => {
   };
 
   _.forEach(matchDetails, (player, index) => {
-    const ign = parseIgn(player, index);
+    const { ign } = parseIgn(player, index);
     const partyId = player[PARTY_ID];
     const group = player['Win_Status'] === 'Winner' ? 'winners' : 'losers';
 
@@ -108,13 +108,14 @@ export const processPartyDetails = (matchDetails) => {
   });
 
   _.forEach(matchDetails, (player, index) => {
-    const ign = parseIgn(player, index);
+    const { ign, rawIgn } = parseIgn(player, index);
     const partyId = player[PARTY_ID];
     const god = player['Reference_Name'];
     const group = player['Win_Status'] === 'Winner' ? 'winners' : 'losers';
 
     // apply players to their respective party
     parties['byGroup'][group][partyId][ign] = {
+      rawIgn,
       ign,
       partyId,
       god,
@@ -148,7 +149,7 @@ export const processLevelDetails = (matchDetails) => {
   };
 
   _.forEach(matchDetails, (player, index) => {
-    const ign = parseIgn(player, index);
+    const { ign } = parseIgn(player, index);
     masteryLevels[ign] = player['Mastery_Level'];
     accountLevels[ign] = player['Account_Level'];
   });

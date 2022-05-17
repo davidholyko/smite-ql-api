@@ -8,13 +8,23 @@ const { REFERENCE_NAME, PLAYER_NAME } = SMITE_API_KEYS;
 /**
  * Replaces all spaces with '_'
  * @param {String} string - like 'Ranked Conquest' or '*Asi'
- * @param {Boolean} isLowerCase -
+ * @param {Object} options -  options
+ * @param {Boolean} options.isLowerCase - boolean to make ASI -> asi
+ * @param {Boolean} options.encase - boolean to ecnase Asi -> __Asi__
  * @returns {String} string like 'ranked_conquest' or 'Asi'
  */
-export const normalize = (string, isLowerCase = true) => {
+export const normalize = (string, { isLowerCase = true, encase = false }) => {
   string = string.replaceAll(' ', '_');
   string = string.replaceAll('*', '');
-  isLowerCase && (string = string.toLowerCase());
+
+  if (isLowerCase) {
+    string = string.toLowerCase();
+  }
+
+  if (encase) {
+    string = `__${string}__`;
+  }
+
   return string;
 };
 
@@ -38,10 +48,12 @@ export const parseIgn = (player, index) => {
   // account for when player profiles are hidden
   //   player.playerId = 0
   //   player.playerName = ''
-  const hiddenIGN = `_${normalize(player[REFERENCE_NAME], false)}_${index}`;
+  const hiddenIGN = `_${normalize(player[REFERENCE_NAME], { isLowerCase: false })}_${index}`;
   const name = parsePlayerName(player[PLAYER_NAME]);
-  const ign = !_.isEmpty(name) ? name : hiddenIGN;
-  return ign;
+  const ign = !_.isEmpty(name) ? normalize(name, { isLowerCase: true, encase: true }) : hiddenIGN;
+  const rawIgn = !_.isEmpty(name) ? name : hiddenIGN;
+
+  return { ign, rawIgn };
 };
 
 /**

@@ -41,20 +41,26 @@ export class SmiteQL extends SmiteRedis {
 
   async _updatePlayerMatch(playerId, matchId, playerDetails, partyDetails) {
     try {
-      const matchInfo = playerDetails[playerId];
+      const normalizedPlayerId = HELPERS.normalize(playerId, { isLowerCase: true, encase: true });
+      const matchInfo = playerDetails[normalizedPlayerId];
       const victoryStatus = matchInfo.isVictory ? WINS : LOSSES;
-      const matchType = matchInfo.isRanked ? RANKED : NORMAL;
+      const matchQuality = matchInfo.isRanked ? RANKED : NORMAL;
 
       const playerMatchState = this.buildPlayerMatchState({ matchInfo, playerId, partyDetails });
 
       // append to RANKED/NORMAL and OVERALL
-      await this._append(`${PLAYERS}.${playerId}.${matchType}.${victoryStatus}`, matchInfo.matchId);
-      await this._append(`${PLAYERS}.${playerId}.${OVERALL}.${victoryStatus}`, matchInfo.matchId);
-      await this._set(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`, playerMatchState);
+      await this._appendPlayer(playerId, `${matchQuality}.${victoryStatus}`, matchInfo.matchId);
+      await this._appendPlayer(playerId, `${OVERALL}.${victoryStatus}`, matchInfo.matchId);
+      await this._setPlayer(playerId, `${MATCHES}.${matchId}`, playerMatchState);
 
       console.info(`UPM_1: 🌀🌀🌀 Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
     } catch (error) {
-      console.error(`❌❌❌ Match generation for '${matchId}' as player '${playerId}' ❌❌❌`);
+      const errors = [
+        `❌❌❌ Failed match generation for ${matchId} as player ${playerId} ❌❌❌`,
+        error.message.split('\n'),
+      ].join('\n');
+
+      console.error(errors);
     }
   }
 
@@ -75,7 +81,7 @@ export class SmiteQL extends SmiteRedis {
       throw new Error(ERRORS.SCAN_MATCH_HISTORY_FAILURE);
     }
 
-    const playerState = await this._get(`${PLAYERS}.${playerId}`);
+    const playerState = await this._getPlayer(playerId);
     const recentHistory = HELPERS.processRecentMatchHistory(playerState, options);
 
     return recentHistory;
@@ -92,7 +98,7 @@ export class SmiteQL extends SmiteRedis {
    */
   async getMatchDetails(matchId, playerId) {
     const doesGlobalMatchExist = await this._exists(`${GLOBAL}.${MATCHES}.${matchId}`);
-    const doesPlayerMatchExist = await this._exists(`${PLAYERS}.${playerId}.${MATCHES}.${matchId}`);
+    const doesPlayerMatchExist = await this._existsPlayer(playerId, `${MATCHES}.${matchId}`);
     const matchState = doesGlobalMatchExist && (await this._get(`${GLOBAL}.${RAW_MATCHES}.${matchId}`));
     const patchVersion = _.get(matchState, PATCH_VERSION) || (await this._getPatchVersion());
 
@@ -153,11 +159,9 @@ export class SmiteQL extends SmiteRedis {
       // if player info history already exists, prepend the match
       // so that most recent match is at the start
       for (const matchId of newMatches) {
-        await this._prepend(`${PLAYERS}.${playerId}.${HISTORY}`, matchId);
+        await this._prependPlayer(playerId, `${HISTORY}`, matchId);
       }
-    }
 
-    if (!_.isEmpty(newMatches)) {
       // Find match details for all matches information in parallel
       await Promise.all(
         _.map(newMatches, async (matchId) => {
@@ -178,7 +182,7 @@ export class SmiteQL extends SmiteRedis {
    * @returns {Object} data
    */
   async getPlayer(playerId, platform) {
-    const doesPlayerExist = await this._exists(`${PLAYERS}.${playerId}`);
+    const doesPlayerExist = await this._existsPlayer(playerId);
     let playerAccountId;
 
     if (_.includes(['XBOX', 'PS4', 'SWITCH'], platform)) {
@@ -194,13 +198,13 @@ export class SmiteQL extends SmiteRedis {
 
     if (doesPlayerExist) {
       // update player.<playerId>.details if the redis DB already knows about it
-      await this._set(`${PLAYERS}.${playerId}.${DETAILS}`, _.first(playerDetails));
+      await this._setPlayer(playerId, `${DETAILS}`, _.first(playerDetails));
     } else {
       const newPlayerState = this.buildPlayerState(playerDetails);
-      await this._set(`${PLAYERS}.${playerId}`, newPlayerState);
+      await this._setPlayer(playerId, '', newPlayerState);
     }
 
-    const playerState = await this._get(`${PLAYERS}.${playerId}`);
+    const playerState = await this._getPlayer(playerId);
 
     return playerState;
   }
@@ -247,7 +251,7 @@ export class SmiteQL extends SmiteRedis {
     } catch (error) {
       return {
         error: true,
-        message: error.message,
+        message: `Player history not found for ${playerId}`,
         stack: error.stack.split('\n'),
       };
     }
@@ -260,12 +264,12 @@ export class SmiteQL extends SmiteRedis {
    */
   async regenerateMatches(playerId) {
     // delete all the matches and reset arrays
-    await this._set(`${PLAYERS}.${playerId}.${MATCHES}`, {});
-    await this._set(`${PLAYERS}.${playerId}.${OVERALL}`, { [WINS]: [], [LOSSES]: [] });
-    await this._set(`${PLAYERS}.${playerId}.${NORMAL}`, { [WINS]: [], [LOSSES]: [] });
-    await this._set(`${PLAYERS}.${playerId}.${RANKED}`, { [WINS]: [], [LOSSES]: [] });
+    await this._setPlayer(playerId, `${MATCHES}`, {});
+    await this._setPlayer(playerId, `${OVERALL}`, { [WINS]: [], [LOSSES]: [] });
+    await this._setPlayer(playerId, `${NORMAL}`, { [WINS]: [], [LOSSES]: [] });
+    await this._setPlayer(playerId, `${RANKED}`, { [WINS]: [], [LOSSES]: [] });
 
-    const playerState = await this._get(`${PLAYERS}.${playerId}`);
+    const playerState = await this._getPlayer(playerId);
     const history = _.get(playerState, HISTORY);
 
     await Promise.all(
@@ -279,6 +283,8 @@ export class SmiteQL extends SmiteRedis {
         await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
       }),
     );
+
+    console.info(`UPM_2: 🧶🧶🧶 Updated ${history.length} matches for ${playerId} 🧶🧶🧶`);
 
     return {
       status: 'completed',
@@ -296,7 +302,8 @@ export class SmiteQL extends SmiteRedis {
 
     await Promise.all(
       _.map(playerIds, async (playerId) => {
-        await this.regenerateMatches(playerId);
+        const unnormalizedPlayerId = _.first(playerId.match(/[^_]*[^_]/));
+        await this.regenerateMatches(unnormalizedPlayerId);
       }),
     );
 

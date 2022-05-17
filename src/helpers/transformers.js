@@ -10,7 +10,7 @@ import moment from 'moment';
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
 
-const { MOMENT, PORTALS } = CONSTANTS;
+const { MOMENT, PORTALS, SMITE_QL_KEYS } = CONSTANTS;
 const { SMITE_API_FORMAT } = MOMENT;
 
 /**
@@ -26,11 +26,12 @@ export const toDate = (date) => {
 
 /**
  *
- * @param {Object} rawMatchDetails - matchDetails
+ * @param {Object} rawMatchDetails - matchDetails for a player
  * @param {String} patchVersion - patchVersion at the time of the match
  * @returns {Object} match with only date and victory status
  */
 export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
+  const names = HELPERS.parseIgn(rawMatchDetails);
   const playerActives = [
     // actives
     rawMatchDetails.Item_Active_1,
@@ -54,9 +55,14 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
     date: toDate(_.get(rawMatchDetails, 'Entry_Datetime')),
 
     // checks
+    isCustom: _.startsWith(rawMatchDetails['name'], 'Custom'),
     isVictory: _.startsWith(rawMatchDetails['Win_Status'], 'Win'),
     isRanked: _.startsWith(rawMatchDetails['name'], 'Ranked'),
     isWatchable: _.startsWith(rawMatchDetails['hasReplay'], 'y'),
+
+    // player name
+    ign: names.ign,
+    rawIgn: names.rawIgn,
 
     // player match details
     kills: _.get(rawMatchDetails, 'Kills_Single', 0),
@@ -101,4 +107,19 @@ export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
   };
 
   return matchState;
+};
+
+/**
+ *
+ * @param {String} playerId - like 'dhko'
+ * @param {String} path - like '.matches'
+ * @returns {String} newPath
+ */
+export const toPlayerPath = (playerId, path) => {
+  const { PLAYERS } = SMITE_QL_KEYS;
+  const playerName = HELPERS.normalize(playerId, { isLowerCase: true, encase: true });
+  const extendedPath = path ? `${playerName}.${path}` : playerName;
+  const newPath = `${PLAYERS}.${extendedPath}`;
+
+  return newPath;
 };
