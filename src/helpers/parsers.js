@@ -13,7 +13,7 @@ const { REFERENCE_NAME, PLAYER_NAME } = SMITE_API_KEYS;
  * @param {Boolean} options.encase - boolean to ecnase Asi -> __Asi__
  * @returns {String} string like 'ranked_conquest' or 'Asi'
  */
-export const normalize = (string, { isLowerCase = true, encase = false }) => {
+export const normalize = (string, { isLowerCase = true, encase = false } = {}) => {
   string = string.replaceAll(' ', '_');
   string = string.replaceAll('*', '');
 
