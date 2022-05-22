@@ -81,12 +81,16 @@ export const processPlayerDetails = (rawMatchDetails, patchVersion) => {
  * @returns {Object} - map of parties
  */
 export const processPartyDetails = (matchDetails) => {
-  // player_1 is in a party of 3 [player_1, player_2, player_3] with solo queue players [player_4] and [player_5]
-  // player_6 is in a part of 5 [player_6, player_7, player_8, player_9, player_10]
+  // player_1 is in a party of 3
+  //   [player_1, player_2, player_3] party of 3 with
+  //   [player_4] solo queue player and
+  //   [player_5] solo queue player
+  // player_6 is in a part of 5
+  //   [player_6, player_7, player_8, player_9, player_10] party of 5
   //
   // player_1: {
-  //   allies: [[player_1, player_2, player_3], [player_4], [player_5]],
-  //   enemies: [player_6, player_7, player_8, player_9, player_10]
+  //   allies:  [[player_1, player_2, player_3], [player_4], [player_5]],
+  //   enemies: [[player_6, player_7, player_8, player_9, player_10]]
   // }
 
   const parties = {
@@ -120,6 +124,7 @@ export const processPartyDetails = (matchDetails) => {
       partyId,
       god,
       platform: PORTALS[player.playerPortalId],
+      level: player['Account_Level'],
     };
     parties['byPlayer'][ign] = parties['byGroup'][group][partyId];
   });
