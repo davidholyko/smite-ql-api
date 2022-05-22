@@ -7,7 +7,7 @@ import HELPERS from '../helpers';
 import { smiteApiClient } from './SmiteApi';
 import { SmiteRedis } from './SmiteRedis';
 
-const { SMITE_QL_KEYS, ERRORS, MOMENT } = CONSTANTS;
+const { SMITE_QL_KEYS, ERRORS, MOMENT, REGEX } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -56,7 +56,7 @@ export class SmiteQL extends SmiteRedis {
       await this._appendPlayer(playerId, `${OVERALL}.${victoryStatus}`, matchInfo.matchId);
       await this._setPlayer(playerId, `${MATCHES}.${matchId}`, playerMatchState);
 
-      console.info(`UPM_1: 🌀🌀🌀 Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
+      console.info(`🌀🌀🌀 UPM_1: Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
     } catch (error) {
       const errors = [
         `❌❌❌ Failed match generation for ${matchId} as player ${playerId} ❌❌❌`,
@@ -289,7 +289,7 @@ export class SmiteQL extends SmiteRedis {
       }),
     );
 
-    console.info(`UPM_2: 🧶🧶🧶 Updated ${history.length} matches for ${playerId} 🧶🧶🧶`);
+    console.info(`🧶🧶🧶 UPM_2: Updated ${history.length} matches for ${playerId} 🧶🧶🧶`);
 
     return {
       status: 'completed',
@@ -306,14 +306,18 @@ export class SmiteQL extends SmiteRedis {
     const playerIds = await this._keys(`${PLAYERS}`);
 
     await Promise.all(
-      _.map(playerIds, async (playerId) => {
-        const unnormalizedPlayerId = _.first(playerId.match(/[^_]*[^_]/));
-        await this.regenerateMatches(unnormalizedPlayerId);
+      _.map(playerIds, async (id) => {
+        const playerId = _.get(id.match(REGEX.MATCH_BETWEEN_DOUBLE_UNDERSCRORE), '[1]');
+        console.log(`🔥🔥🔥 REG_1: Regenerating all matches for ${playerId} 🔥🔥🔥`);
+        await this.regenerateMatches(playerId);
       }),
     );
 
+    console.log(`🌊🌊🌊 REG_2: Regenerating all matches complete! 🌊🌊🌊`);
+
     return {
       status: 'completed',
+      response: playerIds,
     };
   }
 }

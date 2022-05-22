@@ -152,3 +152,10 @@ export const PORTALS = {
   25: 'DISCORD',
   28: 'EPIC',
 };
+
+export const REGEX = {
+  // matches all words between encasing double underscore
+  // '__dhko__' -> 'dhko'
+  // '__a_b__' -> 'a_b'
+  MATCH_BETWEEN_DOUBLE_UNDERSCRORE: /(?:__)(.*?)(?:__)/,
+};

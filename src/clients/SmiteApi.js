@@ -84,6 +84,10 @@ export class SmiteApi {
       return true;
     }
 
+    if (!this.session_id) {
+      return true;
+    }
+
     return moment.utc() > this.session_timestamp;
   }
 
@@ -103,12 +107,19 @@ export class SmiteApi {
   _composeUrl(method, signature, timestamp, ...args) {
     this._assertEnvVariables();
 
-    const session = this.session_id && !this._isSessionExpired() ? `/${this.session_id}` : '';
-    let url = `${BASE_URL}/${method}${this.response_type}/${this.dev_id}/${signature}${session}/${timestamp}`;
+    const urlComponents = _.filter([
+      BASE_URL,
+      `${method}${this.response_type}`,
+      this.dev_id,
+      signature,
+      !this._isSessionExpired() ? this.session_id : '',
+      timestamp,
+      ...args,
+    ]);
 
-    _.forEach([...args], (arg) => {
-      url += `/${arg}`;
-    });
+    // regenerates url like
+    // `${BASE_URL}/${method}/${dev_id}/${signature}/${session}/${timestamp}/${...args}`
+    const url = urlComponents.join('/');
 
     return url;
   }
