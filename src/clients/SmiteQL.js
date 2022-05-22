@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import CONSTANTS from '../constants';
 import HELPERS from '../helpers';
@@ -6,7 +7,7 @@ import HELPERS from '../helpers';
 import { smiteApiClient } from './SmiteApi';
 import { SmiteRedis } from './SmiteRedis';
 
-const { SMITE_QL_KEYS, ERRORS } = CONSTANTS;
+const { SMITE_QL_KEYS, ERRORS, MOMENT } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -21,6 +22,8 @@ const {
   RAW_MATCHES,
   OVERALL,
   ACCOUNT_NUMBER,
+  IGN,
+  LAST_UPDATED,
 } = SMITE_QL_KEYS;
 
 /**
@@ -199,6 +202,7 @@ export class SmiteQL extends SmiteRedis {
     if (doesPlayerExist) {
       // update player.<playerId>.details if the redis DB already knows about it
       await this._setPlayer(playerId, `${DETAILS}`, _.first(playerDetails));
+      await this._setPlayer(playerId, `${LAST_UPDATED}`, moment.utc().format(MOMENT.HUMAN_TIME_FORMAT));
     } else {
       const newPlayerState = this.buildPlayerState(playerDetails);
       await this._setPlayer(playerId, '', newPlayerState);
@@ -245,7 +249,8 @@ export class SmiteQL extends SmiteRedis {
         ...history,
         player: {
           ...player.details,
-          ign: player.ign,
+          [IGN]: player[IGN],
+          [LAST_UPDATED]: player[LAST_UPDATED],
         },
       };
     } catch (error) {

@@ -38,6 +38,7 @@ const {
   LEVEL,
   RAW_MATCHES,
   OVERALL,
+  LAST_UPDATED,
 } = SMITE_QL_KEYS;
 
 /**
@@ -458,6 +459,7 @@ export class SmiteRedis extends SmiteApi {
     const initialPlayerState = {
       [SCHEMA_VERSION]: '1.0.0',
       [IGN]: HELPERS.parsePlayerName(playerName), // in game name, like 'dhko'
+      [LAST_UPDATED]: moment.utc().format(MOMENT.HUMAN_TIME_FORMAT),
       [ACCOUNT_NUMBER]: player[ID], // associated number, like 4553282
       [DETAILS]: player,
       [MATCHES]: {},
