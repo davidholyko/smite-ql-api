@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.89% </span>
+                <span class="strong">56.7% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>55/95</span>
+                <span class='fraction'>55/97</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.89% </span>
+                <span class="strong">56.7% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>55/95</span>
+                <span class='fraction'>55/97</span>
             </div>
         
             
@@ -384,7 +384,11 @@
 <a name='L319'></a><a href='#L319'>319</a>
 <a name='L320'></a><a href='#L320'>320</a>
 <a name='L321'></a><a href='#L321'>321</a>
-<a name='L322'></a><a href='#L322'>322</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -695,10 +699,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -714,7 +722,7 @@ import HELPERS from '../helpers';
 import { smiteApiClient } from './SmiteApi';
 import { SmiteRedis } from './SmiteRedis';
 &nbsp;
-const { SMITE_QL_KEYS, ERRORS, MOMENT } = CONSTANTS;
+const { SMITE_QL_KEYS, ERRORS, MOMENT, REGEX } = CONSTANTS;
 const {
   WINS,
   LOSSES,
@@ -763,7 +771,7 @@ export class SmiteQL extends SmiteRedis {
       await this._appendPlayer(playerId, `${OVERALL}.${victoryStatus}`, matchInfo.matchId);
       await this._setPlayer(playerId, `${MATCHES}.${matchId}`, playerMatchState);
 &nbsp;
-      console.info(`UPM_1: 🌀🌀🌀 Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
+      console.info(`🌀🌀🌀 UPM_1: Updated match ${matchId} for ${playerId} 🌀🌀🌀`);
     } catch (error) {
       const errors = <span class="cstat-no" title="statement not covered" >[</span>
         `❌❌❌ Failed match generation for ${matchId} as player ${playerId} ❌❌❌`,
@@ -996,7 +1004,7 @@ export class SmiteQL extends SmiteRedis {
       }),
     );
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    console.info(`UPM_2: 🧶🧶🧶 Updated ${history.length} matches for ${playerId} 🧶🧶🧶`);</span>
+<span class="cstat-no" title="statement not covered" >    console.info(`🧶🧶🧶 UPM_2: Updated ${history.length} matches for ${playerId} 🧶🧶🧶`);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return {</span>
       status: 'completed',
@@ -1013,14 +1021,18 @@ export class SmiteQL extends SmiteRedis {
     const playerIds = <span class="cstat-no" title="statement not covered" >await this._keys(`${PLAYERS}`);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    await Promise.all(</span>
-      _.map(playerIds, <span class="fstat-no" title="function not covered" >as</span>ync (playerId) =&gt; {
-        const unnormalizedPlayerId = <span class="cstat-no" title="statement not covered" >_.first(playerId.match(/[^_]*[^_]/));</span>
-<span class="cstat-no" title="statement not covered" >        await this.regenerateMatches(unnormalizedPlayerId);</span>
+      _.map(playerIds, <span class="fstat-no" title="function not covered" >as</span>ync (id) =&gt; {
+        const playerId = <span class="cstat-no" title="statement not covered" >_.get(id.match(REGEX.MATCH_BETWEEN_DOUBLE_UNDERSCRORE), '[1]');</span>
+<span class="cstat-no" title="statement not covered" >        console.log(`🔥🔥🔥 REG_1: Regenerating all matches for ${playerId} 🔥🔥🔥`);</span>
+<span class="cstat-no" title="statement not covered" >        await this.regenerateMatches(playerId);</span>
       }),
     );
 &nbsp;
+<span class="cstat-no" title="statement not covered" >    console.log(`🌊🌊🌊 REG_2: Regenerating all matches complete! 🌊🌊🌊`);</span>
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    return {</span>
       status: 'completed',
+      response: playerIds,
     };
   }
 }
@@ -1033,7 +1045,7 @@ export const smiteClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sun May 22 2022 22:47:07 GMT+0000 (Coordinated Universal Time)
+                at Sun May 22 2022 23:41:50 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
