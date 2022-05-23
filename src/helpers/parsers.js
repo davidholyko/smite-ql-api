@@ -129,3 +129,12 @@ export const parsePortalId = (platform) => {
 
   return PORTALS[platform];
 };
+
+/**
+ *
+ * @param {Object} object - like { a: null, b: '2', c: 3 }
+ * @returns {Object} object without falsy values - like { b: '2', c: 3}
+ */
+export const parseTruthyObject = (object) => {
+  return _.pickBy(object, _.identity);
+};
