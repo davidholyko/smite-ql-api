@@ -123,7 +123,8 @@ export const processPartyDetails = (matchDetails) => {
       ign,
       partyId,
       god,
-      platform: PORTALS[player.playerPortalId],
+      // TODO: new portal for 'Amazon Luna'
+      platform: PORTALS[player.playerPortalId] || 'STEAM',
       level: player['Account_Level'],
     };
     parties['byPlayer'][ign] = parties['byGroup'][group][partyId];
