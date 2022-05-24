@@ -221,7 +221,7 @@ export class SmiteApi {
 
   /**
    * /ping[ResponseFormat]
-   * {@link} https://api.smite-ql.com/ping
+   * {@link} https://api.smitegame.com/smiteapi.svc/pingJson
    * A quick way of validating access to the Hi-Rez API.
    * @returns {String} response
    */

@@ -34,6 +34,8 @@ brew install redis
 
 [Smite API Developer Guide](https://docs.google.com/document/d/1OFS-3ocSx-1Rvg4afAnEHlT3917MAK_6eJTR6rzr-BM/edit) contains API endpoints documentation for a developer.
 
+_Visit [Smite API endpoint](https://api.smitegame.com/smiteapi.svc/pingJson) for server status._
+
 #### Register for Smite API Developer Account
 
 Follow instructions [here](https://fs12.formsite.com/HiRez/form48/secure_index.html) to request access for a `DEV_ID` and `AUTH_KEY`.
