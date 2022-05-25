@@ -114,13 +114,6 @@ export class SmiteQL extends SmiteRedis {
     console.info(`🏢🏢🏢 GMD_1: Retrieving matchDetails for matchId: ${matchId} 🏢🏢🏢`);
 
     const rawMatchDetails = doesGlobalMatchExist ? matchState : await super.getMatchDetails(matchId);
-
-    if (_.get(rawMatchDetails, '[0].ret_msg')) {
-      // if ret_msg is a string, the match data is invalid
-      console.info(`❌❌❌ GMD_1.5: Failed matchDetails for matchId: ${matchId} ❌❌❌`);
-      return;
-    }
-
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
     const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);

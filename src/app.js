@@ -90,6 +90,63 @@ export const makeApplication = () => {
   });
 
   /**
+   * @example http://localhost:8080/smite-api?player=dhko
+   * @example http://localhost:8080/smite-api?match=1243757001
+   * @example http://localhost:8080/smite-api?history=dhko
+   */
+  app.get('/smite-api', async function (req, res) {
+    const { match, player, history } = req.query;
+    const queryParams = _.filter(req.query).length;
+
+    if (queryParams > 1) {
+      return res.send({
+        success: false,
+        message: "Only one of [match, player, history] is allowed for '/smite-api' endpoint.",
+      });
+    }
+
+    if (queryParams === 0) {
+      return res.send({
+        success: false,
+        message: "One of [match, player] is required for '/smite-api' endpoint.",
+      });
+    }
+
+    if (match) {
+      const response = await smiteClient.smiteApi.getMatchDetails(match);
+      return res.send({
+        success: true,
+        message: `Match details found for ${match}`,
+        response,
+      });
+    }
+
+    if (player) {
+      const response = await smiteClient.smiteApi.getPlayer(player);
+      return res.send({
+        success: true,
+        message: `Player details found for ${player}`,
+        response,
+      });
+    }
+
+    if (history) {
+      const response = await smiteClient.smiteApi.getMatchHistory(history);
+      return res.send({
+        success: true,
+        message: `Player history found for ${history}`,
+        response,
+      });
+    }
+
+    return res.send({
+      success: false,
+      message: 'Something went wrong',
+      response: {},
+    });
+  });
+
+  /**
    * @example http://localhost:8080/history?player=dhko
    */
   app.get('/history', async function (req, res) {

@@ -159,3 +159,8 @@ export const REGEX = {
   // '__a_b__' -> 'a_b'
   MATCH_BETWEEN_DOUBLE_UNDERSCRORE: /(?:__)(.*?)(?:__)/,
 };
+
+export const RETURN_MESSAGES = {
+  // match details [0]
+  PROFILE_HIDDEN: 'Player Privacy Flag set for this player.',
+};
