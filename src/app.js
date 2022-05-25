@@ -19,11 +19,19 @@ export const makeApplication = () => {
    * @example http://localhost:8080/ping
    */
   app.get('/ping', async function (_req, res) {
-    const response = await smiteClient.getDataUsed();
+    let response;
+    let success = true;
+
+    try {
+      response = await smiteClient.getDataUsed();
+    } catch (error) {
+      response = [{ status: 'Official Smite API is down.' }];
+      success = false;
+    }
 
     res.send({
       // ping should always work as long as server is running
-      success: true,
+      success,
       message: 'pong',
       response: {
         ..._.first(response),

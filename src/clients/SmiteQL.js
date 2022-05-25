@@ -114,6 +114,13 @@ export class SmiteQL extends SmiteRedis {
     console.info(`🏢🏢🏢 GMD_1: Retrieving matchDetails for matchId: ${matchId} 🏢🏢🏢`);
 
     const rawMatchDetails = doesGlobalMatchExist ? matchState : await super.getMatchDetails(matchId);
+
+    if (_.get(rawMatchDetails, '[0].ret_msg')) {
+      // if ret_msg is a string, the match data is invalid
+      console.info(`❌❌❌ GMD_1.5: Failed matchDetails for matchId: ${matchId} ❌❌❌`);
+      return;
+    }
+
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
     const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
@@ -199,8 +206,15 @@ export class SmiteQL extends SmiteRedis {
       throw new Error(`Player: ${playerId} does not exist.`);
     }
 
+    if (_.get(playerDetails, '[0].ret_msg')) {
+      // if the request for getting player JSON fails,
+      // faill back to whatever data we have
+      return await this._getPlayer(playerId);
+    }
+
     if (doesPlayerExist) {
-      // update player.<playerId>.details if the redis DB already knows about it
+      // Update player details and last updated
+      // but leave anything related to matches unchanged
       await this._setPlayer(playerId, `${DETAILS}`, _.first(playerDetails));
       await this._setPlayer(playerId, `${LAST_UPDATED}`, moment.utc().format(MOMENT.HUMAN_TIME_FORMAT));
     } else {

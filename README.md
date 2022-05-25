@@ -1,5 +1,9 @@
 # Smite QL API
 
+```
+http://localhost:8080/ping
+```
+
 ## Testing Strategy
 
 ![Statements](https://raw.githubusercontent.com/davidholyko/smite-ql-api/gh-pages/badges/badge-statements.svg)
