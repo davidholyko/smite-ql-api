@@ -92,7 +92,7 @@ describe('SmiteQL', () => {
     });
 
     it('should return an array of matchIds', async () => {
-      const matchHistory = await smiteClient.getMatchHistory('any-player');
+      const matchHistory = await smiteClient.getMatchHistory('any-player', { platform: 'XBOX', forceUpdate: true });
       const expectedMatchHistory = [expect.any(Number)];
 
       expect(matchHistory).toEqual(expectedMatchHistory);
@@ -109,7 +109,7 @@ describe('SmiteQL', () => {
     });
 
     it('should return playerState initial state', async () => {
-      const data = await smiteClient.getPlayer('dhko');
+      const data = await smiteClient.getPlayer('dhko', 'HIREZ', true);
       const expectedMatches = expect.objectContaining({
         wins: [],
         losses: [],

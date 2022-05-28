@@ -141,13 +141,15 @@ export class SmiteQL extends SmiteRedis {
    * account information doesn't exist, it will fill that in
    * @param {String} playerId - like 'dhko'
    * @param {Object} options - optional args
-   * @param {Object} options.platform - values can be a number (1) or string ('HIREZ')
+   * @param {String | Number} options.platform - values can be a number (1) or string ('HIREZ')
+   * @param {Boolean} options.forceUpdate -
    * @returns {Array<String>} - list of last matchIds (upto 50)
    */
   async getMatchHistory(playerId, options) {
     console.info(`🥇🥇🥇 GMH_1: Starting match history process for ${playerId} 🥇🥇🥇`);
 
-    const playerState = await this.getPlayer(playerId, _.get(options, 'platform'));
+    const optionalParams = _.pick(options, ['platform', 'forceUpdate']);
+    const playerState = await this.getPlayer(playerId, ..._.values(optionalParams));
 
     // find a player's match history by their account number, like '31231241'
     // because a player's ign might not be consistent for console players
@@ -182,18 +184,31 @@ export class SmiteQL extends SmiteRedis {
    *
    * @param {String} playerId - an ign 'dhko' or playerNumber like '4553282'
    * @param {String} platform - like 'XBOX' or 'PS4'.
+   * @param {Boolean} shouldUpdate - whether to call Official Smite API
    * @returns {Object} data
    */
-  async getPlayer(playerId, platform) {
+  async getPlayer(playerId, platform, shouldUpdate = false) {
     const doesPlayerExist = await this._existsPlayer(playerId);
     let playerAccountId;
+    let playerDetails;
+
+    if (!shouldUpdate) {
+      return await this._getPlayer(playerId);
+    }
 
     if (_.includes(['XBOX', 'PS4', 'SWITCH'], platform)) {
       const playerByGameTag = await this.getPlayerIdsByGamerTag(playerId, platform);
       playerAccountId = _.get(playerByGameTag, '[0].player_id');
     }
 
-    const playerDetails = await super.getPlayer(playerAccountId || playerId);
+    try {
+      // if request to find latest data fails because of Official Smite API
+      // fall back to whatever data we have available
+      playerDetails = await super.getPlayer(playerAccountId || playerId);
+    } catch (error) {
+      // fall back to data we already have if an update fails
+      return await this._getPlayer(playerId);
+    }
 
     if (_.isEmpty(playerDetails)) {
       throw new Error(`Player: ${playerId} does not exist.`);

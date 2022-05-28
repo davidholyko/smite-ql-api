@@ -152,7 +152,7 @@ export const makeApplication = () => {
   app.get('/history', async function (req, res) {
     const { forceUpdate, limit, index, platform, map = '' } = req.query;
     // remove all undefined/null values from options
-    const options = _.pickBy({ limit, index, map, platform }, _.identity);
+    const options = _.pickBy({ limit, index, map, platform, forceUpdate }, _.identity);
     const playerId = decodeURI(req.query.player);
 
     if (!req.query.player) {
