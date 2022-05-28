@@ -145,11 +145,10 @@ export class SmiteQL extends SmiteRedis {
    * @param {Boolean} options.forceUpdate -
    * @returns {Array<String>} - list of last matchIds (upto 50)
    */
-  async getMatchHistory(playerId, options) {
+  async getMatchHistory(playerId, options = {}) {
     console.info(`🥇🥇🥇 GMH_1: Starting match history process for ${playerId} 🥇🥇🥇`);
 
-    const optionalParams = _.pick(options, ['platform', 'forceUpdate']);
-    const playerState = await this.getPlayer(playerId, ..._.values(optionalParams));
+    const playerState = await this.getPlayer(playerId, options);
 
     // find a player's match history by their account number, like '31231241'
     // because a player's ign might not be consistent for console players
@@ -183,16 +182,20 @@ export class SmiteQL extends SmiteRedis {
   /**
    *
    * @param {String} playerId - an ign 'dhko' or playerNumber like '4553282'
-   * @param {String} platform - like 'XBOX' or 'PS4'.
-   * @param {Boolean} shouldUpdate - whether to call Official Smite API
+   * @param {Object} options - optional args
+   * @param {String} options.platform - like 'XBOX' or 'PS4'.
+   * @param {Boolean} options.forceUpdate - whether to call Official Smite API
    * @returns {Object} data
    */
-  async getPlayer(playerId, platform, shouldUpdate = false) {
+  async getPlayer(playerId, options = {}) {
+    const { platform, forceUpdate = false } = options;
     const doesPlayerExist = await this._existsPlayer(playerId);
     let playerAccountId;
     let playerDetails;
 
-    if (!shouldUpdate) {
+    console.info(`🐕‍🦺🐕‍🦺🐕‍🦺 GPD_1: Getting details for ${playerId} 🐕‍🦺🐕‍🦺🐕‍🦺, forceUpdate: ${forceUpdate}`);
+
+    if (!forceUpdate) {
       return await this._getPlayer(playerId);
     }
 
@@ -206,9 +209,12 @@ export class SmiteQL extends SmiteRedis {
       // fall back to whatever data we have available
       playerDetails = await super.getPlayer(playerAccountId || playerId);
     } catch (error) {
+      console.error(`❌❌❌ GPD_1.5: An error has occured for details for ${playerId} ❌❌❌`);
       // fall back to data we already have if an update fails
       return await this._getPlayer(playerId);
     }
+
+    console.info(`🦮🦮🦮 GPD_2: Retrieved details for ${playerId} 🦮🦮🦮`);
 
     if (_.isEmpty(playerDetails)) {
       throw new Error(`Player: ${playerId} does not exist.`);
@@ -231,6 +237,8 @@ export class SmiteQL extends SmiteRedis {
     }
 
     const playerState = await this._getPlayer(playerId);
+
+    console.info(`🐩🐩🐩 GPD_3: Process complete for ${playerId} 🐩🐩🐩`);
 
     return playerState;
   }

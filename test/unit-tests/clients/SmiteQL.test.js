@@ -12,7 +12,7 @@ const { PLAYERS, GLOBAL } = SMITE_QL_KEYS;
 const {
   // mocks are real data from Smite API
   mockMatchDetails,
-  mockSingleMatchHistory,
+  mockMatchHistory,
   mockPlayer,
   mockGods,
   mockItems,
@@ -80,20 +80,35 @@ describe('SmiteQL', () => {
     beforeEach(async () => {
       await smiteClient.ready();
 
-      jest.spyOn(SmiteApi.prototype, 'getPlayer').mockImplementation(() => {
-        return mockPlayer;
-      });
       jest.spyOn(SmiteApi.prototype, 'getMatchHistory').mockImplementation(() => {
-        return mockSingleMatchHistory;
+        return mockMatchHistory;
+      });
+      jest.spyOn(smiteClient, 'getPlayer').mockImplementation(() => {
+        return mockPlayer;
       });
       jest.spyOn(smiteClient, 'getMatchDetails').mockImplementation(async () => {
         return true;
       });
     });
 
-    it('should return an array of matchIds', async () => {
+    afterEach(() => {
+      jest.spyOn(smiteClient, 'getPlayer').mockRestore();
+    });
+
+    it('should return an array of new matchIds', async () => {
       const matchHistory = await smiteClient.getMatchHistory('any-player', { platform: 'XBOX', forceUpdate: true });
-      const expectedMatchHistory = [expect.any(Number)];
+      const expectedMatchHistory = [
+        1231724964, //
+        1231730762,
+        1231739478,
+        1231930477,
+        1231936363,
+        1231942984,
+        1231946498,
+        1232091045,
+        1232096830,
+        1232099678,
+      ];
 
       expect(matchHistory).toEqual(expectedMatchHistory);
     });
@@ -109,7 +124,7 @@ describe('SmiteQL', () => {
     });
 
     it('should return playerState initial state', async () => {
-      const data = await smiteClient.getPlayer('dhko', 'HIREZ', true);
+      const data = await smiteClient.getPlayer('dhko', { platform: 'HIREZ', forceUpdate: true });
       const expectedMatches = expect.objectContaining({
         wins: [],
         losses: [],
