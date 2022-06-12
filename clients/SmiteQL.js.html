@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.4% </span>
+                <span class="strong">55.35% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>62/108</span>
+                <span class='fraction'>62/112</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.4% </span>
+                <span class="strong">55.35% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>62/108</span>
+                <span class='fraction'>62/112</span>
             </div>
         
             
@@ -418,7 +418,15 @@
 <a name='L353'></a><a href='#L353'>353</a>
 <a name='L354'></a><a href='#L354'>354</a>
 <a name='L355'></a><a href='#L355'>355</a>
-<a name='L356'></a><a href='#L356'>356</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -536,11 +544,11 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -729,9 +737,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -890,13 +906,13 @@ export class SmiteQL extends SmiteRedis {
 &nbsp;
     const rawMatchDetails = doesGlobalMatchExist ? <span class="branch-0 cbranch-no" title="branch not covered" >matchState </span>: await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
-    const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 &nbsp;
     // updates player.match with the match state object
     await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
 &nbsp;
     <span class="missing-if-branch" title="else path not taken" >E</span>if (!doesGlobalMatchExist) {
+      const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
       // calculate stats from the perspective of the match
       const params = { playerDetails, partyDetails, levelDetails, patchVersion };
       const globalMatchState = this.buildGlobalMatchState(params);
@@ -1084,13 +1100,21 @@ export class SmiteQL extends SmiteRedis {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    await Promise.all(</span>
       _.map(history, <span class="fstat-no" title="function not covered" >as</span>ync (matchId) =&gt; {
+        // Update Player Match
         const rawMatchDetails = <span class="cstat-no" title="statement not covered" >await this._get(`${GLOBAL}.${RAW_MATCHES}.${matchId}`);</span>
-        const patchVersion = <span class="cstat-no" title="statement not covered" >await this._getPatchVersion();</span>
+        const patchVersion = <span class="cstat-no" title="statement not covered" >await this._get(`${GLOBAL}.${MATCHES}.${matchId}.patch_version`);</span>
 &nbsp;
         const partyDetails = <span class="cstat-no" title="statement not covered" >HELPERS.processPartyDetails(rawMatchDetails);</span>
         const playerDetails = <span class="cstat-no" title="statement not covered" >HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);</span>
+&nbsp;
+        // Update Global Match
+        const levelDetails = <span class="cstat-no" title="statement not covered" >HELPERS.processLevelDetails(rawMatchDetails);</span>
+        const params = <span class="cstat-no" title="statement not covered" >{ playerDetails, partyDetails, levelDetails, patchVersion };</span>
+        const globalMatchState = <span class="cstat-no" title="statement not covered" >this.buildGlobalMatchState(params);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);</span>
       }),
     );
 &nbsp;
@@ -1135,7 +1159,7 @@ export const smiteClient = new SmiteQL();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sun Jun 12 2022 03:42:21 GMT+0000 (Coordinated Universal Time)
+                at Sun Jun 12 2022 05:39:04 GMT+0000 (Coordinated Universal Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
