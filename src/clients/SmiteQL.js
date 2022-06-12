@@ -115,13 +115,13 @@ export class SmiteQL extends SmiteRedis {
 
     const rawMatchDetails = doesGlobalMatchExist ? matchState : await super.getMatchDetails(matchId);
     const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
-    const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
     const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 
     // updates player.match with the match state object
     await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
 
     if (!doesGlobalMatchExist) {
+      const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
       // calculate stats from the perspective of the match
       const params = { playerDetails, partyDetails, levelDetails, patchVersion };
       const globalMatchState = this.buildGlobalMatchState(params);
@@ -309,13 +309,21 @@ export class SmiteQL extends SmiteRedis {
 
     await Promise.all(
       _.map(history, async (matchId) => {
+        // Update Player Match
         const rawMatchDetails = await this._get(`${GLOBAL}.${RAW_MATCHES}.${matchId}`);
-        const patchVersion = await this._getPatchVersion();
+        const patchVersion = await this._get(`${GLOBAL}.${MATCHES}.${matchId}.patch_version`);
 
         const partyDetails = HELPERS.processPartyDetails(rawMatchDetails);
         const playerDetails = HELPERS.processPlayerDetails(rawMatchDetails, patchVersion);
 
         await this._updatePlayerMatch(playerId, matchId, playerDetails, partyDetails);
+
+        // Update Global Match
+        const levelDetails = HELPERS.processLevelDetails(rawMatchDetails);
+        const params = { playerDetails, partyDetails, levelDetails, patchVersion };
+        const globalMatchState = this.buildGlobalMatchState(params);
+
+        await this._set(`${GLOBAL}.${MATCHES}.${matchId}`, globalMatchState);
       }),
     );
 

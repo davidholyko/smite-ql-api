@@ -49,6 +49,11 @@ export const parseIgn = (player, index) => {
   // account for when player profiles are hidden
   //   player.playerId = 0
   //   player.playerName = ''
+
+  if (index === undefined) {
+    throw new Error('Index is required for parseIgn.');
+  }
+
   const hiddenIGN = `_${normalize(player[REFERENCE_NAME], { isLowerCase: false })}_${index}`;
   const name = parsePlayerName(player[PLAYER_NAME]);
   const ign = !_.isEmpty(name) ? normalize(name, { isLowerCase: true, encase: true }) : hiddenIGN;

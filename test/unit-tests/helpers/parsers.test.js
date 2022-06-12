@@ -23,7 +23,7 @@ describe('Parsers', () => {
       };
 
       const expectedIgn = { ign: '__dhko__', rawIgn: 'dhko' };
-      const ign = parseIgn(player);
+      const ign = parseIgn(player, 1);
       expect(ign).toEqual(expectedIgn);
     });
     it('should generate a player name based on god if player is hidden', () => {
