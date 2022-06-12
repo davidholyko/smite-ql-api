@@ -25,7 +25,7 @@ describe('Transformers', () => {
   describe('toSmiteQLMatch', () => {
     it('should covert match object from Offical Smite API to condensed version', () => {
       const match = _.first(mockMatchDetails);
-      const transformedMatchState = toSmiteQLMatch(match, '10.0');
+      const transformedMatchState = toSmiteQLMatch(match, '10.0', { ign: 'dalvon21', rawIgn: 'dalvon21' });
 
       const expectedMatch = {
         accountLevel: 144,
@@ -55,7 +55,7 @@ describe('Transformers', () => {
         isWatchable: false,
         isVictory: true,
         isCustom: false,
-        ign: '__dalvon21__',
+        ign: 'dalvon21',
         kills: 11,
         map: 'Slash',
         mapValue: 'Slash',

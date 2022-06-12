@@ -28,10 +28,10 @@ export const toDate = (date) => {
  *
  * @param {Object} rawMatchDetails - matchDetails for a player
  * @param {String} patchVersion - patchVersion at the time of the match
+ * @param {Object} names - ign and rawIgn
  * @returns {Object} match with only date and victory status
  */
-export const toSmiteQLMatch = (rawMatchDetails, patchVersion) => {
-  const names = HELPERS.parseIgn(rawMatchDetails);
+export const toSmiteQLMatch = (rawMatchDetails, patchVersion, names) => {
   const playerActives = [
     // actives
     rawMatchDetails.Item_Active_1,

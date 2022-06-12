@@ -138,7 +138,7 @@ describe('SmiteApi Endpoints', () => {
       expect(player).toEqual(expectedPlayer);
     });
     it('should get player details for a playerId with a special character', async () => {
-      const playerDetails = await smiteApiClient.getPlayer('Malcastór');
+      const playerDetails = await smiteApiClient.getPlayer('Domímex');
       const player = _.first(playerDetails);
       const expectedPlayer = expect.objectContaining({
         hz_player_name: expect.any(String),
